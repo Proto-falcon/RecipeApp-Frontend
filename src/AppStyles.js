@@ -23,13 +23,5 @@ export const styles = StyleSheet.create({
 		fontWeight: "bold",
 		padding: 10,
 		borderWidth: 1
-	},
-
-	inputText:
-	{
-		height: 40,
-		margin: 12,
-		borderWidth: 1,
-		padding: 10,
 	}
 });
