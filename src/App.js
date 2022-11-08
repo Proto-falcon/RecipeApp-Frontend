@@ -5,8 +5,7 @@ import { useState } from "react";
 import { styles } from "./AppStyles";
 import IngredientList from "./components/IngredientList/IngredientList";
 import favicon from "../assets/favicon.png"
-import TextForm from "./components/TextForm/TextForm";
-import OptionsForm from "./components/OptionsForm/OptionsForm";
+import Form from "./components/Form/Form";
 
 
 export default function App() {
@@ -16,16 +15,6 @@ export default function App() {
 			"ingredients": ["None"],
 			"source": ""
 		});
-	const [isOptions, setIsOptions] = useState(false);
-
-	function setRecipeHandler({name, image, ingredients, source}) {
-		
-	}
-
-	function setOptions(event)
-	{
-		setIsOptions(!isOptions);
-	}
 
 	return (
 		<View style={styles.container}>
@@ -33,8 +22,7 @@ export default function App() {
 			<Text style={styles.foodName}>{recipe.name}</Text>
 			<IngredientList ingredients={recipe.ingredients}/>
 
-			<Button onPress={setOptions} title="Options" color="#fd5d00" />
-			{isOptions ? <OptionsForm setData={setRecipe} /> : <TextForm setData={setRecipe} />}
+			<Form setData={setRecipe} />
 			<StatusBar style="auto" />
 		</View>
 	);

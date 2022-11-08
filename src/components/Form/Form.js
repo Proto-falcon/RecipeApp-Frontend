@@ -1,11 +1,11 @@
+import { useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { Button, FlatList, View } from "react-native";
-import { optionStyle } from "./OptionsFormStyles";
-import favicon from "../../../assets/favicon.png"
-import backendip from "../../ipaddressesports/backendip";
+import { Button, FlatList, Text, TextInput, View } from "react-native";
+import BackEndIP from "../../ipaddressesports/BackEndIP";
+import { formStyle } from "./FormStyles";
+import favicon from "../../../assets/favicon.png";
 
-export default function OptionsForm(props) {
+export default function Form(props) {
 	const ingredients = [
 		{
 			id: 1,
@@ -29,6 +29,7 @@ export default function OptionsForm(props) {
 		},
 	];
 	const [addedIgs, setAddedIgs] = useState([]);
+	const [inputIg, setinputIg] = useState("");
 	const [hasError, setHasError] = useState(false);
 
 	function addIngredients(ingredient) {
@@ -74,23 +75,45 @@ export default function OptionsForm(props) {
 	}
 
 	async function fetchFood() {
-		if (addedIgs.length <= 0) {
+		if ((inputIg.length <= 0) && (addedIgs.length <= 0)) {
 			setHasError(true);
 			return;
 		}
 
 		setHasError(false);
 
+		let textQuery = inputIg;
+		let queryOptions = "";
+		if (addedIgs.length > 0)
+		{
+			for (let i = 0; i < addedIgs.length; i++)
+			{
+				queryOptions += addedIgs[i].ingredient;
+				if ((i - 1) < addedIgs.length)
+				{
+					queryOptions += " ";
+				}
+			}
+
+			// addedIgs.forEach(ingredient => {
+			// 	query += ingredient.ingredient + " ";
+			// });
+		}
+
+		let query = "";
+		if (textQuery.trim().length > 0)
+		{
+			query = textQuery + " " + queryOptions;
+		} else
+		{
+			query = queryOptions;
+		}
+
 		try {
 			let response = await axios({
 				method: "get",
 				url:
-					"http://" +
-					backendip +
-					"/?ingredients=" +
-					addedIgs.reduce((prevIg, currentIg) => {
-						return prevIg.ingredient + "_" + currentIg.ingredient;
-					}, ""),
+					"http://" + BackEndIP + "/?ingredients=" + query,
 				responseType: "json",
 			});
 
@@ -117,6 +140,10 @@ export default function OptionsForm(props) {
 		}
 	}
 
+	function inputIngredients(igs) {
+		setinputIg(igs);
+	}
+
 	function renderIgOptions({ item }) {
 		return (
 			<Button
@@ -125,7 +152,6 @@ export default function OptionsForm(props) {
 				title={item.ingredient}
 			/>
 		);
-		e;
 	}
 
 	return (
@@ -135,15 +161,26 @@ export default function OptionsForm(props) {
 				onPress={fetchFood}
 				color="#fd5d00"
 			/>
+			<TextInput
+				style={[
+					formStyle.inputText,
+					{ borderColor: hasError ? "red" : "black" },
+				]}
+				onChangeText={inputIngredients}
+				placeholder="Enter Food name/ingredients"
+			/>
+			
 			<View style={{ height: 140 }}>
 				<FlatList
-					style={optionStyle.list}
+					style={formStyle.list}
 					data={ingredients}
 					renderItem={renderIgOptions}
 					extraData={addedIgs}
 					keyExtractor={(item) => item.id}
 				/>
 			</View>
+
+            { hasError ? <Text style={formStyle.errorMsg}>Please enter food name/ingredients</Text> : null }
 		</>
 	);
 }

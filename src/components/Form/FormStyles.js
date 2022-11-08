@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 
-export const textFormStyle = StyleSheet.create(
+export const formStyle = StyleSheet.create(
     {
         inputText:
         {
@@ -17,5 +17,9 @@ export const textFormStyle = StyleSheet.create(
             padding: 5,
             fontWeight: "bold",
             fontSize: 20
+        },
+
+        list: {
+            marginTop: 10
         }
     });
