@@ -1,28 +1,51 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { styles } from "./AppStyles";
-import IngredientList from "./components/IngredientList/IngredientList";
 import favicon from "../assets/favicon.png"
 import Form from "./components/Form/Form";
+import RecipeList from "./components/RecipeList/RecipeList";
+
 
 
 export default function App() {
-	const [recipe, setRecipe] = useState({
+	const [recipes, setRecipes] = useState([
+		{
 			"name": "No Recipe Name Available",
 			"image": favicon,
 			"ingredients": ["None"],
 			"source": ""
-		});
+		}]);
+
+	function addRecipes(recipes)
+	{
+		// recipes.forEach(rec => {
+		// 	setRecipes((prevState) => 
+		// 	{
+		// 		let newState = [];
+		// 		newState.push(
+		// 			{
+		// 				...rec,
+		// 				"image": { uri: rec["image"] }
+		// 			});
+		// 		return newState;
+		// 	});
+		
+		let newState = [];
+		for (let i = 0; i < recipes.length; i++)
+		{
+			newState.push(recipes[i]);
+		}
+
+		setRecipes(newState);
+	}
 
 	return (
 		<View style={styles.container}>
-			<Image style={styles.foodPic} source={recipe.image}/>
-			<Text style={styles.foodName}>{recipe.name}</Text>
-			<IngredientList ingredients={recipe.ingredients}/>
+			<RecipeList recipes={recipes} />
 
-			<Form setData={setRecipe} />
+			<Form setData={addRecipes} />
 			<StatusBar style="auto" />
 		</View>
 	);

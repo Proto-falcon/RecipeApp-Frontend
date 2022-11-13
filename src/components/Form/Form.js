@@ -94,10 +94,6 @@ export default function Form(props) {
 					queryOptions += " ";
 				}
 			}
-
-			// addedIgs.forEach(ingredient => {
-			// 	query += ingredient.ingredient + " ";
-			// });
 		}
 
 		let query = "";
@@ -119,24 +115,16 @@ export default function Form(props) {
 
 			if (199 < response.status < 300) {
 				let content = await response.data;
-				props.setData((prevState) => {
-					return {
-						...prevState,
-						...content,
-						image: { uri: content["image"] },
-					};
-				});
+				props.setData(content.results);
 			}
 		} catch {
-			props.setData((prevState) => {
-				return {
-					...prevState,
+			props.setData([
+				{
 					name: "No Recipe Name Available",
 					image: favicon,
 					ingredients: ["None"],
 					source: "",
-				};
-			});
+				}])
 		}
 	}
 

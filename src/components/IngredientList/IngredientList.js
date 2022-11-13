@@ -3,7 +3,7 @@ import { igStyles } from "./IngredientListStyles";
 
 export default function IngredientList(props)
 {
-    const height = props.ingredients.length <= 1 ? "7%" : "20%";
+    const height = props.ingredients.length <= 1 ? "12%" : "20%";
 
     function renderIgs({ item })
     {
@@ -11,8 +11,9 @@ export default function IngredientList(props)
     }
 
     return (
-        <View style={[igStyles.ingredient, {maxHeight: height}]}>
+        <View>
             <FlatList
+                style={[igStyles.ingredient, {maxHeight: height}, {flexGrow: 0}]}
                 data={props.ingredients}
                 renderItem={renderIgs}
             />
