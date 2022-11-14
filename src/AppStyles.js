@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
 		alignItems: "center",
 		alignSelf: "stretch",
 		justifyContent: "center",
-
+		height: "100%"
 	},
 
 	foodPic:

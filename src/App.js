@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Image, Text, View } from "react-native";
+import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { styles } from "./AppStyles";
@@ -19,19 +19,7 @@ export default function App() {
 		}]);
 
 	function addRecipes(recipes)
-	{
-		// recipes.forEach(rec => {
-		// 	setRecipes((prevState) => 
-		// 	{
-		// 		let newState = [];
-		// 		newState.push(
-		// 			{
-		// 				...rec,
-		// 				"image": { uri: rec["image"] }
-		// 			});
-		// 		return newState;
-		// 	});
-		
+	{	
 		let newState = [];
 		for (let i = 0; i < recipes.length; i++)
 		{

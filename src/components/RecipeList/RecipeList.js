@@ -9,16 +9,14 @@ export default function RecipeList(props)
     {
         return(
             <>
-                <Image style={styles.foodPic} source={item.image}/>
-                <Text style={styles.foodName}>{item.name}</Text>
+                <Image style={[styles.foodPic, {flexGrow: 1}]} source={item.image}/>
+                <Text style={[styles.foodName, {flexGrow: 1}]}>{item.name}</Text>
                 <IngredientList ingredients={item.ingredients}/>
             </>
         );
     }
 
     return (
-        <View style={{maxHeight: "55%"}}>
-            <FlatList data={props.recipes} renderItem={renderRecipe} />
-        </View>
+            <FlatList style={{height: 100, width: "20%"}} data={props.recipes} renderItem={renderRecipe} />
     );
 }
