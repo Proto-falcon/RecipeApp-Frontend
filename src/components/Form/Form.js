@@ -143,7 +143,7 @@ export default function Form(props) {
 	}
 
 	return (
-		<>
+		<View style={formStyle.container}>
 			<Button
 				title="Fetch Recipes"
 				onPress={fetchFood}
@@ -169,6 +169,6 @@ export default function Form(props) {
 			</View>
 
             { hasError ? <Text style={formStyle.errorMsg}>Please enter food name/ingredients</Text> : null }
-		</>
+		</View>
 	);
 }

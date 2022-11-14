@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native"
 
 export const formStyle = StyleSheet.create(
     {
+        container:
+        {
+            flex: 1,
+            flexBasis:100
+        },
         inputText:
         {
             height: 40,

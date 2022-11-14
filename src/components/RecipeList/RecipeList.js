@@ -1,6 +1,6 @@
 import { FlatList, Image, Text, View } from "react-native";
-import { styles } from "../../AppStyles";
 import IngredientList from "../IngredientList/IngredientList";
+import { recipeListStyle } from "./RecipeListStyle";
 
 export default function RecipeList(props)
 {
@@ -8,15 +8,17 @@ export default function RecipeList(props)
     function renderRecipe({item})
     {
         return(
-            <>
-                <Image style={[styles.foodPic, {flexGrow: 1}]} source={item.image}/>
-                <Text style={[styles.foodName, {flexGrow: 1}]}>{item.name}</Text>
+            <View style={recipeListStyle.itemContainer}>
+                <Image style={recipeListStyle.foodPic} source={item.image}/>
+                <Text style={recipeListStyle.foodName}>{item.name}</Text>
                 <IngredientList ingredients={item.ingredients}/>
-            </>
+            </View>
         );
     }
 
     return (
-            <FlatList style={{height: 100, width: "20%"}} data={props.recipes} renderItem={renderRecipe} />
+        <View style={recipeListStyle.list}>
+            <FlatList data={props.recipes} renderItem={renderRecipe} />
+        </View>
     );
 }

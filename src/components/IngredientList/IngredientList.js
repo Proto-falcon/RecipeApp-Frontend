@@ -9,10 +9,11 @@ export default function IngredientList(props)
     }
 
     return (
+        <View style={igStyles.ingredient}>
             <FlatList
-                style={[igStyles.ingredient]}
                 data={props.ingredients}
                 renderItem={renderIgs}
             />
+        </View>
     );
 }
