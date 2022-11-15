@@ -116,6 +116,7 @@ export default function Form(props) {
 			if (199 < response.status < 300) {
 				let content = await response.data;
 				props.setData(content.results);
+				props.setLink(content.addRecipesLink);
 			}
 		} catch {
 			props.setData([

@@ -11,6 +11,10 @@ export const recipeListStyle = StyleSheet.create(
         {
             
         },
+        foodPicContainer:
+        {
+            alignItems: "center"
+        },
         foodPic:
         {
             height: 200,
@@ -23,6 +27,7 @@ export const recipeListStyle = StyleSheet.create(
             marginBottom: 20,
             fontWeight: "bold",
             padding: 10,
-            borderWidth: 1
+            borderWidth: 1,
+            textAlign: "center"
         }
     });

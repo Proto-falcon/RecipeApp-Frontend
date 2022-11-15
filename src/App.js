@@ -10,6 +10,7 @@ import RecipeList from "./components/RecipeList/RecipeList";
 
 
 export default function App() {
+	const [hasResults, setHasResults] = useState(false);
 	const [recipes, setRecipes] = useState([
 		{
 			"name": "No Recipe Name Available",
@@ -17,6 +18,7 @@ export default function App() {
 			"ingredients": ["None"],
 			"source": ""
 		}]);
+	const [addRecipesLink, setAddRecipesLink] = useState("");
 
 	function addRecipes(recipes)
 	{	
@@ -27,13 +29,14 @@ export default function App() {
 		}
 
 		setRecipes(newState);
+		setHasResults(true);
 	}
 
 	return (
 		<View style={styles.container}>
-			<RecipeList recipes={recipes} />
+			<RecipeList hasResults={hasResults} recipes={recipes} addRecipesLink={addRecipesLink} />
 
-			<Form setData={addRecipes} />
+			<Form setData={addRecipes} setLink={setAddRecipesLink}/>
 			<StatusBar style="auto" />
 		</View>
 	);
