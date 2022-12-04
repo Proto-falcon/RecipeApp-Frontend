@@ -4,12 +4,9 @@ export const recipeListStyle = StyleSheet.create(
     {
         list: {
             flex: 1,
-            flexBasis: 200,
-            width: "30%"
-        },
-        itemContainer:
-        {
-            
+            flexBasis: 100,
+            width: "50%",
+            maxWidth: 300
         },
         foodPicContainer:
         {
@@ -18,7 +15,8 @@ export const recipeListStyle = StyleSheet.create(
         foodPic:
         {
             height: 200,
-            width: 200
+            width: "100%",
+            resizeMode: "contain"
         },
 
         foodName:

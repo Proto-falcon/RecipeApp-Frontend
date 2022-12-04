@@ -3,9 +3,9 @@ import { igStyles } from "./IngredientListStyles";
 
 export default function IngredientList(props)
 {
-    function renderIgs({ item })
+    function renderIgs({ item, index })
     {
-        return (<Text>{item}</Text>);
+        return (<Text>{index + 1}.  {item}</Text>);
     }
 
     return (

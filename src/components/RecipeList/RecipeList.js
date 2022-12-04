@@ -1,21 +1,30 @@
 import axios from "axios";
 import { FlatList, Image, Text, View } from "react-native";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
-import IngredientList from "../IngredientList/IngredientList";
 import { recipeListStyle } from "./RecipeListStyle";
 
 export default function RecipeList(props) {
 	function renderRecipe({ item }) {
+		let image = "";
+
+		if (item.image != "" )
+		{
+			image = {uri:item.image, height: 200, width: "100%"};
+		}
+		else
+		{
+			image = require("../../../assets/favicon.png");
+		}
+
 		return (
 			<View style={recipeListStyle.itemContainer}>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
 						style={recipeListStyle.foodPic}
-						source={item.image}
+						source={image}
 					/>
 				</View>
 				<Text style={recipeListStyle.foodName}>{item.name}</Text>
-				<IngredientList ingredients={item.ingredients} />
 			</View>
 		);
 	}

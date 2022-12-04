@@ -1,9 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { styles } from "./AppStyles";
-import favicon from "../assets/favicon.png";
 import Form from "./components/Form/Form";
 import RecipeList from "./components/RecipeList/RecipeList";
 
@@ -12,7 +11,7 @@ export default function App() {
 	const [recipes, setRecipes] = useState([
 		{
 			name: "No Recipe Name Available",
-			image: favicon,
+			image: "",
 			ingredients: ["None"],
 			source: "",
 		},
@@ -33,13 +32,13 @@ export default function App() {
 	{
 		let newState = [];
 
+		for (let i = 0; i < recipes.length; i++) {
+			newState.push(recipes[i]);
+		}
+
 		for (let i = 0; i < recipeList.length; i++) {
 			newState.push(recipeList[i]);
 			
-		}
-
-		for (let i = 0; i < recipes.length; i++) {
-			newState.push(recipes[i]);
 		}
 
 		setRecipes(newState);
