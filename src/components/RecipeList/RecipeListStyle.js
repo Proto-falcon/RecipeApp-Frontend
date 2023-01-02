@@ -4,9 +4,8 @@ export const recipeListStyle = StyleSheet.create(
     {
         list: {
             flex: 1,
-            flexBasis: 100,
             width: "50%",
-            maxWidth: 300
+            maxWidth: 300,
         },
         foodPicContainer:
         {

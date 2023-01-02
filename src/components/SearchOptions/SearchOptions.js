@@ -1,12 +1,13 @@
-import { useState } from "react";
 import axios from "axios";
-import { Button, FlatList, Text, TextInput, View } from "react-native";
+import { useContext, useState } from "react";
+import { Button, FlatList, Image, Pressable, Text, TextInput, View } from "react-native";
+import RecipeResultsCtx from "../../context/Context";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
-import { formStyle } from "./FormStyles";
-import favicon from "../../../assets/favicon.png";
+import { SearchOptionsStyle } from "./SearchOptionsStyle";
 
-export default function Form(props) {
-	const ingredients = [
+export default function SearchOptions({ navigation })
+{
+    const ingredients = [
 		{
 			id: 1,
 			ingredient: "fish",
@@ -28,11 +29,16 @@ export default function Form(props) {
 			ingredient: "apple",
 		},
 	];
+
+	const ctx = useContext(RecipeResultsCtx)
+
 	const [addedIgs, setAddedIgs] = useState([]);
 	const [inputIg, setinputIg] = useState("");
 	const [hasError, setHasError] = useState(false);
 
-	function addIngredients(ingredient) {
+    const image = require("../../../assets/searchIcon.png");
+
+    function addIngredients(ingredient) {
 		setAddedIgs((prevState) => {
 			let newList = [];
 			newList = newList.concat(prevState);
@@ -112,21 +118,24 @@ export default function Form(props) {
 					"http://" + BackEndIP + "/?ingredients=" + query,
 				responseType: "json",
 			});
-
+			
 			if (199 < response.status < 300) {
 				let content = await response.data;
-				props.setData(content.results);
-				props.setLink(content.addRecipesLink);
+
+				ctx.getRecipes(content.results);
+				ctx.setAddRecipesLink(content.addRecipesLink);
 			}
 		} catch {
-			props.setData([
+			ctx.getRecipes([
 				{
 					name: "No Recipe Name Available",
-					image: favicon,
+					image: require("../../../assets/favicon.png"),
 					ingredients: ["None"],
 					source: "",
 				}])
 		}
+
+		return navigation.navigate("Home");
 	}
 
 	function inputIngredients(igs) {
@@ -143,26 +152,27 @@ export default function Form(props) {
 		);
 	}
 
-	return (
-		<View style={formStyle.container}>
-			<Button
-				style={{borderRadius: 10}}
-				title="Fetch Recipes"
-				onPress={fetchFood}
-				color="#fd5d00"
-			/>
-			<TextInput
-				style={[
-					formStyle.inputText,
-					{ borderColor: hasError ? "red" : "black" },
-				]}
-				onChangeText={inputIngredients}
-				placeholder="Enter Food name/ingredients"
-			/>
-			
+    return (
+        <View style={SearchOptionsStyle.container}>
+			<View style={SearchOptionsStyle.textButtonContainer}>
+				<Pressable style={SearchOptionsStyle.imgContainer} onPress={fetchFood}>
+					<Image style={SearchOptionsStyle.searchIcon} source={image}/>
+				</Pressable>
+				
+				<TextInput
+					style={[SearchOptionsStyle.input,
+						{ borderColor: hasError ? "red" : "black" },
+					]}
+					onChangeText={inputIngredients}
+					placeholder="Search"
+				/>
+			</View>
+
+			{ hasError ? <Text style={SearchOptionsStyle.errorMsg}>Please enter food name/ingredients</Text> : null }
+
 			<View style={{ height: 140 }}>
 				<FlatList
-					style={formStyle.list}
+					style={SearchOptionsStyle.list}
 					data={ingredients}
 					renderItem={renderIgOptions}
 					extraData={addedIgs}
@@ -170,7 +180,6 @@ export default function Form(props) {
 				/>
 			</View>
 
-            { hasError ? <Text style={formStyle.errorMsg}>Please enter food name/ingredients</Text> : null }
-		</View>
-	);
+        </View>
+    );
 }

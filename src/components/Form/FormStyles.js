@@ -5,14 +5,15 @@ export const formStyle = StyleSheet.create(
         container:
         {
             flex: 1,
-            flexBasis:100
+            flexBasis:200
         },
         inputText:
         {
             height: 40,
 		    margin: 12,
 		    borderWidth: 1,
-		    padding: 10
+		    padding: 10,
+            borderRadius: 10
 	    },
 
         errorMsg:

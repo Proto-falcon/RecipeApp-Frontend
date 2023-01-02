@@ -1,64 +1,47 @@
-import { StatusBar } from "expo-status-bar";
-import { Image, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
-import { styles } from "./AppStyles";
-import Form from "./components/Form/Form";
-import RecipeList from "./components/RecipeList/RecipeList";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Text } from "react-native";
+import Search from "./components/Search/Search";
+import SearchOptions from "./components/SearchOptions/SearchOptions";
+import { ContextProvider } from "./context/Context";
 
 export default function App() {
-	const [hasResults, setHasResults] = useState(false);
-	const [recipes, setRecipes] = useState([
-		{
-			name: "No Recipe Name Available",
-			image: "",
-			ingredients: ["None"],
-			source: "",
-		},
-	]);
-	const [addRecipesLink, setAddRecipesLink] = useState("");
-
-	function GetRecipes(recipeList) {
-		let newState = [];
-		for (let i = 0; i < recipeList.length; i++) {
-			newState.push(recipeList[i]);
+	const Stack = createNativeStackNavigator();
+	const Linking = {
+		config: {
+			screens: {
+				Home: "Home",
+				Search: "Search"
+			}
 		}
+	};
 
-		setRecipes(newState);
-		setHasResults(true);
-	}
-
-	function addRecipes(recipeList)
-	{
-		let newState = [];
-
-		for (let i = 0; i < recipes.length; i++) {
-			newState.push(recipes[i]);
-		}
-
-		for (let i = 0; i < recipeList.length; i++) {
-			newState.push(recipeList[i]);
-			
-		}
-
-		setRecipes(newState);
+	function test() {
+		return <Text />
 	}
 
 	return (
-		<View style={styles.container}>
-			<RecipeList
-				setData={addRecipes}
-				setLink={setAddRecipesLink}
-				hasResults={hasResults}
-				recipes={recipes}
-				addRecipesLink={addRecipesLink}
-			/>
-
-			<Form
-				setData={GetRecipes}
-				setLink={setAddRecipesLink}
-			/>
-			<StatusBar style="auto" />
-		</View>
+		<ContextProvider>
+			<NavigationContainer linking={Linking}>
+				<Stack.Navigator
+					screenOptions={{
+						headerStyle: { backgroundColor: "#fd5d00" },
+						headerTitleStyle: { color: "white" },
+						headerTitleAlign: "center",
+						headerLeft: test
+					}}
+					initialRouteName="Home"
+				>
+					<Stack.Screen
+						name="Home"
+						component={Search}
+					/>
+					<Stack.Screen
+						name="Search"
+						component={SearchOptions}
+					/>
+				</Stack.Navigator>
+			</NavigationContainer>
+		</ContextProvider>
 	);
 }
