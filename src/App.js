@@ -5,19 +5,25 @@ import Search from "./components/Search/Search";
 import SearchOptions from "./components/SearchOptions/SearchOptions";
 import { ContextProvider } from "./context/Context";
 
+/**
+ * Render the enter APP UI and use React navigation to
+ * navigate different screens and update urls on browser
+ *
+ * @returns {JSX.Element} The whole app UI
+ */
 export default function App() {
 	const Stack = createNativeStackNavigator();
 	const Linking = {
 		config: {
 			screens: {
 				Home: "Home",
-				Search: "Search"
-			}
-		}
+				Search: "Search",
+			},
+		},
 	};
 
 	function test() {
-		return <Text />
+		return <Text />;
 	}
 
 	return (
@@ -28,7 +34,7 @@ export default function App() {
 						headerStyle: { backgroundColor: "#fd5d00" },
 						headerTitleStyle: { color: "white" },
 						headerTitleAlign: "center",
-						headerLeft: test
+						headerLeft: test,
 					}}
 					initialRouteName="Home"
 				>

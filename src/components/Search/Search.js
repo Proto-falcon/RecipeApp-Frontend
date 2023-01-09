@@ -5,6 +5,12 @@ import RecipeResultsCtx from "../../context/Context";
 import RecipeList from "../RecipeList/RecipeList";
 import { SearchStyle } from "./SearchStyle";
 
+/**
+ * Renders the page with recipe results depending on
+ * the options selected in Search Options page
+ *
+ * @returns {JSX.Element} Search Results Page
+ */
 export default function Search() {
 	const ctx = useContext(RecipeResultsCtx);
 

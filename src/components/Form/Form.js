@@ -5,6 +5,13 @@ import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { formStyle } from "./FormStyles";
 import favicon from "../../../assets/favicon.png";
 
+/**
+ * Legacy form replaced by SearchOptions.
+ * Might change it in the future.
+ * 
+ * @param {*} props 
+ * @returns {JSX.Element}
+ */
 export default function Form(props) {
 	const ingredients = [
 		{

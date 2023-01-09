@@ -4,14 +4,35 @@ import { FlatList, Image, Text, View } from "react-native";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "./RecipeListStyle";
 
+/**
+ * Renders a list of Recipes
+ * 
+ * @param {{
+ * 	recipes:
+ * 		Array<recipe>,
+ *  moreRecipesLink: string,
+ *  addRecipes: (recipeResults: Array<recipe, addRecipesLink: string) => void
+ * }} props 
+ * @returns {JSX.Element}
+ */
 export default function RecipeList(props) {
 
-	const [recipes, setRecipes] = useState(props.recipes);
+	const [recipes, setRecipes] = useState(props.recipes); // List of recipes
 
+	/**
+	 * Forces it to update the list because some reason
+	 * it doens't register it on first render
+	 */
 	useEffect(() => {
 		setRecipes(props.recipes)
 	}, [props.recipes]);
 
+	/**
+	 * Renders a recipe with in image and name
+	 * 
+	 * @param {recipe} item 
+	 * @returns {JSX.Element} A recipe with image and name
+	 */
 	function renderRecipe({ item }) {
 		let image = "";
 		if (item.image != "")
@@ -36,6 +57,12 @@ export default function RecipeList(props) {
 		);
 	}
 
+	/**
+	 * Adds more recipes to the current list
+	 * when the user scrolls near the bottom
+	 * 
+	 * @param {number} distanceFromEnd 
+	 */
     async function loadMoreRecipes({distanceFromEnd})
     {
         if (recipes[0].source != "")
