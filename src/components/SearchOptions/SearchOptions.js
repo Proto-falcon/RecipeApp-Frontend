@@ -13,6 +13,11 @@ import RecipeResultsCtx from "../../context/Context";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
 
+let BACKEND = "";
+if (__DEV__) {
+    BACKEND = BackEndIP;
+}
+
 /**
  * Renders a page that has options to search recipes
  *
@@ -147,7 +152,7 @@ export default function SearchOptions({ navigation }) {
 		try {
 			let response = await axios({
 				method: "get",
-				url: "http://" + BackEndIP + "/?ingredients=" + query,
+				url: "http://" + BACKEND + "/?ingredients=" + query,
 				responseType: "json",
 			});
 

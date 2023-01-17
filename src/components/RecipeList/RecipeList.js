@@ -1,24 +1,35 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Text, useWindowDimensions, View } from "react-native";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "./RecipeListStyle";
 
+let BACKEND = "";
+if (__DEV__) {
+    BACKEND = BackEndIP;
+}
+
 /**
  * Renders a list of Recipes
+ * @typedef {{
+ * 		name: string,
+ *  	image: string,
+ *  	ingredients: Array<string>,
+ *  	source: string
+ * 	}} recipe
  * 
  * @param {{
  * 	recipes:
  * 		Array<recipe>,
- *  moreRecipesLink: string,
- *  addRecipes: (recipeResults: Array<recipe, addRecipesLink: string) => void
+ *  recipeLink: string,
+ *  setData: (recipeResults: Array<recipe>, addRecipesLink: string) => void
  * }} props 
  * @returns {JSX.Element}
  */
 export default function RecipeList(props) {
 
 	const [recipes, setRecipes] = useState(props.recipes); // List of recipes
-
+	const [width, setWidth] = useState(useWindowDimensions().width);
 	/**
 	 * Forces it to update the list because some reason
 	 * it doens't register it on first render
@@ -37,7 +48,7 @@ export default function RecipeList(props) {
 		let image = "";
 		if (item.image != "")
 		{
-			image = {uri:item.image, height: 200, width: "100%"};
+			image = {uri:item.image, height: width, width: "100%"};
 		}
 		else
 		{
@@ -45,7 +56,7 @@ export default function RecipeList(props) {
 		}
 
 		return (
-			<View style={recipeListStyle.itemContainer}>
+			<View>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
 						style={recipeListStyle.foodPic}
@@ -70,17 +81,23 @@ export default function RecipeList(props) {
             let response = await axios({
                 method: "get",
                 url:
-                    "http://" + BackEndIP + "/addRecipes/?nextLink=" + props.moreRecipesLink,
+                    "http://" + BACKEND + "/addRecipes/?nextLink=" + props.recipeLink,
                 responseType: "json",
             });
 
             let content = await response.data;
-			props.addRecipes(content.results, content.addRecipesLink);
+			props.setData(content.results, content.addRecipesLink);
         }
     }
 
+	let listStyle = {
+		flex: 1,
+		width: width > 700 ? "30%" : "100%",
+		
+	};
+
 	return (
-		<View style={recipeListStyle.list}>
+		<View style={[listStyle]}>
 			<FlatList
 				data={recipes}
 				renderItem={renderRecipe}

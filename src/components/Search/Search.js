@@ -7,7 +7,7 @@ import { SearchStyle } from "./SearchStyle";
 
 /**
  * Renders the page with recipe results depending on
- * the options selected in Search Options page
+ * the options selected in Search Options page 🔎
  *
  * @returns {JSX.Element} Search Results Page
  */
