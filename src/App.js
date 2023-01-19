@@ -1,10 +1,12 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { Link, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { Pressable, Text } from "react-native";
-import Search from "./components/Search/Search";
-import SearchOptions from "./components/SearchOptions/SearchOptions";
+import { Image, Pressable, Text } from "react-native";
+import Search from "./pages/Search/Search";
+import { SearchStyle } from "./pages/Search/SearchStyle";
+import SearchOptions from "./pages/SearchOptions/SearchOptions";
 import { ContextProvider } from "./context/Context";
+import { styles } from "./AppStyles";
 
 /**
  * Render the enter APP UI and use React navigation to
@@ -23,14 +25,6 @@ export default function App() {
 		},
 	};
 
-	function home() {
-		return (
-			<Text style={{ color: "white", fontSize: 18, fontWeight: "500" }}>
-				Home
-			</Text>
-		);
-	}
-
 	function HomeButton(navigation) {
 		return (
 			<Pressable
@@ -42,14 +36,34 @@ export default function App() {
 				}}
 			>
 				<Text
-					style={{ color: "white", fontSize: 18, fontWeight: "500", marginLeft:10 }}
+					style={{
+						color: "white",
+						fontSize: 18,
+						fontWeight: "500",
+						marginLeft: 10,
+					}}
 				>
 					Home
 				</Text>
 			</Pressable>
 		);
 	}
-	
+
+	function SearchButton() {
+		const image = require("../assets/searchIcon.png");
+		return (
+			<Link
+				to={{ screen: "Search" }}
+				style={SearchStyle.imgContainer}
+			>
+				<Image
+					style={styles.searchIcon}
+					source={image}
+				/>
+			</Link>
+		);
+	}
+
 	return (
 		<ContextProvider>
 			<NavigationContainer linking={Linking}>
@@ -59,6 +73,7 @@ export default function App() {
 						headerTitleStyle: { color: "white" },
 						headerTitleAlign: "center",
 						headerLeft: () => undefined,
+						headerRight: SearchButton,
 					}}
 					initialRouteName="Home"
 				>
@@ -68,14 +83,16 @@ export default function App() {
 					/>
 					<Stack.Group
 						screenOptions={({ route, navigation }) => {
-							let h = HomeButton(navigation)
+							let h = HomeButton(navigation);
 							return {
-							headerLeft: () => h,
-						}}}
+								headerLeft: () => h,
+							};
+						}}
 					>
 						<Stack.Screen
 							name="Search"
 							component={SearchOptions}
+							options={{headerRight: () => undefined}}
 						/>
 					</Stack.Group>
 				</Stack.Navigator>

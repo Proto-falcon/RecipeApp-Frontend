@@ -7,12 +7,6 @@ export const SearchStyle = StyleSheet.create(
             alignItems: "center",
         },
 
-        searchIcon: {
-            height: 20,
-            width: 20,
-            resizeMode: "contain",
-        },
-
         imgContainer: {
             flexBasis:30,
             height: 30,

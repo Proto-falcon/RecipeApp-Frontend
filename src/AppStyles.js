@@ -1,12 +1,14 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		alignSelf: "stretch",
-		justifyContent: "center",
-		height: "100%"
+	searchIcon: {
+		height: 20,
+		width: 20,
+		resizeMode: "contain",
+		marginRight: 10
+	},
+
+	pageContainer: {
+		marginTop: 10
 	}
 });

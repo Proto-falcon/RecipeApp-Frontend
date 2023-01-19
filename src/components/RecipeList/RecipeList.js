@@ -4,7 +4,7 @@ import { FlatList, Image, Text, useWindowDimensions, View } from "react-native";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "./RecipeListStyle";
 
-let BACKEND = "";
+let BACKEND = "/";
 if (__DEV__) {
     BACKEND = BackEndIP;
 }
@@ -24,7 +24,7 @@ if (__DEV__) {
  *  recipeLink: string,
  *  setData: (recipeResults: Array<recipe>, addRecipesLink: string) => void
  * }} props 
- * @returns {JSX.Element}
+ * @returns List of Recipes
  */
 export default function RecipeList(props) {
 
@@ -42,7 +42,7 @@ export default function RecipeList(props) {
 	 * Renders a recipe with in image and name
 	 * 
 	 * @param {recipe} item 
-	 * @returns {JSX.Element} A recipe with image and name
+	 * @returns A recipe with image and name
 	 */
 	function renderRecipe({ item }) {
 		let image = "";
@@ -80,8 +80,7 @@ export default function RecipeList(props) {
         {
             let response = await axios({
                 method: "get",
-                url:
-                    "http://" + BACKEND + "/addRecipes/?nextLink=" + props.recipeLink,
+                url: BACKEND + "/addRecipes/?nextLink=" + props.recipeLink,
                 responseType: "json",
             });
 

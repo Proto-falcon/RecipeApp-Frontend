@@ -1,9 +1,9 @@
-import { Link } from "@react-navigation/native";
 import { useContext } from "react";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import RecipeResultsCtx from "../../context/Context";
-import RecipeList from "../RecipeList/RecipeList";
+import RecipeList from "../../components/RecipeList/RecipeList";
 import { SearchStyle } from "./SearchStyle";
+import { styles } from "../../AppStyles";
 
 /**
  * Renders the page with recipe results depending on
@@ -14,19 +14,8 @@ import { SearchStyle } from "./SearchStyle";
 export default function Search() {
 	const ctx = useContext(RecipeResultsCtx);
 
-	const image = require("../../../assets/searchIcon.png");
-
 	return (
-		<View style={SearchStyle.container}>
-			<Link
-				to={{ screen: "Search" }}
-				style={SearchStyle.imgContainer}
-			>
-				<Image
-					style={SearchStyle.searchIcon}
-					source={image}
-				/>
-			</Link>
+		<View style={{...SearchStyle.container, ...styles.pageContainer}}>
 			<RecipeList
 				recipes={ctx.results}
 				setData={ctx.addRecipes}

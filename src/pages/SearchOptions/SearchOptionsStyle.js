@@ -4,7 +4,6 @@ export const SearchOptionsStyle = StyleSheet.create(
     {
         container: {
             flex: 1,
-            width: "70%",
             alignItems: "center",
             marginTop: 10,
             marginLeft: "auto",
@@ -49,7 +48,4 @@ export const SearchOptionsStyle = StyleSheet.create(
             borderRadius: 20,
         },
 
-        list: {
-            marginTop: 10
-        }
     });
