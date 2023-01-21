@@ -1,26 +1,35 @@
 import { useEffect, useState } from "react";
-import { Button, FlatList, View } from "react-native";
-import { optiionStyles } from "./RecipeOptionStyle";
+import { FlatList, Pressable, Text, View } from "react-native";
+import { optionStyles } from "./RecipeOptionStyle";
 
 /**
  * Displays a list of recipe options from the data given via
  *
  * @param {{
- *      name: string
+ *      type: string
  *      updateData: (type:string, options: Array<str>) => void,
  *      data: Array<string>,
+ * 		selectedData: Array<string>
+ * 		style: any
  *  }
  * } props
- * 
- * Data is array of data to be displayed and
- * updateData is for updating data of the parent component.
- * 
+ *
+ * `data` is array of data to be displayed and
+ * `updateData` is for updating data of the parent component.
+ * `selectedData` is data that is already selected.
+ *
  * @returns List of Recipe Options
  */
 export default function RecipeOption(props) {
-	const [selectedData, setSelectedData] = useState([]);
+	const [selectedData, setSelectedData] = useState(props.selectedData);
 
-	useEffect(() => props.updateData(props.name, selectedData), [props.name, selectedData]);
+
+	useEffect(() => setSelectedData(props.selectedData), [props.type]);
+
+	useEffect(
+		() => props.updateData(props.type, selectedData),
+		[selectedData]
+	);
 
 	/**
 	 * Add selected options to selectedData
@@ -93,22 +102,29 @@ export default function RecipeOption(props) {
 	 * @param {string} item
 	 * @returns Button to be rendered in List
 	 */
-	function renderOptionOptions({ item }) {
+	function renderOptions({ item }) {
 		return (
-			<Button
+			<Pressable
 				onPress={(e) => selectOptionHandler(item)}
-				color={optionIncluded(item) ? "#00ff0d" : "#fd5d00"}
-				title={item}
-			/>
+				style={{
+					width: 175,
+					backgroundColor: optionIncluded(item)
+						? "#00ff0d"
+						: "#fd5d00",
+					padding: 5,
+					alignItems: "center",
+				}}
+			>
+				<Text style={{fontWeight:"bold"}}>{item}</Text>
+			</Pressable>
 		);
 	}
 
 	return (
-		<View style={{ ...optiionStyles.listsContainer, height: "25%" }}>
+		<View style={{ ...optionStyles.listContainer, ...props.style }}>
 			<FlatList
-				style={optiionStyles.list}
 				data={props.data}
-				renderItem={renderOptionOptions}
+				renderItem={renderOptions}
 				extraData={selectedData}
 			/>
 		</View>

@@ -8,19 +8,24 @@ const RecipeResultsCtx = createContext({
 		// array of recipes
 		{
 			name: "No Recipe Name Available",
-			image: "",
+			image: require("../../assets/favicon.png"),
 			ingredients: ["None"],
 			source: "",
 		},
 	],
 	getRecipes: (recipeList) => {}, // Create a list of recipes
 	addRecipes: (recipeList, link) => {}, // Add recipes to the current list
+	isLoading: false,
+	setIsLoading: (boolean) => {}
 });
 
+/**
+ * Component only used for managing context for the whole app
+ * 
+ * @param {*} props 
+ * @returns Child Elements
+ */
 export function ContextProvider(props) {
-	/**
-	 * Component only used for managing context for the whole app
-	 */
 
 	// Array of recipes
 	const [recipes, setRecipes] = useState([
@@ -34,6 +39,8 @@ export function ContextProvider(props) {
 
 	// link to recipes
 	const [addRecipesLink, setAddRecipesLink] = useState("");
+
+	const [isLoading, setIsLoading] = useState(false);
 
 	/**
 	 * Sets link to fetch more recipes
@@ -64,10 +71,9 @@ export function ContextProvider(props) {
 					source: "",
 				},
 			]);
-            setTimeout(() => {
-                let newState = recipeList;
-                setRecipes(newState);
-            }, 20);
+			
+            let newState = recipeList;
+            setRecipes(newState);
 		}
 	}
 
@@ -110,6 +116,8 @@ export function ContextProvider(props) {
 				getRecipes: GetRecipes,
 				setAddRecipesLink: setAddLink,
 				addRecipes: addRecipes,
+				isLoading: isLoading,
+				setIsLoading: setIsLoading
 			}}
 		>
 			{props.children}

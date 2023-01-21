@@ -13,7 +13,7 @@ if (__DEV__) {
  * Renders a list of Recipes
  * @typedef {{
  * 		name: string,
- *  	image: string,
+ *  	image: any,
  *  	ingredients: Array<string>,
  *  	source: string
  * 	}} recipe
@@ -29,7 +29,10 @@ if (__DEV__) {
 export default function RecipeList(props) {
 
 	const [recipes, setRecipes] = useState(props.recipes); // List of recipes
+	const [isMoreRecipes, setIsMoreRecipes] = useState(true);
+	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
 	const [width, setWidth] = useState(useWindowDimensions().width);
+
 	/**
 	 * Forces it to update the list because some reason
 	 * it doens't register it on first render
@@ -76,17 +79,35 @@ export default function RecipeList(props) {
 	 */
     async function loadMoreRecipes({distanceFromEnd})
     {
-        if (recipes[0].source != "")
-        {
-            let response = await axios({
-                method: "get",
-                url: BACKEND + "/addRecipes/?nextLink=" + props.recipeLink,
-                responseType: "json",
-            });
+		if (props.recipeLink != undefined && props.recipeLink != "" && isMoreRecipes)
+		{
+			try {
+				let response = await axios({
+					method: "get",
+					url: `${BACKEND}/addRecipes/?nextLink=${props.recipeLink}`,
+					responseType: "json",
+				});
 
-            let content = await response.data;
-			props.setData(content.results, content.addRecipesLink);
-        }
+				let content = await response.data;
+				props.setData(content.results, content.addRecipesLink);
+			} catch (error) {
+				setIsMoreRecipes(false);
+			}
+		}
+		else if (recipes[recipes.length - 1].source != "" && !loadedAllRecipes) {
+			setRecipes((prevState) => {
+				let newState = [...prevState]
+				newState.push({
+					name: "No more Recipes",
+					image: "",
+					ingredients: [],
+					source: "",
+				});
+			
+				return newState
+			});
+			setLoadedAllRecipes(prevState => !prevState);
+		}
     }
 
 	let listStyle = {
@@ -102,6 +123,7 @@ export default function RecipeList(props) {
 				renderItem={renderRecipe}
                 onEndReached={loadMoreRecipes}
                 onEndReachedThreshold={2}
+				extraData={recipes}
 			/>
 		</View>
 	);

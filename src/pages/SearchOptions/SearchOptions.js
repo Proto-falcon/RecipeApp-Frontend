@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import {
-	Button,
 	FlatList,
 	Image,
-	NativeModules,
 	Pressable,
 	Text,
 	TextInput,
@@ -15,13 +13,20 @@ import { styles } from "../../AppStyles";
 import RecipeOption from "../../components/RecipeOption/RecipeOption";
 import RecipeResultsCtx from "../../context/Context";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
-import { DIETS } from "../../RecipeMetaOptions";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
+import RecipeMetaOptions from "../../RecipeMetaOptions";
 
 let BACKEND = "/";
 if (__DEV__) {
-    BACKEND = BackEndIP;
+	BACKEND = BackEndIP;
 }
+
+/**
+ * Page's layout will be similar to the BBC GoodFood search/filter options window within the search page
+ * where the option types are on the right side while the differnent values for that type are on the left.
+ *
+ * Can make it left/right or top/bottom where clicking the option types displays the different option values.
+ */
 
 /**
  * Renders a page that has options to search recipes
@@ -30,62 +35,39 @@ if (__DEV__) {
  * @returns Search Options Page
  */
 export default function SearchOptions({ navigation }) {
-	const ingredients = [
-		{
-			id: 1,
-			ingredient: "fish",
-		},
-		{
-			id: 2,
-			ingredient: "chicken",
-		},
-		{
-			id: 3,
-			ingredient: "onion",
-		},
-		{
-			id: 4,
-			ingredient: "cheese",
-		},
-		{
-			id: 5,
-			ingredient: "apple",
-		},
-	];
-
 	const ctx = useContext(RecipeResultsCtx);
 
-	const {UIManager} = NativeModules;
-	UIManager.setLayoutAnimationEnabledExperimental(true);
-
-	// const [addedIgs, setAddedIgs] = useState([]); // array of ingredients selected
-
 	// collection of arrays of optional values
-	const [options, setOptions] = useState(
-		{
-			diet: [],
-			health: [],
-			cuisineType: [],
-			mealType: [],
-			dishType: [],
-		});
-
+	const [options, setOptions] = useState({
+		diet: [],
+		health: [],
+		cuisineType: [],
+		mealType: [],
+		dishType: [],
+	});
+	const [optionTypes, setNumOptions] = useState(() => {
+		let num = [];
+		for (const i in options) {
+			num.push(i);
+		}
+		return num;
+	});
+	const [optionType, setOptionType] = useState(optionTypes[0]);
 	const [inputIg, setinputIg] = useState(""); // string of ingredients inputted by user
 	const [hasError, setHasError] = useState(false); // checks if the user hasn't inputted/selected ingredients
 	const [width, setWidth] = useState(useWindowDimensions().width);
-
-	const image = require("../../../assets/searchIcon.png");
+	const [height, setHeight] = useState(useWindowDimensions().height);
 
 	/**
 	 * Updates the selected options
-	 * 
-	 * @param {string} type 
-	 * @param {Array<string>} optionsArray 
+	 *
+	 * @param {string} type
+	 * @param {Array<string>} optionsArray
 	 */
 	function updateOptions(type, optionsArray) {
 		setOptions((preveState) => {
-			let newState = {...preveState}
-			newState[type] = optionsArray
+			let newState = { ...preveState };
+			newState[type] = optionsArray;
 
 			return newState;
 		});
@@ -93,18 +75,18 @@ export default function SearchOptions({ navigation }) {
 
 	/**
 	 * Checks if all the options array are empty
-	 * 
+	 *
 	 * @returns true if all options are empty, false otherwise.
 	 */
 	function isOptionsEmpty() {
 		let emptyCount = 0;
-		let numProps = 0
+		let numProps = 0;
 		for (const option in options) {
 			if (option.length <= 0) emptyCount += 1;
 			numProps += 1;
 		}
 
-		return emptyCount >= numProps
+		return emptyCount >= numProps;
 	}
 
 	/**
@@ -121,34 +103,27 @@ export default function SearchOptions({ navigation }) {
 		let queryOptions = "";
 
 		if (isOptionsEmpty) {
-			for (const option in options)
-			{
+			let i = 0;
+			for (const option in options) {
 				options[option].forEach((item, index) => {
-					queryOptions += `${option}=${item}`
+					queryOptions += `${option}=${item}`;
 					if (index < options[option].length - 1) {
-						queryOptions += "&"
+						queryOptions += "&";
 					}
 				});
+				if (i < options[option].length - 1 && options[option].length > 0) {
+					queryOptions += "&";
+				}
+				i += 1;
 			}
 		}
-
-		// if (addedIgs.length > 0) {
-		// 	for (let i = 0; i < addedIgs.length; i++) {
-		// 		queryOptions += addedIgs[i].ingredient;
-		// 		if (i - 1 < addedIgs.length) {
-		// 			queryOptions += " ";
-		// 		}
-		// 	}
-		// }
 
 		let query = "";
 		if (inputIg.trim().length > 0 && queryOptions.length > 0) {
 			query = `ingredients=${inputIg.trim()}&${queryOptions}`;
-		}
-		else if (inputIg.trim().length > 0) {
-			query = `ingredients=${inputIg.trim()}`
-		}
-		else if (queryOptions.length > 0) {
+		} else if (inputIg.trim().length > 0) {
+			query = `ingredients=${inputIg.trim()}`;
+		} else if (queryOptions.length > 0) {
 			query = queryOptions;
 		}
 
@@ -176,6 +151,8 @@ export default function SearchOptions({ navigation }) {
 			]);
 		}
 
+		ctx.setIsLoading(true);
+
 		return navigation.navigate("Home");
 	}
 
@@ -198,11 +175,28 @@ export default function SearchOptions({ navigation }) {
 			<Text style={SearchOptionsStyle.errorMsg}>
 				Please enter food name/ingredients
 			</Text>
-		) : null
+		) : null;
+	}
+
+	function renderOptionTypes({ item }) {
+		return (
+			<Pressable
+				style={SearchOptionsStyle.optionTypes}
+				onPress={() => setOptionType(item)}
+			>
+				<Text style={{fontWeight:"bold"}}>{item}</Text>
+			</Pressable>
+		);
 	}
 
 	return (
-		<View style={{...SearchOptionsStyle.container, ...styles.pageContainer, width: width < 700 ? "100%": "70%"}}>
+		<View
+			style={{
+				...SearchOptionsStyle.container,
+				...styles.pageContainer,
+				width: width < 700 ? "100%" : "70%",
+			}}
+		>
 			<View style={SearchOptionsStyle.textButtonContainer}>
 				<Pressable
 					style={SearchOptionsStyle.imgContainer}
@@ -210,7 +204,7 @@ export default function SearchOptions({ navigation }) {
 				>
 					<Image
 						style={SearchOptionsStyle.searchIcon}
-						source={image}
+						source={require("../../../assets/searchIcon.png")}
 					/>
 				</Pressable>
 
@@ -224,13 +218,28 @@ export default function SearchOptions({ navigation }) {
 				/>
 			</View>
 
-			<TextError/>
-
-			<RecipeOption
-				name={"diet"}
-				data={DIETS}
-				updateData={updateOptions}
-			/>
+			<TextError />
+			<View
+				style={{
+					...SearchOptionsStyle.optionsContainer,
+					maxHeight: height / 4
+				}}
+			>
+				<View style={{ borderWidth: 2, marginBottom: 5, height: 23 }}>
+					<FlatList
+						data={optionTypes}
+						renderItem={renderOptionTypes}
+						numColumns={optionTypes.length}
+					/>
+				</View>
+				<RecipeOption
+					style={{height: "70%", maxHeight: "70%" }}
+					type={optionType}
+					data={RecipeMetaOptions[optionType]}
+					selectedData={options[optionType]}
+					updateData={updateOptions}
+				/>
+			</View>
 		</View>
 	);
 }

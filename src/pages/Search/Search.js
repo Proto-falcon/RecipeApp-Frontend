@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { View } from "react-native";
 import RecipeResultsCtx from "../../context/Context";
 import RecipeList from "../../components/RecipeList/RecipeList";
@@ -13,14 +13,14 @@ import { styles } from "../../AppStyles";
  */
 export default function Search() {
 	const ctx = useContext(RecipeResultsCtx);
-
+	useEffect(() => ctx.setIsLoading(false), [ctx.isLoading]);
 	return (
 		<View style={{...SearchStyle.container, ...styles.pageContainer}}>
-			<RecipeList
+			{!ctx.isLoading && <RecipeList
 				recipes={ctx.results}
 				setData={ctx.addRecipes}
 				recipeLink={ctx.moreRecipesLink}
-			/>
+			/>}
 		</View>
 	);
 }
