@@ -4,6 +4,7 @@ import {
 	FlatList,
 	Image,
 	Pressable,
+	SectionList,
 	Text,
 	TextInput,
 	useWindowDimensions,
@@ -20,13 +21,6 @@ let BACKEND = "/";
 if (__DEV__) {
 	BACKEND = BackEndIP;
 }
-
-/**
- * Page's layout will be similar to the BBC GoodFood search/filter options window within the search page
- * where the option types are on the right side while the differnent values for that type are on the left.
- *
- * Can make it left/right or top/bottom where clicking the option types displays the different option values.
- */
 
 /**
  * Renders a page that has options to search recipes
@@ -189,6 +183,34 @@ export default function SearchOptions({ navigation }) {
 		);
 	}
 
+	function SelectedOptions() {
+		const OPTIONLISTWIDTH = "100%";
+		let optionObjArray = []
+
+		for (const option in options) {
+			optionObjArray.push({
+				optionType: option,
+				data: options[option]
+			})
+		}
+
+		return (
+			<View style={{...SearchOptionsStyle.selectedOptionsContainer, width: OPTIONLISTWIDTH}}>
+				<Text style={{...SearchOptionsStyle.text, ...SearchOptionsStyle.selectedMetaText, fontWeight: "bold"}}>Selected Options</Text>
+				<SectionList
+				style={{width: "100%"}}
+					sections={optionObjArray}
+					renderItem={({item}) => <Text style={{...SearchOptionsStyle.text}}>{item}</Text>}
+					renderSectionHeader={({section: {optionType}}) => {
+						return (
+							<Text style={{...SearchOptionsStyle.optionTypeHeader, ...SearchOptionsStyle.selectedMetaText, ...SearchOptionsStyle.text}}>
+								{optionType}
+							</Text>);
+					}}
+				/>
+			</View>);
+	}
+
 	return (
 		<View
 			style={{
@@ -222,18 +244,19 @@ export default function SearchOptions({ navigation }) {
 			<View
 				style={{
 					...SearchOptionsStyle.optionsContainer,
-					maxHeight: height / 4
+					maxHeight: height / 2.5,
+					flexDirection: "row"
 				}}
 			>
-				<View style={{ borderWidth: 2, marginBottom: 5, height: 23 }}>
+				<SelectedOptions/>
+				<View style={{ borderWidth: 2, marginBottom: 5, height: 99 }}>
 					<FlatList
 						data={optionTypes}
 						renderItem={renderOptionTypes}
-						numColumns={optionTypes.length}
 					/>
 				</View>
 				<RecipeOption
-					style={{height: "70%", maxHeight: "70%" }}
+					style={{height: "55%", maxHeight: "55%" }}
 					type={optionType}
 					data={RecipeMetaOptions[optionType]}
 					selectedData={options[optionType]}

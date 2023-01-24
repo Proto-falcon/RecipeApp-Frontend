@@ -23,9 +23,14 @@ import { optionStyles } from "./RecipeOptionStyle";
 export default function RecipeOption(props) {
 	const [selectedData, setSelectedData] = useState(props.selectedData);
 
-
+	/**
+	 * Selects the type of data within an object to be displayed when `props.type` changes.
+	 */
 	useEffect(() => setSelectedData(props.selectedData), [props.type]);
 
+	/**
+	 * Updates the data in the parent component when changing `selectedData changes`.
+	 */
 	useEffect(
 		() => props.updateData(props.type, selectedData),
 		[selectedData]

@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-
+const HEIGHT = "100%";
 export const SearchOptionsStyle = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -58,5 +58,27 @@ export const SearchOptionsStyle = StyleSheet.create({
 		width: 100,
 		backgroundColor: "#ff9100",
 		alignItems: "center",
+	},
+
+	text: {
+		textAlign: "center",
+		padding: 5,
+	},
+
+	optionTypeHeader: {
+		backgroundColor: "#ffee00",
+		fontWeight: "bold",
+	},
+
+	selectedMetaText: {
+		fontSize: 25
+	},
+
+	selectedOptionsContainer: {
+		height: HEIGHT,
+		minHeight: HEIGHT,
+		maxHeight: HEIGHT,
+		borderWidth: 2,
+		marginBottom: 5
 	},
 });
