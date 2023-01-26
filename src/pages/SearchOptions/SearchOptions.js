@@ -74,13 +74,12 @@ export default function SearchOptions({ navigation }) {
 	 */
 	function isOptionsEmpty() {
 		let emptyCount = 0;
-		let numProps = 0;
 		for (const option in options) {
-			if (option.length <= 0) emptyCount += 1;
-			numProps += 1;
+			if (options[option].length <= 0) {
+				emptyCount += 1;
+			}
 		}
-
-		return emptyCount >= numProps;
+		return emptyCount >= optionTypes.length;
 	}
 
 	/**
@@ -105,7 +104,7 @@ export default function SearchOptions({ navigation }) {
 						queryOptions += "&";
 					}
 				});
-				if (i < options[option].length - 1 && options[option].length > 0) {
+				if (queryOptions.length > 0 && (i < optionTypes.length)) {
 					queryOptions += "&";
 				}
 				i += 1;

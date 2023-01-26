@@ -9,7 +9,7 @@ import { styles } from "../../AppStyles";
  * Renders the page with recipe results depending on
  * the options selected in Search Options page 🔎
  *
- * @returns {JSX.Element} Search Results Page
+ * @returns Search Results Page
  */
 export default function Search() {
 	const ctx = useContext(RecipeResultsCtx);
