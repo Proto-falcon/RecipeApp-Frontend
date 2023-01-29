@@ -16,6 +16,7 @@ import RecipeResultsCtx from "../../context/Context";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
 import RecipeMetaOptions from "../../RecipeMetaOptions";
+import TextError from "../../components/TextError/TextError";
 
 let BACKEND = "/";
 if (__DEV__) {
@@ -123,7 +124,7 @@ export default function SearchOptions({ navigation }) {
 		try {
 			let response = await axios({
 				method: "get",
-				url: `${BACKEND}/?${query}`,
+				url: `${BACKEND}/api/fetchRecipes/?${query}`,
 				responseType: "json",
 			});
 
@@ -157,18 +158,6 @@ export default function SearchOptions({ navigation }) {
 	 */
 	function inputIngredients(igs) {
 		setinputIg(igs);
-	}
-
-	/**
-	 * Displays the error message when no inputs are given.
-	 * @returns Error display message or none.
-	 */
-	function TextError() {
-		return hasError ? (
-			<Text style={SearchOptionsStyle.errorMsg}>
-				Please enter food name/ingredients
-			</Text>
-		) : null;
 	}
 
 	function renderOptionTypes({ item }) {
@@ -239,7 +228,12 @@ export default function SearchOptions({ navigation }) {
 				/>
 			</View>
 
-			<TextError />
+			<TextError
+				hasError={hasError}
+				style={styles.errorMsg}
+				message={"Please enter food name/ingredients"}
+			/>
+
 			<View
 				style={{
 					...SearchOptionsStyle.optionsContainer,

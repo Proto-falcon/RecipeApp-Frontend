@@ -116,7 +116,7 @@ export default function Form(props) {
 			let response = await axios({
 				method: "get",
 				url:
-					"http://" + BackEndIP + "/?ingredients=" + query,
+					"http://" + BackEndIP + "/api/fetchRecipes/?ingredients=" + query,
 				responseType: "json",
 			});
 

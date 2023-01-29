@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import { CsrfContext } from "./CsrfToken";
 
 // Creates a context for reciperesults
 const RecipeResultsCtx = createContext({
@@ -109,19 +110,21 @@ export function ContextProvider(props) {
 	 * Wraps the whole app in a context provider
 	 */
 	return (
-		<RecipeResultsCtx.Provider
-			value={{
-				moreRecipesLink: addRecipesLink,
-				results: recipes,
-				getRecipes: GetRecipes,
-				setAddRecipesLink: setAddLink,
-				addRecipes: addRecipes,
-				isLoading: isLoading,
-				setIsLoading: setIsLoading
-			}}
-		>
-			{props.children}
-		</RecipeResultsCtx.Provider>
+		<CsrfContext>
+			<RecipeResultsCtx.Provider
+				value={{
+					moreRecipesLink: addRecipesLink,
+					results: recipes,
+					getRecipes: GetRecipes,
+					setAddRecipesLink: setAddLink,
+					addRecipes: addRecipes,
+					isLoading: isLoading,
+					setIsLoading: setIsLoading
+				}}
+			>
+				{props.children}
+			</RecipeResultsCtx.Provider>
+		</CsrfContext>
 	);
 }
 

@@ -37,15 +37,6 @@ export const SearchOptionsStyle = StyleSheet.create({
 		borderRadius: 20,
 	},
 
-	errorMsg: {
-		color: "white",
-		backgroundColor: "red",
-		padding: 10,
-		fontWeight: "bold",
-		fontSize: 20,
-		borderRadius: 20,
-	},
-
 	optionsContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",

@@ -84,7 +84,7 @@ export default function RecipeList(props) {
 			try {
 				let response = await axios({
 					method: "get",
-					url: `${BACKEND}/addRecipes/?nextLink=${props.recipeLink}`,
+					url: `${BACKEND}/api/addRecipes/?nextLink=${props.recipeLink}`,
 					responseType: "json",
 				});
 

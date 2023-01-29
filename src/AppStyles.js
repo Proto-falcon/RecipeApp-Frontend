@@ -8,7 +8,24 @@ export const styles = StyleSheet.create({
 		marginRight: 10
 	},
 
+	navText: {
+		color: "white",
+		fontSize: 18,
+		fontWeight: "500",
+		marginLeft: 10,
+	},
+
 	pageContainer: {
-		marginTop: 10
-	}
+		marginTop: 10,
+		textAlign: "center",
+	},
+
+	errorMsg: {
+		color: "white",
+		backgroundColor: "red",
+		padding: 10,
+		fontWeight: "bold",
+		fontSize: 20,
+		borderRadius: 20,
+	},
 });
