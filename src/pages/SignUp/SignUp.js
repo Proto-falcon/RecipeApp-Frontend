@@ -1,18 +1,13 @@
 import axios from "axios";
-import * as KeyChain from "react-native-keychain";
 import { useContext, useEffect, useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { styles } from "../../AppStyles";
 import FormField from "../../components/FormField/FormField";
 import TextError from "../../components/TextError/TextError";
 import CsrfCtx from "../../context/CsrfToken";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { SignUpStyles } from "./SignUpStyles";
-
-let BACKEND = "/";
-if (__DEV__) {
-	BACKEND = BackEndIP;
-}
+import BackEndIP from "../../ipaddressesports/BackEndIP";
+import accountCtx from "../../context/account";
 
 /**
  * Renders the sign page & manage logic
@@ -23,12 +18,13 @@ if (__DEV__) {
 export default function SignUp({ navigation }) {
 
 	const authCtx = useContext(CsrfCtx);
+	const accCtx = useContext(accountCtx);
 
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPasword] = useState("");
     const [formValid, setFormValid] = useState(true);
-	const [errorMsg, setErrorMsg] = useState("")
+	const [errorMsg, setErrorMsg] = useState("");
 
 	/**
 	 * Updates the `username` state with `newUsername`
@@ -80,7 +76,7 @@ export default function SignUp({ navigation }) {
                     method: "post",
 					headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
 					withCredentials: true,
-                    url: `${BACKEND}/api/signup/`,
+                    url: `${BackEndIP}/api/signup/`,
 					responseType: "json",
 					data: {
 						username: username,
@@ -93,9 +89,9 @@ export default function SignUp({ navigation }) {
 			let content = await response.data;
 			if (199 < response.status < 300) {
 				if (content.signUpSuccess) {
-					if (Platform.OS != "web") {
-						await KeyChain.setGenericPassword(username, password);
-					}
+					accCtx.setLoginStatus(true);
+					accCtx.setUsername(username);
+					accCtx.setEmail(email);
 					navigation.navigate("Home");
 				}
 			}

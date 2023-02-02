@@ -1,49 +1,38 @@
 import { createContext, useState } from "react";
 
 const CsrfCtx = createContext({
-        token: "",
-        sessionId: "",
-        setCsrfToken: (newToken) => {},
-        setSession: (newSession) => {}
-    }
-);
+	token: "",
+	setCsrfToken: (newToken) => {},
+});
 
-export function CsrfContext(props) {
-    const [token, setToken] = useState("");
-    const [session, setSession] = useState();
-    
+/**
+ * Context Manager for Csrf
+ *
+ * @param {{children: any}} props
+ * @returns Components that can use the csrf context
+ */
+export function CsrfContextProvider(props) {
+	const [token, setToken] = useState("");
 
-    /**
-     * Updates the csrf `token`
-     * 
-     * @param {string} newToken 
-     */
-    function updateToken(newToken) {
-        setToken(newToken);
-    }
+	/**
+	 * Updates the csrf `token`
+	 *
+	 * @param {string} newToken
+	 */
+	function updateToken(newToken) {
+		setToken(newToken);
+	}
 
-    /**
-     * Updates the `session` Id
-     * 
-     * @param {string} newSession 
-     */
-    function updateSession(newSession) {
-        setSession(newSession);
-    }
-
-    return (
-        <CsrfCtx.Provider
-         value={{
-                token: token,
-                sessionId: session,
-                setCsrfToken: updateToken,
-                setSession: updateSession
-            }
-        }
-        >
-            {props.children}
-        </CsrfCtx.Provider>
-    );
+	return (
+		<CsrfCtx.Provider
+			value={{
+				token: token,
+				setCsrfToken: updateToken,
+			}}
+		>
+			{props.children}
+		</CsrfCtx.Provider>
+	);
 }
 
 export default CsrfCtx;

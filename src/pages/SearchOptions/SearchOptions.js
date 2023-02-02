@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	Image,
@@ -13,15 +13,16 @@ import {
 import { styles } from "../../AppStyles";
 import RecipeOption from "../../components/RecipeOption/RecipeOption";
 import RecipeResultsCtx from "../../context/Context";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
 import RecipeMetaOptions from "../../RecipeMetaOptions";
 import TextError from "../../components/TextError/TextError";
-
-let BACKEND = "/";
-if (__DEV__) {
-	BACKEND = BackEndIP;
-}
+import BackEndIP from "../../ipaddressesports/BackEndIP";
+import accountCtx from "../../context/account";
+import NavBar from "../../components/NavBar/NavBar";
+import LogOutButton from "../../components/Buttons/LogOutButton";
+import SearchButton from "../../components/Buttons/SearchButton";
+import LoginButton from "../../components/Buttons/LogInButton";
+import SignUpButton from "../../components/Buttons/SignUpButton";
 
 /**
  * Renders a page that has options to search recipes
@@ -31,6 +32,7 @@ if (__DEV__) {
  */
 export default function SearchOptions({ navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
+	const accCtx = useContext(accountCtx);
 
 	// collection of arrays of optional values
 	const [options, setOptions] = useState({
@@ -52,6 +54,29 @@ export default function SearchOptions({ navigation }) {
 	const [hasError, setHasError] = useState(false); // checks if the user hasn't inputted/selected ingredients
 	const [width, setWidth] = useState(useWindowDimensions().width);
 	const [height, setHeight] = useState(useWindowDimensions().height);
+
+	// Changes the navigation bar if the user is logged in or not.
+	useEffect(() => {
+		if (accCtx.loggedIn) {
+			navigation.setOptions({
+				headerRight: () => (
+					<NavBar>
+						<LogOutButton />
+					</NavBar>
+				),
+			});
+		}
+		else {
+			navigation.setOptions({
+				headerRight: () => (
+					<NavBar>
+						<LoginButton />
+						<SignUpButton />
+					</NavBar>
+				),
+			});
+		}
+	}, [accCtx.loggedIn]);
 
 	/**
 	 * Updates the selected options
@@ -124,7 +149,7 @@ export default function SearchOptions({ navigation }) {
 		try {
 			let response = await axios({
 				method: "get",
-				url: `${BACKEND}/api/fetchRecipes/?${query}`,
+				url: `${BackEndIP}/api/fetchRecipes/?${query}`,
 				responseType: "json",
 			});
 
