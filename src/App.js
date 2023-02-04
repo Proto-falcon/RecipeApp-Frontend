@@ -4,13 +4,12 @@ import { StatusBar } from "expo-status-bar";
 import Search from "./pages/Search/Search";
 import SearchOptions from "./pages/SearchOptions/SearchOptions";
 import { ContextProvider } from "./context/Context";
-import SignIn from "./pages/SignUp/SignUp";
-import SignUpButton from "./components/Buttons/SignUpButton";
 import NavBar from "./components/NavBar/NavBar";
-import LoginButton from "./components/Buttons/LogInButton";
 import SearchButton from "./components/Buttons/SearchButton";
-import HomeButton from "./components/Buttons/HomeButton";
-import Form from "./components/Form/Form";
+import Form from "./pages/Form/Form";
+import Profile from "./pages/Profile/Profile";
+import { styles } from "./AppStyles";
+import { Text } from "react-native";
 
 
 /**
@@ -28,7 +27,8 @@ export default function App() {
 				Home: "Home",
 				Search: "Search",
 				SignIn: "SignUp",
-				Login: "Login"
+				Login: "Login",
+				Profile: "Profile"
 			},
 		},
 	};
@@ -40,10 +40,24 @@ export default function App() {
 				<Stack.Navigator
 					screenOptions={{
 						headerStyle: { backgroundColor: "#fd5d00" },
-						headerTitleStyle: { color: "white" },
-						headerTitleAlign: "center",
+						headerTitle: () => undefined,
 						headerLeft: () => undefined,
-						headerRight: () => <NavBar><LoginButton /><SignUpButton /><SearchButton /></NavBar>,
+						headerRight: () => (
+							<NavBar>
+								<Link
+									to={{ screen: "Login", params: {toLogin: true} }}
+									style={styles.navLink}
+								>
+									<Text style={styles.navText}>Login</Text>
+								</Link>
+								<Link
+									to={{ screen: "SignUp", params: {toLogin: false} }}
+									style={styles.navLink}
+								>
+									<Text style={styles.navText}>Sign Up</Text>
+								</Link>
+								<SearchButton />
+							</NavBar>),
 					}}
 				>
 					<Stack.Screen
@@ -53,28 +67,80 @@ export default function App() {
 					<Stack.Group
 						screenOptions={({ route, navigation }) => {
 							return {
-								headerLeft: () => <HomeButton />,
+								headerLeft: () => (
+									<Link
+										style={styles.navLink}
+										to={{ screen: "Home" }}
+									>
+										<Text style={styles.navText}>Home</Text>
+									</Link>
+								),
 							};
 						}}
 					>
 						<Stack.Screen
 							name="Search"
 							component={SearchOptions}
-							options={{headerRight: () => <NavBar><LoginButton/><SignUpButton/></NavBar>}}
+							options={{headerRight: () => (
+								<NavBar>
+									<Link
+										to={{ screen: "Login", params: {toLogin: true} }}
+										style={styles.navLink}
+									>
+										<Text style={styles.navText}>Login</Text>
+									</Link>
+									<Link
+										to={{ screen: "SignUp", params: {toLogin: false} }}
+										style={styles.navLink}
+									>
+										<Text style={styles.navText}>Sign Up</Text>
+									</Link>
+									<SearchButton />
+								</NavBar>
+							)}}
 						/>
 
 						<Stack.Screen
 							name="SignUp"
 							component={Form}
-							options={{headerRight: () => <NavBar><LoginButton/><SearchButton/></NavBar>}}
+							options={{headerRight: () => (
+								<NavBar>
+									<Link
+										to={{ screen: "Login", params: {toLogin: true} }}
+										style={styles.navLink}
+									>
+										<Text style={styles.navText}>Login</Text>
+									</Link>
+									<SearchButton/>
+									</NavBar>
+							)}}
 						/>
 						
 						<Stack.Screen
 							name="Login"
 							component={Form}
-							options={{headerRight: () => <NavBar><SignUpButton/><SearchButton/></NavBar>}}
+							options={{headerRight: () => (
+								<NavBar>
+									<Link
+										to={{ screen: "SignUp", params: {toLogin: false} }}
+										style={styles.navLink}
+									>
+										<Text style={styles.navText}>Sign Up</Text>
+									</Link>
+									<SearchButton/>
+								</NavBar>
+							)}}
 						/>
+					<Stack.Screen
+						name="Profile"
+						component={Profile}
+						options={{
+							headerRight: () => <SearchButton/>
+						}}
+					/>
 					</Stack.Group>
+
+
 				</Stack.Navigator>
 			</NavigationContainer>
 			<StatusBar />

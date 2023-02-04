@@ -1,7 +1,7 @@
 import FormField from "../FormField/FormField";
 
 /**
- * Renders a username and email field or combination of both for
+ * Renders a username and email field or just username for
  * sign up or login respectively.
  *
  * @param {{
@@ -14,14 +14,14 @@ import FormField from "../FormField/FormField";
  *  }} props
  *
  * @returns Username and Email fields for sign up or
- * a combined field for login
+ * only a username field for login
  */
 export default function UserEmailForms(props) {
 	if (props.toLogin) {
 		return (
 			<FormField
-				label={"Username/Email:"}
-				placeholder={"Enter either username/email:"}
+				label={"Username:"}
+				placeholder={"Enter username:"}
 				onChangeTextHandler={props.usernameHandler}
 				containerStyle={props.containerStyle}
 				labelStyle={props.labelStyle}

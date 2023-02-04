@@ -20,20 +20,21 @@ import BackEndIP from "../../ipaddressesports/BackEndIP";
 import accountCtx from "../../context/account";
 import NavBar from "../../components/NavBar/NavBar";
 import LogOutButton from "../../components/Buttons/LogOutButton";
-import SearchButton from "../../components/Buttons/SearchButton";
-import LoginButton from "../../components/Buttons/LogInButton";
-import SignUpButton from "../../components/Buttons/SignUpButton";
+import BACKEND from "../../ipaddressesports/BackEndIP";
+import CsrfCtx from "../../context/CsrfToken";
+import { Link } from "@react-navigation/native";
 
 /**
  * Renders a page that has options to search recipes
  *
- * @param {*} navigation
+ * @param {{ navigation: * }} props
  * @returns Search Options Page
  */
 export default function SearchOptions({ navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
 	const accCtx = useContext(accountCtx);
-
+	const authCtx = useContext(CsrfCtx);
+	
 	// collection of arrays of optional values
 	const [options, setOptions] = useState({
 		diet: [],
@@ -54,24 +55,61 @@ export default function SearchOptions({ navigation }) {
 	const [hasError, setHasError] = useState(false); // checks if the user hasn't inputted/selected ingredients
 	const [width, setWidth] = useState(useWindowDimensions().width);
 	const [height, setHeight] = useState(useWindowDimensions().height);
-
+	const [mount, setMount] = useState(true);
+	
+	// Calls when `Form` component is mounted
+	useEffect(() => {accCtx.checkCred(authCtx, BACKEND)}, [mount]);
+	
 	// Changes the navigation bar if the user is logged in or not.
 	useEffect(() => {
 		if (accCtx.loggedIn) {
 			navigation.setOptions({
-				headerRight: () => (
+				headerLeft: () => (
 					<NavBar>
-						<LogOutButton />
+						<Link
+							style={styles.navLink}
+							to={{ screen: "Home" }}
+						>
+							<Text style={styles.navText}>Home</Text>
+						</Link>
+						<Link
+							style={styles.navLink}
+							to={{ screen: "Profile" }}
+						>
+							<Text style={styles.navText}>Profile</Text>
+						</Link>
+						<Text style={styles.usernameText}>Username: {accCtx.username}</Text>
 					</NavBar>
+				),
+				headerRight: () => (
+						<LogOutButton />
 				),
 			});
 		}
 		else {
 			navigation.setOptions({
+				headerLeft: () => (
+					<Link
+						style={styles.navLink}
+						to={{ screen: "Home" }}
+					>
+						<Text style={styles.navText}>Home</Text>
+					</Link>
+				),
 				headerRight: () => (
 					<NavBar>
-						<LoginButton />
-						<SignUpButton />
+						<Link
+							to={{ screen: "Login", params: {toLogin: true} }}
+							style={styles.navLink}
+						>
+							<Text style={styles.navText}>Login</Text>
+						</Link>
+						<Link
+							to={{ screen: "SignUp", params: {toLogin: false} }}
+							style={styles.navLink}
+						>
+							<Text style={styles.navText}>Sign Up</Text>
+						</Link>
 					</NavBar>
 				),
 			});

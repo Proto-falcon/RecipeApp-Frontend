@@ -8,11 +8,23 @@ export const styles = StyleSheet.create({
 		marginRight: 10
 	},
 
+	navLink: {
+		padding: 5
+	},
+
 	navText: {
 		color: "white",
 		fontSize: 18,
 		fontWeight: "500",
 		marginLeft: 10,
+	},
+
+	usernameText: {
+		color: "black",
+		fontSize: 12,
+		fontWeight: "400",
+		marginLeft: 10,
+		marginTop: 5
 	},
 
 	pageContainer: {

@@ -7,8 +7,9 @@ import TextError from "../../components/TextError/TextError";
 import CsrfCtx from "../../context/CsrfToken";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import AccountCtx from "../../context/account";
-import UserEmailForms from "../UserEmailForms/UserEmailForms";
+import UserEmailForms from "../../components/UserEmailForms/UserEmailForms";
 import { SignUpStyles } from "../../pages/SignUp/SignUpStyles";
+import BACKEND from "../../ipaddressesports/BackEndIP";
 
 const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/
 
@@ -23,16 +24,36 @@ const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\
  * 	}} props
  * @returns Text Form
  */
-export default function Form({route, navigation }) {
-
+export default function Form({ route, navigation }) {
+	
 	const authCtx = useContext(CsrfCtx);
 	const accCtx = useContext(AccountCtx);
+
 	const [toLogin, setToLogin] = useState(route.params.toLogin);
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPasword] = useState("");
     const [formValid, setFormValid] = useState(true);
 	const [errorMsg, setErrorMsg] = useState("");
+	const [mount, setMount] = useState(true);
+	const [fieldWidth, setFieldWidth] = useState({
+		width: "25%",
+        minWidth: "25%",
+        maxWidth: "25%",
+	});
+	
+	// Calls when `Form` component is mounted
+	useEffect(() => {
+		accCtx.checkCred(authCtx, BACKEND);
+		
+		if (Platform.OS != "web") {
+			setFieldWidth({
+				width: "50%",
+        		minWidth: "50%",
+        		maxWidth: "50%",
+			});
+		}
+	}, [mount]);
 
 	/**
 	 * Updates the `username` state with `newUsername`
@@ -88,24 +109,24 @@ export default function Form({route, navigation }) {
 				method = "put";
 				path = "login/";
 			}
-			
-			let response = await axios(
-				{
-					method: method,
-					headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
-					withCredentials: true,
-					url: `${BackEndIP}/api/${path}`,
-					responseType: "json",
-					data: {
-						username: username,
-						email: email,
-						password: password
-					}
-				}
-			);
 
-			let content = await response.data;
-			if (199 < response.status < 300) {
+			try {
+				let response = await axios(
+					{
+						method: method,
+						headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
+						withCredentials: true,
+						url: `${BackEndIP}/api/${path}`,
+						responseType: "json",
+						data: {
+							username: username,
+							email: email,
+							password: password
+						}
+					}
+				);
+					
+				let content = await response.data;
 				if (content.signUpSuccess) {
 					accCtx.setLoginStatus(true);
 					accCtx.setUsername(username);
@@ -114,18 +135,25 @@ export default function Form({route, navigation }) {
 				}
 				else if (content.loginSuccess) {
 					accCtx.setLoginStatus(true);
-					accCtx.setUsername(username);
-					accCtx.setEmail(email);
+					accCtx.setUsername(content.user.username);
+					accCtx.setEmail(content.user.email);
 					navigation.navigate("Home");
 				}
-			}
-			else {
+
+			} catch (error) {
 				setErrorMsg(content.message);
 				setFormValid(false)
 			}
-
         }
     }
+
+	function SubmitButton() {
+		return (
+			<Pressable style={SignUpStyles.submitButton} onPress={onSubmitHandler}>
+				<Text style={{fontWeight: "bold",}}>{toLogin ? "Login" : "Sign Up"}</Text>
+			</Pressable>
+		);
+	}
 
 	return (
 		<View style={{ ...styles.pageContainer, alignItems: "center" }}>
@@ -133,7 +161,7 @@ export default function Form({route, navigation }) {
 				toLogin={toLogin}
 				usernameHandler={usernameHandler}
 				emailHandler={emailHandler}
-				containerStyle={SignUpStyles.formContainer}
+				containerStyle={{...SignUpStyles.formContainer, ...fieldWidth}}
 				labelStyle={SignUpStyles.formLabel}
 				inputStyle={SignUpStyles.formInput}
 			/>
@@ -142,13 +170,11 @@ export default function Form({route, navigation }) {
 				placeholder={"Please enter password:"}
 				isPassword={true}
 				onChangeTextHandler={passwordHandler}
-                containerStyle={SignUpStyles.formContainer}
+                containerStyle={{...SignUpStyles.formContainer, ...fieldWidth}}
                 labelStyle={SignUpStyles.formLabel}
                 inputStyle={SignUpStyles.formInput}
 			/>
-			<Pressable style={SignUpStyles.submitButton} onPress={onSubmitHandler}>
-				<Text style={{fontWeight: "bold",}}>Sign Up</Text>
-			</Pressable>
+			<SubmitButton />
 
 			<TextError
 				hasError={!formValid}
