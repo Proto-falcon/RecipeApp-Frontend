@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	Image,
+	Platform,
 	Pressable,
 	SectionList,
 	Text,
@@ -52,9 +53,10 @@ export default function SearchOptions({ navigation }) {
 	});
 	const [optionType, setOptionType] = useState(optionTypes[0]);
 	const [inputIg, setinputIg] = useState(""); // string of ingredients inputted by user
+	const [inputExclude, setInputExclude] = useState("");
+	const [exclude, setExclude] = useState([]);
 	const [hasError, setHasError] = useState(false); // checks if the user hasn't inputted/selected ingredients
-	const [width, setWidth] = useState(useWindowDimensions().width);
-	const [height, setHeight] = useState(useWindowDimensions().height);
+	const [errorMsg, setErrorMsg] = useState("");
 	const [mount, setMount] = useState(true);
 	
 	// Calls when `Form` component is mounted
@@ -150,38 +152,50 @@ export default function SearchOptions({ navigation }) {
 	 * Fetches recipes using the options object and inputIg
 	 */
 	async function fetchFood() {
-		if (inputIg.length <= 0 && isOptionsEmpty()) {
+		if (inputIg.length <= 0 && isOptionsEmpty() && exclude.length <= 0) {
 			setHasError(true);
+			setErrorMsg("Please enter food name/ingredients");
 			return;
 		}
 
 		setHasError(false);
 
-		let queryOptions = "";
+		let query = "";
 
-		if (isOptionsEmpty) {
+		if (!isOptionsEmpty()) {
 			let i = 0;
 			for (const option in options) {
+				if (query.length > 0 && (i < optionTypes.length - 1) && (options[option].length > 0)) {
+					query += "&";
+				}
 				options[option].forEach((item, index) => {
-					queryOptions += `${option}=${item}`;
+					query += `${option}=${item}`;
 					if (index < options[option].length - 1) {
-						queryOptions += "&";
+						query += "&";
 					}
 				});
-				if (queryOptions.length > 0 && (i < optionTypes.length)) {
-					queryOptions += "&";
-				}
 				i += 1;
 			}
 		}
 
-		let query = "";
-		if (inputIg.trim().length > 0 && queryOptions.length > 0) {
-			query = `ingredients=${inputIg.trim()}&${queryOptions}`;
-		} else if (inputIg.trim().length > 0) {
-			query = `ingredients=${inputIg.trim()}`;
-		} else if (queryOptions.length > 0) {
-			query = queryOptions;
+		if (exclude.length > 0) {
+			ctx.updateExclusions(exclude);
+			if (query.length > 0) {
+				query += "&";
+			}
+			exclude.forEach((item, i) => {
+				query += `excluded=${item.trim()}`;
+				if (i < exclude.length - 1) {
+					query += "&";
+				}
+			});
+		}
+
+		if (inputIg.trim().length > 0) {
+			if (query.length > 0) {
+				query += "&";
+			}
+			query += `ingredients=${inputIg.trim()}`;
 		}
 
 		try {
@@ -191,26 +205,17 @@ export default function SearchOptions({ navigation }) {
 				responseType: "json",
 			});
 
-			if (199 < response.status < 300) {
-				let content = await response.data;
+			let content = await response.data;
 
-				ctx.getRecipes(content.results);
-				ctx.setAddRecipesLink(content.addRecipesLink);
-			}
-		} catch {
-			ctx.getRecipes([
-				{
-					name: "No Recipe Name Available",
-					image: require("../../../assets/favicon.png"),
-					ingredients: ["None"],
-					source: "",
-				},
-			]);
+			ctx.getRecipes(content.results);
+			ctx.setAddRecipesLink(content.addRecipesLink);
+
+			ctx.setIsLoading(true);
+			navigation.navigate("Home");
+		} catch (error) {
+			setHasError(true);
+			setErrorMsg("Unable to retrieve any recipes");
 		}
-
-		ctx.setIsLoading(true);
-
-		return navigation.navigate("Home");
 	}
 
 	/**
@@ -223,6 +228,31 @@ export default function SearchOptions({ navigation }) {
 		setinputIg(igs);
 	}
 
+	/**
+	 * Updates `inputExclude` by the text entered by the user
+	 * 
+	 * @param {string} excluded 
+	 */
+	function inputExcludeHandler(excluded) {
+		setInputExclude(excluded)
+	}
+
+	/**
+	 * Adds an excluded ingredient
+	 */
+	function addExcludeHandler() {
+		if (inputExclude !== "") {
+			setExclude(preveState => [...preveState, inputExclude])
+			setInputExclude("");
+		}
+	}
+
+	/**
+	 * Renders the available option.
+	 * 
+	 * @param {{item: string}} param 
+	 * @returns Button that toggles the option
+	 */
 	function renderOptionTypes({ item }) {
 		return (
 			<Pressable
@@ -234,6 +264,26 @@ export default function SearchOptions({ navigation }) {
 		);
 	}
 
+	/**
+	 * Renders an excluded ingredient that the user doesn't want to be
+	 * displayed in the recipe results. 
+	 * 
+	 * @param {{ item: string}} param
+	 * @returns An excluded ingredient
+	 */
+	function renderExclusions({item}) {
+		return (
+			<Pressable>
+				<Text style={{textAlign: "center"}}>{item}</Text>
+			</Pressable>
+		);
+	}
+
+	/**
+	 * Renders a list of selected options in their sections
+	 * 
+	 * @returns A list of selected options in their sections
+	 */
 	function SelectedOptions() {
 		const OPTIONLISTWIDTH = "100%";
 		let optionObjArray = []
@@ -259,7 +309,8 @@ export default function SearchOptions({ navigation }) {
 							</Text>);
 					}}
 				/>
-			</View>);
+			</View>
+		);
 	}
 
 	return (
@@ -267,7 +318,7 @@ export default function SearchOptions({ navigation }) {
 			style={{
 				...SearchOptionsStyle.container,
 				...styles.pageContainer,
-				width: width < 700 ? "100%" : "70%",
+				width: useWindowDimensions().width < 700 ? "100%" : "70%",
 			}}
 		>
 			<View style={SearchOptionsStyle.textButtonContainer}>
@@ -287,23 +338,47 @@ export default function SearchOptions({ navigation }) {
 						{ borderColor: hasError ? "red" : "black" },
 					]}
 					onChangeText={inputIngredients}
-					placeholder="Search"
+					placeholder="Enter recipe names/ingredients"
+					onSubmitEditing={fetchFood}
+				/>
+			</View>
+			<View style={SearchOptionsStyle.textButtonContainer}>
+				<Pressable onPress={addExcludeHandler} style={{paddingTop:10}}>
+					<Text style={{fontWeight: "bold"}}>Exclude</Text>
+				</Pressable>
+				<TextInput
+					style={[
+						SearchOptionsStyle.input,
+						{ borderColor: hasError ? "red" : "black" },
+					]}
+					onChangeText={inputExcludeHandler}
+					value={inputExclude}
+					placeholder="Enter ingredients to exclude"
+					onSubmitEditing={addExcludeHandler}
 				/>
 			</View>
 
 			<TextError
 				hasError={hasError}
 				style={styles.errorMsg}
-				message={"Please enter food name/ingredients"}
+				message={errorMsg}
 			/>
 
 			<View
 				style={{
 					...SearchOptionsStyle.optionsContainer,
-					maxHeight: height / 2.5,
+					maxHeight: useWindowDimensions().height / 2.5,
 					flexDirection: "row"
 				}}
 			>
+
+				<View>
+					<FlatList
+					data={exclude}
+					renderItem={renderExclusions}
+					/>
+				</View>
+
 				<SelectedOptions/>
 				<View style={{ borderWidth: 2, marginBottom: 5, height: 99 }}>
 					<FlatList
@@ -312,7 +387,7 @@ export default function SearchOptions({ navigation }) {
 					/>
 				</View>
 				<RecipeOption
-					style={{height: "55%", maxHeight: "55%" }}
+					style={{height: 99 }}
 					type={optionType}
 					data={RecipeMetaOptions[optionType]}
 					selectedData={options[optionType]}

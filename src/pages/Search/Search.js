@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Platform, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import RecipeResultsCtx from "../../context/Context";
 import RecipeList from "../../components/RecipeList/RecipeList";
 import { SearchStyle } from "./SearchStyle";
@@ -87,6 +87,7 @@ export default function Search({ navigation }) {
 					recipes={ctx.results}
 					setData={ctx.addRecipes}
 					recipeLink={ctx.moreRecipesLink}
+					exlusions={ctx.exclusions}
 				/>
 			)}
 		</View>

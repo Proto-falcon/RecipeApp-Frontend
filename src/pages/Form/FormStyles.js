@@ -1,31 +1,25 @@
 import { StyleSheet } from "react-native"
 
-export const formStyle = StyleSheet.create(
+export const FormStyle = StyleSheet.create(
     {
-        container:
-        {
-            flex: 1,
-            flexBasis:200
-        },
-        inputText:
-        {
-            height: 40,
-		    margin: 12,
-		    borderWidth: 1,
-		    padding: 10,
-            borderRadius: 10
-	    },
-
-        errorMsg:
-        {
-            color: "white",
-            backgroundColor: "red",
+        formInput: {
             padding: 5,
-            fontWeight: "bold",
-            fontSize: 20
+            marginTop: 10,
+            borderWidth: 2,
+            borderRadius: 20
         },
 
-        list: {
-            marginTop: 10
-        }
-    });
+        formLabel: {
+            marginRight: 10,
+            textAlign: "left",
+            fontWeight: "bold",
+        },
+
+        submitButton: {
+            padding: 10,
+            margin: 10,
+            borderRadius: 15, 
+            backgroundColor: "#fd5d00"
+        },
+    }
+);

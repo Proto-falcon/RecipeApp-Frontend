@@ -10,6 +10,7 @@ import Form from "./pages/Form/Form";
 import Profile from "./pages/Profile/Profile";
 import { styles } from "./AppStyles";
 import { Text } from "react-native";
+import RecipeInfo from "./pages/RecipeInfo/RecipeInfo";
 
 
 /**
@@ -26,6 +27,7 @@ export default function App() {
 			screens: {
 				Home: "Home",
 				Search: "Search",
+				RecipeInfo: "RecipeInfo",
 				SignIn: "SignUp",
 				Login: "Login",
 				Profile: "Profile"
@@ -57,7 +59,8 @@ export default function App() {
 									<Text style={styles.navText}>Sign Up</Text>
 								</Link>
 								<SearchButton />
-							</NavBar>),
+							</NavBar>
+						),
 					}}
 				>
 					<Stack.Screen
@@ -78,27 +81,37 @@ export default function App() {
 							};
 						}}
 					>
-						<Stack.Screen
-							name="Search"
-							component={SearchOptions}
-							options={{headerRight: () => (
-								<NavBar>
-									<Link
-										to={{ screen: "Login", params: {toLogin: true} }}
-										style={styles.navLink}
-									>
-										<Text style={styles.navText}>Login</Text>
-									</Link>
-									<Link
-										to={{ screen: "SignUp", params: {toLogin: false} }}
-										style={styles.navLink}
-									>
-										<Text style={styles.navText}>Sign Up</Text>
-									</Link>
-									<SearchButton />
-								</NavBar>
-							)}}
-						/>
+						<Stack.Group
+							screenOptions={{
+								headerRight: () => (
+									<NavBar>
+										<Link
+											to={{ screen: "Login", params: {toLogin: true} }}
+											style={styles.navLink}
+										>
+											<Text style={styles.navText}>Login</Text>
+										</Link>
+										<Link
+											to={{ screen: "SignUp", params: {toLogin: false} }}
+											style={styles.navLink}
+										>
+											<Text style={styles.navText}>Sign Up</Text>
+										</Link>
+										<SearchButton />
+									</NavBar>
+								)
+							}}
+						>
+							<Stack.Screen
+								name="Search"
+								component={SearchOptions}
+							/>
+
+							<Stack.Screen
+								name="RecipeInfo"
+								component={RecipeInfo}
+							/>
+						</Stack.Group>
 
 						<Stack.Screen
 							name="SignUp"

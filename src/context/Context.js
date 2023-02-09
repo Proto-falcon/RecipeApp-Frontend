@@ -6,13 +6,16 @@ import { CsrfContextProvider } from "./CsrfToken";
 const RecipeResultsCtx = createContext({
 	moreRecipesLink: "", // Link to fetch more recipes
 	setAddRecipesLink: (link) => {}, // set Recipes link
+	exclusions: [""],
+	updateExclusions: (newExclusions) => {},
 	results: [
 		// array of recipes
 		{
+			uri: "",
 			name: "No Recipe Name Available",
 			image: require("../../assets/favicon.png"),
-			ingredients: ["None"],
-			source: "",
+			ingredients: [""],
+			source: ""
 		},
 	],
 	getRecipes: (recipeList) => {}, // Create a list of recipes
@@ -32,12 +35,24 @@ export function ContextProvider(props) {
 	// Array of recipes
 	const [recipes, setRecipes] = useState([
 		{
+			uri: "",
 			name: "No Recipe Name Available",
 			image: "",
 			ingredients: ["None"],
 			source: "",
 		},
 	]);
+
+	const [excluded, setExcluded] = useState([]);
+
+	/**
+	 * Updates the `excluded` state
+	 * 
+	 * @param {string[]} newExcludeState 
+	 */
+	function changeExcluded(newExcludeState) {
+		setExcluded(newExcludeState);
+	}
 
 	// link to recipes
 	const [addRecipesLink, setAddRecipesLink] = useState("");
@@ -57,6 +72,7 @@ export function ContextProvider(props) {
 	 * Creates an array with recipes
 	 *
 	 * @param {Array<{
+	 * 	uri: string,
 	 *  name: string,
 	 *  image: string,
 	 *  ingredients: Array<string>,
@@ -64,9 +80,10 @@ export function ContextProvider(props) {
 	 * }>} recipeList
 	 */
 	function GetRecipes(recipeList) {
-		if (recipeList[0].source != "") {
+		if (recipeList[0].uri != "") {
 			setRecipes([
 				{
+					id: "",
 					name: "No Recipe Name Available",
 					image: "",
 					ingredients: ["None"],
@@ -85,6 +102,7 @@ export function ContextProvider(props) {
 	 * fetch more recipes
 	 *
 	 * @param {Array<{
+	 * 	uri: string
 	 *  name: string,
 	 *  image: string,
 	 *  ingredients: Array<string>,
@@ -116,6 +134,8 @@ export function ContextProvider(props) {
 				<RecipeResultsCtx.Provider
 					value={{
 						moreRecipesLink: addRecipesLink,
+						exclusions: excluded,
+						updateExclusions: changeExcluded,
 						results: recipes,
 						getRecipes: GetRecipes,
 						setAddRecipesLink: setAddLink,

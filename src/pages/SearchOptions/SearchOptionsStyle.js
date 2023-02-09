@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-const HEIGHT = "100%";
+const HEIGHT = "80%";
 export const SearchOptionsStyle = StyleSheet.create({
 	container: {
 		flex: 1,

@@ -8,7 +8,7 @@ import CsrfCtx from "../../context/CsrfToken";
 import BackEndIP from "../../ipaddressesports/BackEndIP";
 import AccountCtx from "../../context/account";
 import UserEmailForms from "../../components/UserEmailForms/UserEmailForms";
-import { SignUpStyles } from "../../pages/SignUp/SignUpStyles";
+import { FormStyle } from "./FormStyles";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 
 const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/
@@ -61,7 +61,13 @@ export default function Form({ route, navigation }) {
 	 * @param {string} newUsername
 	 */
 	function usernameHandler(newUsername) {
-		setUsername(newUsername);
+		if (newUsername.length > 50) {
+			setFormValid(false);
+			setErrorMsg("Username too long");
+		} else {
+			setFormValid(true);
+			setUsername(newUsername);
+		}
 	}
 
 	/**
@@ -141,7 +147,7 @@ export default function Form({ route, navigation }) {
 				}
 
 			} catch (error) {
-				setErrorMsg(content.message);
+				setErrorMsg(error.response.data.message);
 				setFormValid(false)
 			}
         }
@@ -149,30 +155,30 @@ export default function Form({ route, navigation }) {
 
 	function SubmitButton() {
 		return (
-			<Pressable style={SignUpStyles.submitButton} onPress={onSubmitHandler}>
+			<Pressable style={FormStyle.submitButton} onPress={onSubmitHandler}>
 				<Text style={{fontWeight: "bold",}}>{toLogin ? "Login" : "Sign Up"}</Text>
 			</Pressable>
 		);
 	}
 
 	return (
-		<View style={{ ...styles.pageContainer, alignItems: "center" }}>
+		<View style={{ ...styles.pageContainer, alignItems: "center"}}>
 			<UserEmailForms
 				toLogin={toLogin}
 				usernameHandler={usernameHandler}
 				emailHandler={emailHandler}
-				containerStyle={{...SignUpStyles.formContainer, ...fieldWidth}}
-				labelStyle={SignUpStyles.formLabel}
-				inputStyle={SignUpStyles.formInput}
+				containerStyle={fieldWidth}
+				labelStyle={FormStyle.formLabel}
+				inputStyle={{...FormStyle.formInput, borderColor: formValid ? "black" : "red"}}
 			/>
 			<FormField
 				label={"Password:"}
 				placeholder={"Please enter password:"}
 				isPassword={true}
 				onChangeTextHandler={passwordHandler}
-                containerStyle={{...SignUpStyles.formContainer, ...fieldWidth}}
-                labelStyle={SignUpStyles.formLabel}
-                inputStyle={SignUpStyles.formInput}
+                containerStyle={fieldWidth}
+                labelStyle={FormStyle.formLabel}
+                inputStyle={{...FormStyle.formInput, borderColor: formValid ? "black" : "red"}}
 			/>
 			<SubmitButton />
 

@@ -8,17 +8,19 @@ import { recipeListStyle } from "./RecipeListStyle";
 /**
  * Renders a list of Recipes
  * @typedef {{
+ *  	uri: string,
  * 		name: string,
  *  	image: any,
  *  	ingredients: Array<string>,
- *  	source: string
+ * 		source: string
  * 	}} recipe
  * 
  * @param {{
- * 	recipes:
- * 		Array<recipe>,
+ * 	recipes: Array<recipe>,
  *  recipeLink: string,
- *  setData: (recipeResults: Array<recipe>, addRecipesLink: string) => void
+ *  setData: (recipeResults: Array<recipe>, addRecipesLink: string) => void,
+ * 	exlusions: string[],
+ * 	imageSize: number
  * }} props 
  * @returns List of Recipes
  */
@@ -27,7 +29,6 @@ export default function RecipeList(props) {
 	const [recipes, setRecipes] = useState(props.recipes); // List of recipes
 	const [isMoreRecipes, setIsMoreRecipes] = useState(true);
 	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
-	const [width, setWidth] = useState(useWindowDimensions().width);
 
 	/**
 	 * Forces it to update the list because some reason
@@ -47,7 +48,7 @@ export default function RecipeList(props) {
 		let image = "";
 		if (item.image != "")
 		{
-			image = {uri:item.image, height: width, width: "100%"};
+			image = {uri:item.image, height: "100%", width: "100%"};
 		}
 		else
 		{
@@ -77,10 +78,21 @@ export default function RecipeList(props) {
     {
 		if (props.recipeLink != undefined && props.recipeLink != "" && isMoreRecipes)
 		{
+
+			let excludeQuery = "";
+
+			props.exlusions.forEach((excluded, i) => {
+				excludeQuery += `excluded=${excluded}`
+
+				if (i < props.exlusions) {
+					excludeQuery += "&";
+				}
+			});
+
 			try {
 				let response = await axios({
 					method: "get",
-					url: `${BackEndIP}/api/addRecipes/?nextLink=${props.recipeLink}`,
+					url: `${BackEndIP}/api/addRecipes/?nextLink=${props.recipeLink}&${excludeQuery}`,
 					responseType: "json",
 				});
 
@@ -90,10 +102,11 @@ export default function RecipeList(props) {
 				setIsMoreRecipes(false);
 			}
 		}
-		else if (recipes[recipes.length - 1].source != "" && !loadedAllRecipes) {
+		else if (recipes[recipes.length - 1].uri != "" && !loadedAllRecipes) {
 			setRecipes((prevState) => {
 				let newState = [...prevState]
 				newState.push({
+					uri: "",
 					name: "No more Recipes",
 					image: "",
 					ingredients: [],
@@ -108,7 +121,7 @@ export default function RecipeList(props) {
 
 	let listStyle = {
 		flex: 1,
-		width: width > 700 ? "30%" : "100%",
+		width: useWindowDimensions().width > 700 ? "30%" : "100%",
 		
 	};
 
