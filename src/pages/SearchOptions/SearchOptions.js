@@ -2,9 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
-	Image,
 	Pressable,
-	SectionList,
 	Text,
 	TextInput,
 	useWindowDimensions,

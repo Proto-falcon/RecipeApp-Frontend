@@ -34,13 +34,17 @@ export function AccountProvider(props) {
 	 */
 	async function updateCred(csrfCtx, domain) {
 		if (!isLoggedIn) {
-			let response = await axios.get(`${domain}/api/checkLogin/`);
-			let content = await response.data;
-			csrfCtx.setCsrfToken(content.token);
-			if (content.user != false) {
-				LogInHandler();
-				setUsernameHandler(content.user.username);
-				setEmailHandler(content.user.email);
+			try {
+				let response = await axios.get(`${domain}/api/checkLogin/`);
+				let content = await response.data;
+				csrfCtx.setCsrfToken(content.token);
+				if (content.user != false) {
+					LogInHandler();
+					setUsernameHandler(content.user.username);
+					setEmailHandler(content.user.email);
+				}
+			} catch (error) {
+				
 			}
 		}
 	}

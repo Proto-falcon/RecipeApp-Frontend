@@ -88,6 +88,7 @@ export default function Search({ navigation }) {
 					setData={ctx.addRecipes}
 					recipeLink={ctx.moreRecipesLink}
 					exlusions={ctx.exclusions}
+					navigation={navigation}
 				/>
 			)}
 		</View>

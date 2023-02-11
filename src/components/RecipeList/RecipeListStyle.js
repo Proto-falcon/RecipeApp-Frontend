@@ -2,11 +2,6 @@ import { StyleSheet } from "react-native";
 
 export const recipeListStyle = StyleSheet.create(
     {
-        list: {
-            flex: 1,
-            width: "50%",
-            maxWidth: 300,
-        },
         foodPicContainer:
         {
             alignItems: "center"
