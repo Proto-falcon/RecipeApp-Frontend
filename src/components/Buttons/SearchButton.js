@@ -1,6 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Link } from "@react-navigation/native";
-import { Image } from "react-native";
-import { styles } from "../../AppStyles";
 import { SearchStyle } from "../../pages/Search/SearchStyle";
 
 /**
@@ -8,16 +7,12 @@ import { SearchStyle } from "../../pages/Search/SearchStyle";
  * @returns Button that links to the Search Options page
  */
 export default function SearchButton() {
-	const image = require("../../../assets/searchIcon.png");
 	return (
 		<Link
 			to={{ screen: "Search" }}
 			style={SearchStyle.imgContainer}
 		>
-			<Image
-				style={styles.searchIcon}
-				source={image}
-			/>
+			<FontAwesomeIcon icon={"magnifying-glass"} size={20} />
 		</Link>
 	);
 }

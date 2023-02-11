@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	Image,
-	Platform,
 	Pressable,
 	SectionList,
 	Text,
@@ -24,6 +23,9 @@ import LogOutButton from "../../components/Buttons/LogOutButton";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import CsrfCtx from "../../context/CsrfToken";
 import { Link } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import SelectedOptions from "../../components/SelectedOptions/SelectedOptions";
+import WrappingItems from "../../components/WrappingItems/WrappingItems";
 
 /**
  * Renders a page that has options to search recipes
@@ -35,7 +37,7 @@ export default function SearchOptions({ navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
 	const accCtx = useContext(accountCtx);
 	const authCtx = useContext(CsrfCtx);
-	
+
 	// collection of arrays of optional values
 	const [options, setOptions] = useState({
 		diet: [],
@@ -58,10 +60,12 @@ export default function SearchOptions({ navigation }) {
 	const [hasError, setHasError] = useState(false); // checks if the user hasn't inputted/selected ingredients
 	const [errorMsg, setErrorMsg] = useState("");
 	const [mount, setMount] = useState(true);
-	
+
 	// Calls when `Form` component is mounted
-	useEffect(() => {accCtx.checkCred(authCtx, BACKEND)}, [mount]);
-	
+	useEffect(() => {
+		accCtx.checkCred(authCtx, BACKEND);
+	}, [mount]);
+
 	// Changes the navigation bar if the user is logged in or not.
 	useEffect(() => {
 		if (accCtx.loggedIn) {
@@ -80,15 +84,14 @@ export default function SearchOptions({ navigation }) {
 						>
 							<Text style={styles.navText}>Profile</Text>
 						</Link>
-						<Text style={styles.usernameText}>Username: {accCtx.username}</Text>
+						<Text style={styles.usernameText}>
+							Username: {accCtx.username}
+						</Text>
 					</NavBar>
 				),
-				headerRight: () => (
-						<LogOutButton />
-				),
+				headerRight: () => <LogOutButton />,
 			});
-		}
-		else {
+		} else {
 			navigation.setOptions({
 				headerLeft: () => (
 					<Link
@@ -101,13 +104,16 @@ export default function SearchOptions({ navigation }) {
 				headerRight: () => (
 					<NavBar>
 						<Link
-							to={{ screen: "Login", params: {toLogin: true} }}
+							to={{ screen: "Login", params: { toLogin: true } }}
 							style={styles.navLink}
 						>
 							<Text style={styles.navText}>Login</Text>
 						</Link>
 						<Link
-							to={{ screen: "SignUp", params: {toLogin: false} }}
+							to={{
+								screen: "SignUp",
+								params: { toLogin: false },
+							}}
 							style={styles.navLink}
 						>
 							<Text style={styles.navText}>Sign Up</Text>
@@ -165,7 +171,11 @@ export default function SearchOptions({ navigation }) {
 		if (!isOptionsEmpty()) {
 			let i = 0;
 			for (const option in options) {
-				if (query.length > 0 && (i < optionTypes.length - 1) && (options[option].length > 0)) {
+				if (
+					query.length > 0 &&
+					i < optionTypes.length - 1 &&
+					options[option].length > 0
+				) {
 					query += "&";
 				}
 				options[option].forEach((item, index) => {
@@ -230,11 +240,11 @@ export default function SearchOptions({ navigation }) {
 
 	/**
 	 * Updates `inputExclude` by the text entered by the user
-	 * 
-	 * @param {string} excluded 
+	 *
+	 * @param {string} excluded
 	 */
 	function inputExcludeHandler(excluded) {
-		setInputExclude(excluded)
+		setInputExclude(excluded);
 	}
 
 	/**
@@ -242,15 +252,15 @@ export default function SearchOptions({ navigation }) {
 	 */
 	function addExcludeHandler() {
 		if (inputExclude !== "") {
-			setExclude(preveState => [...preveState, inputExclude])
+			setExclude((preveState) => [...preveState, inputExclude]);
 			setInputExclude("");
 		}
 	}
 
 	/**
 	 * Renders the available option.
-	 * 
-	 * @param {{item: string}} param 
+	 *
+	 * @param {{item: string}} param
 	 * @returns Button that toggles the option
 	 */
 	function renderOptionTypes({ item }) {
@@ -259,56 +269,46 @@ export default function SearchOptions({ navigation }) {
 				style={SearchOptionsStyle.optionTypes}
 				onPress={() => setOptionType(item)}
 			>
-				<Text style={{fontWeight:"bold"}}>{item}</Text>
+				<Text style={{ fontWeight: "bold" }}>{item}</Text>
 			</Pressable>
 		);
+	}
+
+	function removeExlcusions(index) {
+		setExclude((preveState) => {
+			let newState = [];
+			preveState.forEach((element, i) => {
+				if (i != index) {
+					newState.push(element);
+				}
+			});
+			return newState;
+		});
 	}
 
 	/**
 	 * Renders an excluded ingredient that the user doesn't want to be
-	 * displayed in the recipe results. 
-	 * 
-	 * @param {{ item: string}} param
+	 * displayed in the recipe results.
+	 *
+	 * @param {{
+	 * 		item: string,
+	 * 		index: number
+	 * }} param
 	 * @returns An excluded ingredient
 	 */
-	function renderExclusions({item}) {
+	function renderExclusions({ item, index }) {
 		return (
-			<Pressable>
-				<Text style={{textAlign: "center"}}>{item}</Text>
-			</Pressable>
-		);
-	}
-
-	/**
-	 * Renders a list of selected options in their sections
-	 * 
-	 * @returns A list of selected options in their sections
-	 */
-	function SelectedOptions() {
-		const OPTIONLISTWIDTH = "100%";
-		let optionObjArray = []
-
-		for (const option in options) {
-			optionObjArray.push({
-				optionType: option,
-				data: options[option]
-			})
-		}
-
-		return (
-			<View style={{...SearchOptionsStyle.selectedOptionsContainer, width: OPTIONLISTWIDTH}}>
-				<Text style={{...SearchOptionsStyle.text, ...SearchOptionsStyle.selectedMetaText, fontWeight: "bold"}}>Selected Options</Text>
-				<SectionList
-				style={{width: "100%"}}
-					sections={optionObjArray}
-					renderItem={({item}) => <Text style={{...SearchOptionsStyle.text}}>{item}</Text>}
-					renderSectionHeader={({section: {optionType}}) => {
-						return (
-							<Text style={{...SearchOptionsStyle.optionTypeHeader, ...SearchOptionsStyle.selectedMetaText, ...SearchOptionsStyle.text}}>
-								{optionType}
-							</Text>);
-					}}
-				/>
+			<View
+				key={index}
+				style={SearchOptionsStyle.exclude}
+			>
+				<Text style={{ textAlign: "center" }}>{item}</Text>
+				<Pressable onPress={() => removeExlcusions(index)}>
+					<FontAwesomeIcon
+						icon={"xmark"}
+						size={20}
+					/>
+				</Pressable>
 			</View>
 		);
 	}
@@ -326,9 +326,9 @@ export default function SearchOptions({ navigation }) {
 					style={SearchOptionsStyle.imgContainer}
 					onPress={fetchFood}
 				>
-					<Image
-						style={SearchOptionsStyle.searchIcon}
-						source={require("../../../assets/searchIcon.png")}
+					<FontAwesomeIcon
+						icon="magnifying-glass"
+						size={20}
 					/>
 				</Pressable>
 
@@ -343,8 +343,14 @@ export default function SearchOptions({ navigation }) {
 				/>
 			</View>
 			<View style={SearchOptionsStyle.textButtonContainer}>
-				<Pressable onPress={addExcludeHandler} style={{paddingTop:10}}>
-					<Text style={{fontWeight: "bold"}}>Exclude</Text>
+				<Pressable
+					onPress={addExcludeHandler}
+					style={{ paddingTop: 12 }}
+				>
+					<FontAwesomeIcon
+						icon={"ban"}
+						size={20}
+					/>
 				</Pressable>
 				<TextInput
 					style={[
@@ -368,26 +374,40 @@ export default function SearchOptions({ navigation }) {
 				style={{
 					...SearchOptionsStyle.optionsContainer,
 					maxHeight: useWindowDimensions().height / 2.5,
-					flexDirection: "row"
+					flexDirection: "row",
 				}}
 			>
-
-				<View>
-					<FlatList
-					data={exclude}
-					renderItem={renderExclusions}
+				<View
+					style={{
+						width:
+							useWindowDimensions().width < 700 ? "100%" : "30%",
+						...SearchOptionsStyle.excluded,
+					}}
+				>
+					<Text
+						style={{
+							...SearchOptionsStyle.excludedHeader,
+							borderBottomWidth: exclude.length <= 0 ? 0 : 2,
+						}}
+					>
+						Excluded
+					</Text>
+					<WrappingItems
+						style={SearchOptionsStyle.excludeList}
+						items={exclude}
+						renderItems={renderExclusions}
 					/>
 				</View>
 
-				<SelectedOptions/>
-				<View style={{ borderWidth: 2, marginBottom: 5, height: 99 }}>
+				<SelectedOptions options={options} />
+				<View style={SearchOptionsStyle.optionTypesContainer}>
 					<FlatList
 						data={optionTypes}
 						renderItem={renderOptionTypes}
 					/>
 				</View>
 				<RecipeOption
-					style={{height: 99 }}
+					style={{ height: 99 }}
 					type={optionType}
 					data={RecipeMetaOptions[optionType]}
 					selectedData={options[optionType]}

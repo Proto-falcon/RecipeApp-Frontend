@@ -21,10 +21,10 @@ export default function Profile({route, navigation }) {
     const [newEmail, setNewEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [width, setWidth] = useState(useWindowDimensions().width);
-    const [error, setError] = useState(false);
     const [usernameUpdated, setUsernameUpdated] = useState(false);
     const [emailUpdated, setEmailUpdated] = useState(false);
     const [passwordUpdated, setPasswordUpdated] = useState(false);
+    const [errorBackColor, setErrorBackColor] = useState("red");
     const [errorMsg, setErrorMsg] = useState("");
     const [mount, setMount] = useState(true);
 
@@ -46,9 +46,7 @@ export default function Profile({route, navigation }) {
      * @param {string} emailTxt 
      */
     function updateEmailHander(emailTxt) {
-        if (emailTxt.match(emailRegExp) != null) {
-            setNewEmail(emailTxt);
-        }
+        setNewEmail(emailTxt);
     }
 
     /**
@@ -64,6 +62,10 @@ export default function Profile({route, navigation }) {
      * Submits the updated username
      */
     async function submitUsername() {
+        if (newUsername === "") {
+            ErrorHandler("You haven't entered a username", 0, true);
+            return;
+        }
         try {
             let response = await axios.put(`${BACKEND}/api/updateUserInfo/`, {username: newUsername}, {
                 headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
@@ -73,17 +75,16 @@ export default function Profile({route, navigation }) {
             let content = await response.data;
             
             accCtx.setUsername(newUsername)
-
-            setUsernameUpdated(false);
-            setEmailUpdated(false);
-            setUsernameUpdated(true);
-
+            
+            let message = "";
             for (const msg in content) {
-                setErrorMsg(content[msg])
+                message = content[msg];
             }
+
+            ErrorHandler(message, 0, false);
+
         } catch (error) {
-            setError(true);
-            setErrorMsg(error.response.data.message);
+            ErrorHandler(error.response.data.message, 0, true);
         }
     }
     
@@ -91,6 +92,10 @@ export default function Profile({route, navigation }) {
      * Submits the updated email
      */
     async function submitEmail() {
+        if (newEmail === "" || newEmail.match(emailRegExp) === null) {
+            ErrorHandler("You haven't entered a valid email", 1, true);
+            return;
+        }
         try {
             let response = await axios.put(`${BACKEND}/api/updateUserInfo/`, {email: newEmail}, {
                 headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
@@ -101,16 +106,14 @@ export default function Profile({route, navigation }) {
 
             accCtx.setEmail(newEmail)
 
-            setUsernameUpdated(false);
-            setEmailUpdated(true);
-            setPasswordUpdated(false);
-
+            let message = "";
             for (const msg in content) {
-                setErrorMsg(content[msg])
+                message = content[msg];
             }
+
+            ErrorHandler(message, 1, false);
         } catch (error) {
-            setError(true);
-            setErrorMsg(error.response.data.message);
+            ErrorHandler(error.response.data.message, 1, true);
         }
     }
 
@@ -118,6 +121,10 @@ export default function Profile({route, navigation }) {
      * Submits the updated password
      */
     async function submitPassword() {
+        if (newPassword === "") {
+            ErrorHandler("You haven't entered a password", 2, true);
+            return;
+        }
         try {
             let response = await axios.put(`${BACKEND}/api/updateUserInfo/`, {password: newPassword}, {
                 headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
@@ -126,18 +133,54 @@ export default function Profile({route, navigation }) {
             })
             let content = await response.data;
 
-            setUsernameUpdated(false);
-            setEmailUpdated(false);
-            setPasswordUpdated(true);
-
+            let message = "";
             for (const msg in content) {
-                setErrorMsg(content[msg])
+                message = content[msg];
             }
 
+            ErrorHandler(message, 2, false);
+
         } catch (error) {
-            setError(true);
-            setErrorMsg(error.response.data.message);
+            ErrorHandler(error.response.data.message, 2, true);
         }
+    }
+
+    /**
+     * Displays the error message via toggling the `error` state
+     * 
+     * @param {string} message
+     * @param {number} fieldId
+     * @param {boolean} isError
+     */
+    function ErrorHandler(message, fieldId, isError) {
+        if (isError) {
+            setErrorBackColor("red")
+        }
+        else {
+            setErrorBackColor("green");
+        }
+        switch (fieldId) {
+            case 0:
+                setUsernameUpdated(true);
+                setEmailUpdated(false);
+                setPasswordUpdated(false);
+                break;
+            case 1:
+                setUsernameUpdated(false);
+                setEmailUpdated(true);
+                setPasswordUpdated(false);
+                break;
+            case 2:
+                setUsernameUpdated(false);
+                setEmailUpdated(false);
+                setPasswordUpdated(true);
+                break;
+            default:
+                setUsernameUpdated(false);
+                setEmailUpdated(false);
+                setPasswordUpdated(false);
+        }
+        setErrorMsg(message);
     }
 
     let customWidth = width < 700 ? width * 0.7 : width * 0.5;
@@ -159,7 +202,7 @@ export default function Profile({route, navigation }) {
                 submitStyle={profileStyles.submitButton}
             />
             <TextError
-                style={{...styles.errorMsg, backgroundColor: "green"}}
+                style={{...styles.errorMsg, backgroundColor: errorBackColor}}
                 hasError={usernameUpdated}
                 message={errorMsg}
             />
@@ -178,7 +221,7 @@ export default function Profile({route, navigation }) {
                 submitStyle={profileStyles.submitButton}
             />
             <TextError
-                style={{...styles.errorMsg, backgroundColor: "green"}}
+                style={{...styles.errorMsg, backgroundColor: errorBackColor}}
                 hasError={emailUpdated}
                 message={errorMsg}
             />
@@ -195,7 +238,7 @@ export default function Profile({route, navigation }) {
                 submitStyle={profileStyles.submitButton}
             />
             <TextError
-                style={{...styles.errorMsg, backgroundColor: "green"}}
+                style={{...styles.errorMsg, backgroundColor: errorBackColor}}
                 hasError={passwordUpdated}
                 message={errorMsg}
             />

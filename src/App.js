@@ -12,6 +12,12 @@ import { styles } from "./AppStyles";
 import { Text } from "react-native";
 import RecipeInfo from "./pages/RecipeInfo/RecipeInfo";
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
+import { faBan } from "@fortawesome/free-solid-svg-icons/faBan";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+
+library.add(faMagnifyingGlass, faBan, faXmark)
 
 /**
  * Render the enter APP UI and use React navigation to

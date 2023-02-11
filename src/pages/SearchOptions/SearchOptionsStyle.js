@@ -25,6 +25,8 @@ export const SearchOptionsStyle = StyleSheet.create({
 	imgContainer: {
 		flexBasis: 20,
 		height: 30,
+		justifyContent: "center",
+		paddingTop: 10,
 	},
 
 	input: {
@@ -37,6 +39,31 @@ export const SearchOptionsStyle = StyleSheet.create({
 		borderRadius: 20,
 	},
 
+	exclude: {
+		flexDirection: "row",
+		padding: 5,
+		paddingLeft: 7,
+		marginLeft: 5,
+		marginTop: 5,
+		marginBottom: 5,
+		backgroundColor: "#ff5c5c",
+		borderRadius: 10,
+	},
+
+	excludedHeader: {
+		fontWeight: "bold",
+		fontSize: 20,
+		textAlign: "center",
+	},
+
+	excludeList: { paddingLeft: 5, justifyContent: "center" },
+
+	excluded: {
+		borderTopWidth: 2,
+		borderLeftWidth: 2,
+		borderRightWidth: 2,
+	},
+
 	optionsContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",
@@ -44,6 +71,8 @@ export const SearchOptionsStyle = StyleSheet.create({
 		minWidth: 400,
 		width: "30%",
 	},
+
+	optionTypesContainer: { borderWidth: 2, marginBottom: 5, height: 99 },
 
 	optionTypes: {
 		width: 100,
@@ -62,7 +91,7 @@ export const SearchOptionsStyle = StyleSheet.create({
 	},
 
 	selectedMetaText: {
-		fontSize: 25
+		fontSize: 25,
 	},
 
 	selectedOptionsContainer: {
@@ -70,6 +99,6 @@ export const SearchOptionsStyle = StyleSheet.create({
 		minHeight: HEIGHT,
 		maxHeight: HEIGHT,
 		borderWidth: 2,
-		marginBottom: 5
+		marginBottom: 5,
 	},
 });
