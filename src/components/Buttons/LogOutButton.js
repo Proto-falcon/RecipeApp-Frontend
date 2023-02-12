@@ -3,8 +3,8 @@ import axios from "axios";
 import { useContext } from "react";
 import { Pressable, Text } from "react-native";
 import { styles } from "../../AppStyles";
-import AccountCtx from "../../context/account";
-import CsrfCtx from "../../context/CsrfToken";
+import { AccountCtx } from "../../context/account";
+import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 
 /**

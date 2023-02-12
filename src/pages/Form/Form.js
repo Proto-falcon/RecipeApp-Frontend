@@ -1,15 +1,15 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { lazy, useContext, useEffect, useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { styles } from "../../AppStyles";
-import FormField from "../../components/FormField/FormField";
-import TextError from "../../components/TextError/TextError";
-import CsrfCtx from "../../context/CsrfToken";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
-import AccountCtx from "../../context/account";
-import UserEmailForms from "../../components/UserEmailForms/UserEmailForms";
 import { FormStyle } from "./FormStyles";
 import BACKEND from "../../ipaddressesports/BackEndIP";
+import { CsrfCtx } from "../../context/CsrfToken";
+import { AccountCtx } from "../../context/account";
+
+const FormField = lazy(() => import("../../components/FormField/FormField"));
+const TextError = lazy(() => import("../../components/TextError/TextError"));
+const UserEmailForms = lazy(() => import("../../components/UserEmailForms/UserEmailForms"));
 
 const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/
 
@@ -122,7 +122,7 @@ export default function Form({ route, navigation }) {
 						method: method,
 						headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
 						withCredentials: true,
-						url: `${BackEndIP}/api/${path}`,
+						url: `${BACKEND}/api/${path}`,
 						responseType: "json",
 						data: {
 							username: username,

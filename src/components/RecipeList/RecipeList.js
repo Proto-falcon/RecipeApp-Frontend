@@ -1,8 +1,7 @@
-import { Link } from "@react-navigation/native";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, Pressable, Text, useWindowDimensions, View } from "react-native";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
+import BACKEND from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "./RecipeListStyle";
 
 /**
@@ -105,7 +104,7 @@ export default function RecipeList(props) {
 			try {
 				let response = await axios({
 					method: "get",
-					url: `${BackEndIP}/api/addRecipes/?nextLink=${props.recipeLink}&${excludeQuery}`,
+					url: `${BACKEND}/api/addRecipes/?nextLink=${props.recipeLink}&${excludeQuery}`,
 					responseType: "json",
 				});
 

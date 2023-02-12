@@ -1,14 +1,14 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { Text, TextInput, useWindowDimensions, View } from "react-native";
+import { lazy, useContext, useEffect, useState } from "react";
+import { useWindowDimensions, View } from "react-native";
 import { styles } from "../../AppStyles";
-import IndiviudalForm from "../../components/IndividualForm/IndividualForm";
-import AccountCtx from "../../context/account";
-import CsrfCtx from "../../context/CsrfToken";
-import BACKEND from "../../ipaddressesports/BackEndIP";
 import { FormStyle } from "../Form/FormStyles";
 import { profileStyles } from "./ProfileStyles";
-import TextError from "../../components/TextError/TextError";
+import { AccountCtx } from "../../context/account";
+import { CsrfCtx } from "../../context/CsrfToken";
+import BACKEND from "../../ipaddressesports/BackEndIP";
+const IndiviudalForm = lazy(() => import("../../components/IndividualForm/IndividualForm"));
+const TextError = lazy(() => import("../../components/TextError/TextError"));
 
 const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/
 
@@ -29,7 +29,9 @@ export default function Profile({route, navigation }) {
     const [mount, setMount] = useState(true);
 
     // Calls when `Form` component is mounted
-    useEffect(() => {accCtx.checkCred(authCtx, BACKEND)}, [mount]);
+    useEffect(() => {
+        accCtx.checkCred(authCtx, BACKEND)
+    }, [mount]);
 
     /**
      * Sets the new username

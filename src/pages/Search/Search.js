@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { lazy, useContext, useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import RecipeResultsCtx from "../../context/Context";
-import RecipeList from "../../components/RecipeList/RecipeList";
+import { RecipeResultsCtx } from "../../context/Context";
+import { Link } from "@react-navigation/native";
 import { SearchStyle } from "./SearchStyle";
 import { styles } from "../../AppStyles";
-import CsrfCtx from "../../context/CsrfToken";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
-import AccountCtx from "../../context/account";
-import LogOutButton from "../../components/Buttons/LogOutButton";
-import NavBar from "../../components/NavBar/NavBar";
-import SearchButton from "../../components/Buttons/SearchButton";
-import { Link } from "@react-navigation/native";
+import { CsrfCtx } from "../../context/CsrfToken";
+import { AccountCtx } from "../../context/account";
+import BACKEND from "../../ipaddressesports/BackEndIP";
+const RecipeList = lazy(() => import("../../components/RecipeList/RecipeList"));
+const LogOutButton = lazy(() => import("../../components/Buttons/LogOutButton"));
+const NavBar = lazy(() => import("../../components/NavBar/NavBar"));
+const SearchButton = lazy(() => import("../../components/Buttons/SearchButton"));
 
 /**
  * Renders the page with recipe results depending on
@@ -30,7 +30,7 @@ export default function Search({ navigation }) {
 
 	// Checks the user has logged in when the app boots up
 	useEffect(() => {
-		accCtx.checkCred(csrfCtx, BackEndIP)
+		accCtx.checkCred(csrfCtx, BACKEND)
 	}, [isMounted]);
 
 	// Changes the navigation bar if the user is logged in or not.

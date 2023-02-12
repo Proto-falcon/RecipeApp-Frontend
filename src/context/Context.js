@@ -1,9 +1,9 @@
 import { createContext, useState } from "react";
-import { AccountProvider } from "./account";
-import { CsrfContextProvider } from "./CsrfToken";
+import AccountProvider from "./account";
+import CsrfContextProvider from "./CsrfToken";
 
 // Creates a context for reciperesults
-const RecipeResultsCtx = createContext({
+export const RecipeResultsCtx = createContext({
 	moreRecipesLink: "", // Link to fetch more recipes
 	setAddRecipesLink: (link) => {}, // set Recipes link
 	exclusions: [""],
@@ -30,7 +30,7 @@ const RecipeResultsCtx = createContext({
  * @param {*} props 
  * @returns Child Elements
  */
-export function ContextProvider(props) {
+export default function ContextProvider(props) {
 
 	// Array of recipes
 	const [recipes, setRecipes] = useState([
@@ -150,5 +150,3 @@ export function ContextProvider(props) {
 		</CsrfContextProvider>
 	);
 }
-
-export default RecipeResultsCtx;

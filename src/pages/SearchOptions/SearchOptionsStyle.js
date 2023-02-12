@@ -59,6 +59,7 @@ export const SearchOptionsStyle = StyleSheet.create({
 	excludeList: { paddingLeft: 5, justifyContent: "center" },
 
 	excluded: {
+		width: "100%",
 		borderTopWidth: 2,
 		borderLeftWidth: 2,
 		borderRightWidth: 2,

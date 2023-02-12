@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { lazy, useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	Pressable,
@@ -9,21 +9,28 @@ import {
 	View,
 } from "react-native";
 import { styles } from "../../AppStyles";
-import RecipeOption from "../../components/RecipeOption/RecipeOption";
-import RecipeResultsCtx from "../../context/Context";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
-import RecipeMetaOptions from "../../RecipeMetaOptions";
-import TextError from "../../components/TextError/TextError";
-import BackEndIP from "../../ipaddressesports/BackEndIP";
-import accountCtx from "../../context/account";
-import NavBar from "../../components/NavBar/NavBar";
-import LogOutButton from "../../components/Buttons/LogOutButton";
-import BACKEND from "../../ipaddressesports/BackEndIP";
-import CsrfCtx from "../../context/CsrfToken";
 import { Link } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import SelectedOptions from "../../components/SelectedOptions/SelectedOptions";
-import WrappingItems from "../../components/WrappingItems/WrappingItems";
+import { AccountCtx } from "../../context/account";
+import { CsrfCtx } from "../../context/CsrfToken";
+import { RecipeResultsCtx } from "../../context/Context";
+import RecipeMetaOptions from "../../RecipeMetaOptions";
+import BACKEND from "../../ipaddressesports/BackEndIP";
+const RecipeOption = lazy(() =>
+	import("../../components/RecipeOption/RecipeOption")
+);
+const TextError = lazy(() => import("../../components/TextError/TextError"));
+const NavBar = lazy(() => import("../../components/NavBar/NavBar"));
+const LogOutButton = lazy(() =>
+	import("../../components/Buttons/LogOutButton")
+);
+const SelectedOptions = lazy(() =>
+	import("../../components/SelectedOptions/SelectedOptions")
+);
+const WrappingItems = lazy(() =>
+	import("../../components/WrappingItems/WrappingItems")
+);
 
 /**
  * Renders a page that has options to search recipes
@@ -33,7 +40,7 @@ import WrappingItems from "../../components/WrappingItems/WrappingItems";
  */
 export default function SearchOptions({ navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
-	const accCtx = useContext(accountCtx);
+	const accCtx = useContext(AccountCtx);
 	const authCtx = useContext(CsrfCtx);
 
 	// collection of arrays of optional values
@@ -185,7 +192,7 @@ export default function SearchOptions({ navigation }) {
 				i += 1;
 			}
 		}
-
+		console.log(exclude)
 		if (exclude.length > 0) {
 			ctx.updateExclusions(exclude);
 			if (query.length > 0) {
@@ -209,10 +216,9 @@ export default function SearchOptions({ navigation }) {
 		try {
 			let response = await axios({
 				method: "get",
-				url: `${BackEndIP}/api/fetchRecipes/?${query}`,
+				url: `${BACKEND}/api/fetchRecipes/?${query}`,
 				responseType: "json",
 			});
-
 			let content = await response.data;
 
 			ctx.getRecipes(content.results);
@@ -221,6 +227,7 @@ export default function SearchOptions({ navigation }) {
 			ctx.setIsLoading(true);
 			navigation.navigate("Home");
 		} catch (error) {
+			console.log(error.request);
 			setHasError(true);
 			setErrorMsg("Unable to retrieve any recipes");
 		}
@@ -375,13 +382,7 @@ export default function SearchOptions({ navigation }) {
 					flexDirection: "row",
 				}}
 			>
-				<View
-					style={{
-						width:
-							useWindowDimensions().width < 700 ? "100%" : "30%",
-						...SearchOptionsStyle.excluded,
-					}}
-				>
+				<View style={SearchOptionsStyle.excluded}>
 					<Text
 						style={{
 							...SearchOptionsStyle.excludedHeader,

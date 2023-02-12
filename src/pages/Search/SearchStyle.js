@@ -8,9 +8,6 @@ export const SearchStyle = StyleSheet.create(
         },
 
         imgContainer: {
-            flexBasis:30,
-            height: 30,
-            marginTop: 7,
-            marginBottom: 7,
+            margin: 7
         },
     });

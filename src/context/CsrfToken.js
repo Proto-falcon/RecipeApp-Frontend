@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-const CsrfCtx = createContext({
+export const CsrfCtx = createContext({
 	token: "",
 	setCsrfToken: (newToken) => {},
 });
@@ -11,7 +11,7 @@ const CsrfCtx = createContext({
  * @param {{children: any}} props
  * @returns Components that can use the csrf context
  */
-export function CsrfContextProvider(props) {
+export default function CsrfContextProvider(props) {
 	const [token, setToken] = useState("");
 
 	/**
@@ -34,5 +34,3 @@ export function CsrfContextProvider(props) {
 		</CsrfCtx.Provider>
 	);
 }
-
-export default CsrfCtx;

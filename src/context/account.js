@@ -2,7 +2,7 @@ import axios from "axios";
 import { createContext, useState } from "react";
 
 // Context for account info
-const AccountCtx = createContext({
+export const AccountCtx = createContext({
 	loggedIn: false,
 	username: "",
 	email: "",
@@ -18,7 +18,7 @@ const AccountCtx = createContext({
  * @param {{children: any}} props
  * @returns App UI
  */
-export function AccountProvider(props) {
+export default function AccountProvider(props) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
@@ -44,7 +44,6 @@ export function AccountProvider(props) {
 					setEmailHandler(content.user.email);
 				}
 			} catch (error) {
-				
 			}
 		}
 	}
@@ -102,5 +101,3 @@ export function AccountProvider(props) {
 		</AccountCtx.Provider>
 	);
 }
-
-export default AccountCtx;
