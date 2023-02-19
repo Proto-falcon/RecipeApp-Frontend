@@ -1,5 +1,5 @@
-import { lazy, useContext, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import { RecipeResultsCtx } from "../../context/Context";
 import { Link } from "@react-navigation/native";
 import { SearchStyle } from "./SearchStyle";
@@ -26,71 +26,77 @@ export default function Search({ navigation }) {
 	const [isMounted, setIsMounted] = useState(true);
 
 	useEffect(() => ctx.setIsLoading(false), [ctx.isLoading]);
-
-
+	
 	// Checks the user has logged in when the app boots up
 	useEffect(() => {
 		accCtx.checkCred(csrfCtx, BACKEND)
 	}, [isMounted]);
 
-	// Changes the navigation bar if the user is logged in or not.
-	useEffect(() => {
-		if (accCtx.loggedIn) {
-			navigation.setOptions({
-				headerLeft: () => (
-					<NavBar>
-						<Link
-							style={styles.navLink}
-							to={{ screen: "Profile" }}
-						>
-							<Text style={styles.navText}>Profile</Text>
-						</Link>
-						<Text style={styles.usernameText}>Username: {accCtx.username}</Text>
-					</NavBar>
-				),
-				headerRight: () => (
-					<NavBar>
-						<LogOutButton />
-						<SearchButton />
-					</NavBar>
-				),
-			});
-		}
-		else {
-			navigation.setOptions({
-				headerLeft: () => undefined,
-				headerRight: () => (
-					<NavBar>
-						<Link
-							to={{ screen: "Login", params: {toLogin: true} }}
-							style={styles.navLink}
-						>
-							<Text style={styles.navText}>Login</Text>
-						</Link>
-						<Link
-							to={{ screen: "SignUp", params: {toLogin: false} }}
-							style={styles.navLink}
-						>
-							<Text style={styles.navText}>Sign Up</Text>
-						</Link>
-						<SearchButton />
-					</NavBar>
-				),
-			});
-		}
-	}, [accCtx.loggedIn, accCtx.username]);
+	try {
+		// // Changes the navigation bar if the user is logged in or not.
+		useEffect(() => {
+			if (accCtx.loggedIn) {
+				navigation.setOptions({
+					headerLeft: () => (
+						<NavBar>
+							<Link
+								style={styles.navLink}
+								to={{ screen: "Profile" }}
+							>
+								<Text style={styles.navText}>Profile</Text>
+							</Link>
+							<Text style={styles.usernameText}>Username: {accCtx.username}</Text>
+						</NavBar>
+					),
+					headerRight: () => (
+						<NavBar>
+							<LogOutButton />
+							<SearchButton />
+						</NavBar>
+					),
+				});
+			}
+			else {
+				navigation.setOptions({
+					headerLeft: () => undefined,
+					headerRight: () => (
+						<NavBar>
+							<Link
+								to={{ screen: "Login", params: {toLogin: true} }}
+								style={styles.navLink}
+							>
+								<Text style={styles.navText}>Login</Text>
+							</Link>
+							<Link
+								to={{ screen: "SignUp", params: {toLogin: false} }}
+								style={styles.navLink}
+							>
+								<Text style={styles.navText}>Sign Up</Text>
+							</Link>
+							<SearchButton />
+						</NavBar>
+					),
+				});
+			}
+		}, [accCtx.loggedIn, accCtx.username]);
+	} catch (error) {
+		console.log(error)
+	}
+
 
 	return (
-		<View style={{ ...SearchStyle.container, ...styles.pageContainer }}>
-			{!ctx.isLoading && (
-				<RecipeList
-					recipes={ctx.results}
-					setData={ctx.addRecipes}
-					recipeLink={ctx.moreRecipesLink}
-					exlusions={ctx.exclusions}
-					navigation={navigation}
-				/>
-			)}
-		</View>
+		<Suspense fallback={<ActivityIndicator size="large"/>}>
+			<View style={{...styles.pageContainer, ...SearchStyle.container}}>
+				{!ctx.isLoading && (
+					<RecipeList
+						recipes={ctx.results}
+						setData={ctx.addRecipes}
+						recipeLink={ctx.moreRecipesLink}
+						showEnd={true}
+						navigation={navigation}
+					/>
+				)}
+			</View>
+		</Suspense>
 	);
 }

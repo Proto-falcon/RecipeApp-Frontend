@@ -11,7 +11,7 @@ export const RecipeResultsCtx = createContext({
 	results: [
 		// array of recipes
 		{
-			uri: "",
+			id: "",
 			name: "No Recipe Name Available",
 			image: require("../../assets/favicon.png"),
 			ingredients: [""],
@@ -35,7 +35,7 @@ export default function ContextProvider(props) {
 	// Array of recipes
 	const [recipes, setRecipes] = useState([
 		{
-			uri: "",
+			id: "",
 			name: "No Recipe Name Available",
 			image: "",
 			ingredients: ["None"],
@@ -72,7 +72,7 @@ export default function ContextProvider(props) {
 	 * Creates an array with recipes
 	 *
 	 * @param {Array<{
-	 * 	uri: string,
+	 * 	id: string,
 	 *  name: string,
 	 *  image: string,
 	 *  ingredients: Array<string>,
@@ -80,7 +80,7 @@ export default function ContextProvider(props) {
 	 * }>} recipeList
 	 */
 	function GetRecipes(recipeList) {
-		if (recipeList[0].uri != "") {
+		if (recipeList[0].id != "") {
 			setRecipes([
 				{
 					id: "",
@@ -102,7 +102,7 @@ export default function ContextProvider(props) {
 	 * fetch more recipes
 	 *
 	 * @param {Array<{
-	 * 	uri: string
+	 * 	id: string
 	 *  name: string,
 	 *  image: string,
 	 *  ingredients: Array<string>,

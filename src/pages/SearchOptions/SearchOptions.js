@@ -1,6 +1,7 @@
 import axios from "axios";
-import { lazy, useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
+	ActivityIndicator,
 	FlatList,
 	Pressable,
 	Text,
@@ -42,6 +43,8 @@ export default function SearchOptions({ navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
 	const accCtx = useContext(AccountCtx);
 	const authCtx = useContext(CsrfCtx);
+
+	const [width, setWidth] = useState(useWindowDimensions().width);
 
 	// collection of arrays of optional values
 	const [options, setOptions] = useState({
@@ -178,7 +181,6 @@ export default function SearchOptions({ navigation }) {
 			for (const option in options) {
 				if (
 					query.length > 0 &&
-					i < optionTypes.length - 1 &&
 					options[option].length > 0
 				) {
 					query += "&";
@@ -192,9 +194,7 @@ export default function SearchOptions({ navigation }) {
 				i += 1;
 			}
 		}
-		console.log(exclude)
 		if (exclude.length > 0) {
-			ctx.updateExclusions(exclude);
 			if (query.length > 0) {
 				query += "&";
 			}
@@ -220,14 +220,12 @@ export default function SearchOptions({ navigation }) {
 				responseType: "json",
 			});
 			let content = await response.data;
-
 			ctx.getRecipes(content.results);
 			ctx.setAddRecipesLink(content.addRecipesLink);
 
 			ctx.setIsLoading(true);
 			navigation.navigate("Home");
 		} catch (error) {
-			console.log(error.request);
 			setHasError(true);
 			setErrorMsg("Unable to retrieve any recipes");
 		}
@@ -319,100 +317,103 @@ export default function SearchOptions({ navigation }) {
 	}
 
 	return (
-		<View
-			style={{
-				...SearchOptionsStyle.container,
-				...styles.pageContainer,
-				width: useWindowDimensions().width < 700 ? "100%" : "70%",
-			}}
-		>
-			<View style={SearchOptionsStyle.textButtonContainer}>
-				<Pressable
-					style={SearchOptionsStyle.imgContainer}
-					onPress={fetchFood}
-				>
-					<FontAwesomeIcon
-						icon="magnifying-glass"
-						size={20}
-					/>
-				</Pressable>
-
-				<TextInput
-					style={[
-						SearchOptionsStyle.input,
-						{ borderColor: hasError ? "red" : "black" },
-					]}
-					onChangeText={inputIngredients}
-					placeholder="Enter recipe names/ingredients"
-					onSubmitEditing={fetchFood}
-				/>
-			</View>
-			<View style={SearchOptionsStyle.textButtonContainer}>
-				<Pressable
-					onPress={addExcludeHandler}
-					style={{ paddingTop: 12 }}
-				>
-					<FontAwesomeIcon
-						icon={"ban"}
-						size={20}
-					/>
-				</Pressable>
-				<TextInput
-					style={[
-						SearchOptionsStyle.input,
-						{ borderColor: hasError ? "red" : "black" },
-					]}
-					onChangeText={inputExcludeHandler}
-					value={inputExclude}
-					placeholder="Enter ingredients to exclude"
-					onSubmitEditing={addExcludeHandler}
-				/>
-			</View>
-
-			<TextError
-				hasError={hasError}
-				style={styles.errorMsg}
-				message={errorMsg}
-			/>
-
+		<Suspense fallback={<ActivityIndicator size="large"/>}>
 			<View
 				style={{
-					...SearchOptionsStyle.optionsContainer,
-					maxHeight: useWindowDimensions().height / 2.5,
-					flexDirection: "row",
+					...SearchOptionsStyle.container,
+					...styles.pageContainer,
+					width: width,
+					height: useWindowDimensions().height
 				}}
 			>
-				<View style={SearchOptionsStyle.excluded}>
-					<Text
-						style={{
-							...SearchOptionsStyle.excludedHeader,
-							borderBottomWidth: exclude.length <= 0 ? 0 : 2,
-						}}
+				<View style={{...SearchOptionsStyle.textButtonContainer, width: width * 0.7}}>
+					<Pressable
+						style={SearchOptionsStyle.imgContainer}
+						onPress={fetchFood}
 					>
-						Excluded
-					</Text>
-					<WrappingItems
-						style={SearchOptionsStyle.excludeList}
-						items={exclude}
-						renderItems={renderExclusions}
+						<FontAwesomeIcon
+							icon="magnifying-glass"
+							size={20}
+						/>
+					</Pressable>
+
+					<TextInput
+						style={[
+							SearchOptionsStyle.input,
+							{ borderColor: hasError ? "red" : "black" },
+						]}
+						onChangeText={inputIngredients}
+						placeholder="Enter recipe names/ingredients"
+						onSubmitEditing={fetchFood}
+					/>
+				</View>
+				<View style={{...SearchOptionsStyle.textButtonContainer, width: width * 0.7}}>
+					<Pressable
+						onPress={addExcludeHandler}
+						style={{ paddingTop: 12 }}
+					>
+						<FontAwesomeIcon
+							icon={"ban"}
+							size={20}
+						/>
+					</Pressable>
+					<TextInput
+						style={[
+							SearchOptionsStyle.input,
+							{ borderColor: hasError ? "red" : "black" },
+						]}
+						onChangeText={inputExcludeHandler}
+						value={inputExclude}
+						placeholder="Enter ingredients to exclude"
+						onSubmitEditing={addExcludeHandler}
 					/>
 				</View>
 
-				<SelectedOptions options={options} />
-				<View style={SearchOptionsStyle.optionTypesContainer}>
-					<FlatList
-						data={optionTypes}
-						renderItem={renderOptionTypes}
+				<TextError
+					hasError={hasError}
+					style={styles.errorMsg}
+					message={errorMsg}
+				/>
+
+				<View
+					style={{
+						...SearchOptionsStyle.optionsContainer,
+						maxHeight: useWindowDimensions().height / 2.5,
+						flexDirection: "row",
+					}}
+				>
+					<View style={SearchOptionsStyle.excluded}>
+						<Text
+							style={{
+								...SearchOptionsStyle.excludedHeader,
+								borderBottomWidth: exclude.length <= 0 ? 0 : 2,
+							}}
+						>
+							Excluded
+						</Text>
+						<WrappingItems
+							style={SearchOptionsStyle.excludeList}
+							items={exclude}
+							renderItems={renderExclusions}
+						/>
+					</View>
+
+					<SelectedOptions options={options} />
+					<View style={SearchOptionsStyle.optionTypesContainer}>
+						<FlatList
+							data={optionTypes}
+							renderItem={renderOptionTypes}
+						/>
+					</View>
+					<RecipeOption
+						style={{ height: 99 }}
+						type={optionType}
+						data={RecipeMetaOptions[optionType]}
+						selectedData={options[optionType]}
+						updateData={updateOptions}
 					/>
 				</View>
-				<RecipeOption
-					style={{ height: 99 }}
-					type={optionType}
-					data={RecipeMetaOptions[optionType]}
-					selectedData={options[optionType]}
-					updateData={updateOptions}
-				/>
 			</View>
-		</View>
+		</Suspense>
 	);
 }

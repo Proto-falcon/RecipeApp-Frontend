@@ -1,6 +1,6 @@
 import axios from "axios";
-import { lazy, useContext, useEffect, useState } from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
+import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import { styles } from "../../AppStyles";
 import { FormStyle } from "./FormStyles";
 import BACKEND from "../../ipaddressesports/BackEndIP";
@@ -9,9 +9,12 @@ import { AccountCtx } from "../../context/account";
 
 const FormField = lazy(() => import("../../components/FormField/FormField"));
 const TextError = lazy(() => import("../../components/TextError/TextError"));
-const UserEmailForms = lazy(() => import("../../components/UserEmailForms/UserEmailForms"));
+const UserEmailForms = lazy(() =>
+	import("../../components/UserEmailForms/UserEmailForms")
+);
 
-const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/
+const emailRegExp =
+	/^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\.?[a-zA-Z]*)$/;
 
 /**
  * Renders the Text Form with multiple fields
@@ -25,7 +28,6 @@ const emailRegExp = /^([a-zA-Z0-9]+\.?[a-zA-Z0-9]*)@[a-zA-Z0-9^\.]+\.([a-zA-Z]+\
  * @returns Text Form
  */
 export default function Form({ route, navigation }) {
-	
 	const authCtx = useContext(CsrfCtx);
 	const accCtx = useContext(AccountCtx);
 
@@ -33,24 +35,24 @@ export default function Form({ route, navigation }) {
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPasword] = useState("");
-    const [formValid, setFormValid] = useState(true);
+	const [formValid, setFormValid] = useState(true);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [mount, setMount] = useState(true);
 	const [fieldWidth, setFieldWidth] = useState({
 		width: "25%",
-        minWidth: "25%",
-        maxWidth: "25%",
+		minWidth: "25%",
+		maxWidth: "25%",
 	});
-	
+
 	// Calls when `Form` component is mounted
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
-		
+
 		if (Platform.OS != "web") {
 			setFieldWidth({
 				width: "50%",
-        		minWidth: "50%",
-        		maxWidth: "50%",
+				minWidth: "50%",
+				maxWidth: "50%",
 			});
 		}
 	}, [mount]);
@@ -76,9 +78,7 @@ export default function Form({ route, navigation }) {
 	 * @param {string} newEmail
 	 */
 	function emailHandler(newEmail) {
-		if (
-			newEmail.match(emailRegExp) != null
-		) {
+		if (newEmail.match(emailRegExp) != null) {
 			setEmail(newEmail);
 		} else {
 			setEmail("");
@@ -94,21 +94,21 @@ export default function Form({ route, navigation }) {
 		setPasword(newPassword);
 	}
 
-
 	/**
 	 * Submits the sign up & login form with the user
 	 */
-    async function onSubmitHandler() {
-        if (toLogin && (username.length <= 0 || password <= 0)) {
+	async function onSubmitHandler() {
+		if (toLogin && (username.length <= 0 || password <= 0)) {
 			setErrorMsg("Please fill all the fields/ enter corretly.");
-            setFormValid(false);
-        }
-		else if (!toLogin && (username.length <= 0 || email.length <=0 || password <= 0)) {
+			setFormValid(false);
+		} else if (
+			!toLogin &&
+			(username.length <= 0 || email.length <= 0 || password <= 0)
+		) {
 			setErrorMsg("Please fill all the fields/ enter corretly.");
-            setFormValid(false);
-		}
-		else {
-            setFormValid(true);
+			setFormValid(false);
+		} else {
+			setFormValid(true);
 			let method = "post";
 			let path = "signup/";
 			if (toLogin) {
@@ -117,77 +117,88 @@ export default function Form({ route, navigation }) {
 			}
 
 			try {
-				let response = await axios(
-					{
-						method: method,
-						headers: {"X-CSRFToken": authCtx.token, "credentials": "include"},
-						withCredentials: true,
-						url: `${BACKEND}/api/${path}`,
-						responseType: "json",
-						data: {
-							username: username,
-							email: email,
-							password: password
-						}
-					}
-				);
-					
+				let response = await axios({
+					method: method,
+					headers: {
+						"X-CSRFToken": authCtx.token,
+						credentials: "include",
+					},
+					withCredentials: true,
+					url: `${BACKEND}/api/${path}`,
+					responseType: "json",
+					data: {
+						username: username,
+						email: email,
+						password: password,
+					},
+				});
+
 				let content = await response.data;
 				if (content.signUpSuccess) {
-					accCtx.setLoginStatus(true);
+					accCtx.login();
 					accCtx.setUsername(username);
 					accCtx.setEmail(email);
 					navigation.navigate("Home");
-				}
-				else if (content.loginSuccess) {
-					accCtx.setLoginStatus(true);
+				} else if (content.loginSuccess) {
+					accCtx.login();
 					accCtx.setUsername(content.user.username);
 					accCtx.setEmail(content.user.email);
 					navigation.navigate("Home");
 				}
-
 			} catch (error) {
 				setErrorMsg(error.response.data.message);
-				setFormValid(false)
+				setFormValid(false);
 			}
-        }
-    }
+		}
+	}
 
 	function SubmitButton() {
 		return (
-			<Pressable style={FormStyle.submitButton} onPress={onSubmitHandler}>
-				<Text style={{fontWeight: "bold",}}>{toLogin ? "Login" : "Sign Up"}</Text>
+			<Pressable
+				style={FormStyle.submitButton}
+				onPress={onSubmitHandler}
+			>
+				<Text style={{ fontWeight: "bold" }}>
+					{toLogin ? "Login" : "Sign Up"}
+				</Text>
 			</Pressable>
 		);
 	}
 
 	return (
-		<View style={{ ...styles.pageContainer, alignItems: "center"}}>
-			<UserEmailForms
-				toLogin={toLogin}
-				usernameHandler={usernameHandler}
-				emailHandler={emailHandler}
-				containerStyle={fieldWidth}
-				labelStyle={FormStyle.formLabel}
-				inputStyle={{...FormStyle.formInput, borderColor: formValid ? "black" : "red"}}
-			/>
-			<FormField
-				label={"Password:"}
-				placeholder={"Please enter password:"}
-				isPassword={true}
-				onChangeTextHandler={passwordHandler}
-                containerStyle={fieldWidth}
-                labelStyle={FormStyle.formLabel}
-                inputStyle={{...FormStyle.formInput, borderColor: formValid ? "black" : "red"}}
-			/>
-			<SubmitButton />
+		<Suspense fallback={<ActivityIndicator size="large" />}>
+			<View style={{ ...styles.pageContainer, alignItems: "center" }}>
+				<UserEmailForms
+					toLogin={toLogin}
+					usernameHandler={usernameHandler}
+					emailHandler={emailHandler}
+					containerStyle={fieldWidth}
+					labelStyle={FormStyle.formLabel}
+					inputStyle={{
+						...FormStyle.formInput,
+						borderColor: formValid ? "black" : "red",
+					}}
+				/>
+				<FormField
+					label={"Password:"}
+					placeholder={"Please enter password:"}
+					isPassword={true}
+					onChangeTextHandler={passwordHandler}
+					containerStyle={fieldWidth}
+					labelStyle={FormStyle.formLabel}
+					inputStyle={{
+						...FormStyle.formInput,
+						borderColor: formValid ? "black" : "red",
+					}}
+				/>
+				<SubmitButton />
 
-			<TextError
-				hasError={!formValid}
-				style={styles.errorMsg}
-				message={errorMsg}
-			/>
-		</View>
+				<TextError
+					hasError={!formValid}
+					style={styles.errorMsg}
+					message={errorMsg}
+				/>
+			</View>
+		</Suspense>
 	);
 }
-

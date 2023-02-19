@@ -25,7 +25,7 @@ export default function LogOutButton() {
 		let content = await response.data;
 
 		if (content.loggedOut) {
-			accCtx.setLoginStatus(false);
+			accCtx.logOut();
 			accCtx.setUsername("");
 			accCtx.setEmail("");
 			tokenCtx.setCsrfToken(content.token);

@@ -4,13 +4,14 @@ export const SearchOptionsStyle = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
-		marginTop: 10,
+		paddingTop: 10,
 		marginLeft: "auto",
 		marginRight: "auto",
 	},
 
 	textButtonContainer: {
 		flexDirection: "row",
+		justifyContent: "center",
 		flexBasis: 50,
 		maxHeight: 50,
 	},

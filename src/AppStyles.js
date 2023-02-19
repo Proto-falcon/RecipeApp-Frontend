@@ -28,8 +28,7 @@ export const styles = StyleSheet.create({
 	},
 
 	pageContainer: {
-		marginTop: 10,
-		textAlign: "center",
+		backgroundColor: "#ffffff"
 	},
 
 	errorMsg: {

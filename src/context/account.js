@@ -6,7 +6,8 @@ export const AccountCtx = createContext({
 	loggedIn: false,
 	username: "",
 	email: "",
-	setLoginStatus: () => {},
+	login: () =>{},
+	logOut: () => {},
 	setUsername: (newUsername) => {},
 	setEmail: (newEmail) => {},
 	checkCred: (csrfCtx, domain) => {},
@@ -33,7 +34,7 @@ export default function AccountProvider(props) {
 	 * @param {string} domain
 	 */
 	async function updateCred(csrfCtx, domain) {
-		if (!isLoggedIn) {
+		// if (!isLoggedIn) {
 			try {
 				let response = await axios.get(`${domain}/api/checkLogin/`);
 				let content = await response.data;
@@ -45,14 +46,21 @@ export default function AccountProvider(props) {
 				}
 			} catch (error) {
 			}
-		}
+		// }
 	}
 
 	/**
-	 * Inverts the `isLoggedIn` state
+	 * Logs the user in
 	 */
 	function LogInHandler() {
-		setIsLoggedIn((prevState) => !prevState);
+		setIsLoggedIn(true);
+	}
+
+	/**
+	 * Logs the user out
+	 */
+	function LogOutHandler() {
+		setIsLoggedIn(false);
 	}
 
 	/**
@@ -91,7 +99,8 @@ export default function AccountProvider(props) {
 				loggedIn: isLoggedIn,
 				username: username,
 				email: email,
-				setLoginStatus: LogInHandler,
+				login: LogInHandler,
+				logOut: LogOutHandler,
 				setUsername: setUsernameHandler,
 				setEmail: setEmailHandler,
 				checkCred: updateCred,

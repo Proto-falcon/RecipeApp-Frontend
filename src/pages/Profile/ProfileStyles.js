@@ -13,6 +13,13 @@ export const profileStyles = StyleSheet.create({
 		margin: 10,
 		borderRadius: 15,
 		backgroundColor: "#fd5d00",
-        width: 150
+		width: 150,
+	},
+
+	recentRecipes: {
+		borderTopWidth: 2,
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "center"
 	},
 });
