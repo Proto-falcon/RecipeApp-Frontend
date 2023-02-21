@@ -13,8 +13,10 @@ import { profileStyles } from "./ProfileStyles";
 import { AccountCtx } from "../../context/account";
 import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
-import RecipesArray from "../../components/RecipesArray/RecipesArray";
-import RecipeCover from "../../components/RecipeCover/RecipeCover";
+import NavBar from "../../components/NavBar/NavBar";
+import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
+const RecipesArray = lazy(() => import("../../components/RecipesArray/RecipesArray"));
+const RecipeCover = lazy(() => import("../../components/RecipeCover/RecipeCover"));
 const IndiviudalForm = lazy(() =>
 	import("../../components/IndividualForm/IndividualForm")
 );
@@ -62,7 +64,6 @@ export default function Profile({ route, navigation }) {
 	// Calls when `Form` component is mounted
 	useEffect(() => {
 		getRecentRecipes();
-		accCtx.checkCred(authCtx, BACKEND);
 	}, [mount]);
 
 	/**
@@ -243,129 +244,137 @@ export default function Profile({ route, navigation }) {
 
 	let customWidth = width < 700 ? width * 0.7 : width * 0.3;
 	return (
-		<Suspense fallback={<ActivityIndicator size="large" />}>
-			<View style={styles.pageContainer}>
-				<ScrollView>
-					<View
-						style={{
-							alignItems: "center",
-						}}
-					>
-						<IndiviudalForm
-							containerStyle={{ alignItems: "center" }}
-							label="Username:"
-							labelStyle={{
-								...profileStyles.userField,
-								fontWeight: "bold",
-							}}
-							labelValueHidden={false}
-							labelValue={accCtx.username}
-							labelValueStyle={profileStyles.userField}
-							placeholder="Please enter new username"
-							onChangeText={updateUsernameHandler}
-							inputPromptStyle={{
-								...FormStyle.formInput,
-								width: customWidth,
-							}}
-							submitText="Update Username"
-							submitHandler={submitUsername}
-							submitStyle={profileStyles.submitButton}
-						/>
-						<TextError
+		<View>
+			<NavBar
+				routeName={route.name}
+				style={NavBarStyle.container}
+			/>
+			<Suspense fallback={<ActivityIndicator size="large" />}>
+				<View style={styles.pageContainer}>
+					<ScrollView>
+						<View
 							style={{
-								...styles.errorMsg,
-								backgroundColor: errorBackColor,
+								alignItems: "center",
 							}}
-							hasError={usernameUpdated}
-							message={errorMsg}
-						/>
-						<IndiviudalForm
-							containerStyle={{ alignItems: "center" }}
-							label="Email:"
-							labelStyle={{
-								...profileStyles.userField,
-								fontWeight: "bold",
-							}}
-							labelValueHidden={false}
-							labelValue={accCtx.email}
-							labelValueStyle={profileStyles.userField}
-							placeholder="Please enter new email"
-							onChangeText={updateEmailHander}
-							inputPromptStyle={{
-								...FormStyle.formInput,
-								width: customWidth,
-							}}
-							submitText="Update Email"
-							submitHandler={submitEmail}
-							submitStyle={profileStyles.submitButton}
-						/>
-						<TextError
+						>
+							<IndiviudalForm
+								containerStyle={{ alignItems: "center" }}
+								label="Username:"
+								labelStyle={{
+									...profileStyles.userField,
+									fontWeight: "bold",
+								}}
+								labelValueHidden={false}
+								labelValue={accCtx.username}
+								labelValueStyle={profileStyles.userField}
+								placeholder="Please enter new username"
+								onChangeText={updateUsernameHandler}
+								inputPromptStyle={{
+									...FormStyle.formInput,
+									width: customWidth,
+								}}
+								submitText="Update Username"
+								submitHandler={submitUsername}
+								submitStyle={profileStyles.submitButton}
+							/>
+							<TextError
+								style={{
+									...styles.errorMsg,
+									backgroundColor: errorBackColor,
+								}}
+								hasError={usernameUpdated}
+								message={errorMsg}
+							/>
+							<IndiviudalForm
+								containerStyle={{ alignItems: "center" }}
+								label="Email:"
+								labelStyle={{
+									...profileStyles.userField,
+									fontWeight: "bold",
+								}}
+								labelValueHidden={false}
+								labelValue={accCtx.email}
+								labelValueStyle={profileStyles.userField}
+								placeholder="Please enter new email"
+								onChangeText={updateEmailHander}
+								inputPromptStyle={{
+									...FormStyle.formInput,
+									width: customWidth,
+								}}
+								submitText="Update Email"
+								submitHandler={submitEmail}
+								submitStyle={profileStyles.submitButton}
+							/>
+							<TextError
+								style={{
+									...styles.errorMsg,
+									backgroundColor: errorBackColor,
+								}}
+								hasError={emailUpdated}
+								message={errorMsg}
+							/>
+							<IndiviudalForm
+								containerStyle={{ alignItems: "center" }}
+								label="Password:"
+								labelStyle={{
+									...profileStyles.userField,
+									fontWeight: "bold",
+								}}
+								labelValueHidden={true}
+								placeholder="Please enter new Password"
+								onChangeText={updatePaswordHandler}
+								inputPromptStyle={{
+									...FormStyle.formInput,
+									width: customWidth,
+								}}
+								submitText="Update Password"
+								submitHandler={submitPassword}
+								submitStyle={profileStyles.submitButton}
+							/>
+							<TextError
+								style={{
+									...styles.errorMsg,
+									backgroundColor: errorBackColor,
+								}}
+								hasError={passwordUpdated}
+								message={errorMsg}
+							/>
+						</View>
+						<Text
 							style={{
-								...styles.errorMsg,
-								backgroundColor: errorBackColor,
-							}}
-							hasError={emailUpdated}
-							message={errorMsg}
-						/>
-						<IndiviudalForm
-							containerStyle={{ alignItems: "center" }}
-							label="Password:"
-							labelStyle={{
-								...profileStyles.userField,
+								fontSize: 30,
 								fontWeight: "bold",
+								textAlign: "center",
 							}}
-							labelValueHidden={true}
-							placeholder="Please enter new Password"
-							onChangeText={updatePaswordHandler}
-							inputPromptStyle={{
-								...FormStyle.formInput,
-								width: customWidth,
-							}}
-							submitText="Update Password"
-							submitHandler={submitPassword}
-							submitStyle={profileStyles.submitButton}
-						/>
-						<TextError
+						>
+							Recent Recipes
+						</Text>
+						<View
 							style={{
-								...styles.errorMsg,
-								backgroundColor: errorBackColor,
+								...recentRecipesBorders,
+								...profileStyles.recentRecipes,
+								padding: width < 700 ? 0 : 3,
 							}}
-							hasError={passwordUpdated}
-							message={errorMsg}
-						/>
-					</View>
-					<Text
-						style={{
-							fontSize: 30,
-							fontWeight: "bold",
-							textAlign: "center",
-						}}
-					>
-						Recent Recipes
-					</Text>
-					<View
-						style={{
-							...recentRecipesBorders,
-							...profileStyles.recentRecipes,
-							padding: width < 700 ? 0 : 3,
-						}}
-					>
-						{recentRecipes.length > 0 ? (<RecipesArray
-							data={recentRecipes}
-							renderItem={({ item }) => (
-								<RecipeCover
-									key={item.id}
-									width={300}
-									height={300}
-									item={item}
+						>
+							{recentRecipes.length > 0 ? (
+								<RecipesArray
+									data={recentRecipes}
+									renderItem={({ item }) => (
+										<RecipeCover
+											key={item.id}
+											width={300}
+											height={300}
+											item={item}
+										/>
+									)}
 								/>
+							) : (
+								<ActivityIndicator size="large" />
 							)}
-						/>) : (
-							<ActivityIndicator size="large" />
-						)}
-					</View>
-				</ScrollView>
-			</View>
-		</Suspense>
+						</View>
+					</ScrollView>
+				</View>
+			</Suspense>
+		</View>
 	);
 }

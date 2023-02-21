@@ -4,8 +4,9 @@ export const NavBarStyle = StyleSheet.create({
 	container: {
 		backgroundColor: "#fd5d00",
 		flexDirection: "row",
-		height: 9.671875,
+		height: 75,
 		padding: 10,
-        justifyContent: "space-around"
+        justifyContent: "space-between",
+		alignItems: "center"
 	},
 });

@@ -127,8 +127,61 @@ export default function RecipeList(props) {
 						item={item}
 					/>
 				)}
-				onEndReached={loadMoreRecipes}
-				onEndReachedThreshold={2}
+
+				/**
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * For devices that can render more than 2 columns, a button that the user manually clicks to load results
+				 * is needed because the onreachend event keeps on being called repeatedly when displaying items in a 
+				 * `grid`.
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				// onEndReached={loadMoreRecipes}
+				// onEndReachedThreshold={2}
 				extraData={recipes}
 			/>
 		</View>

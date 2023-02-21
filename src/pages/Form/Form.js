@@ -1,11 +1,19 @@
 import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	Pressable,
+	Text,
+	useWindowDimensions,
+	View,
+} from "react-native";
 import { styles } from "../../AppStyles";
 import { FormStyle } from "./FormStyles";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import { CsrfCtx } from "../../context/CsrfToken";
 import { AccountCtx } from "../../context/account";
+import NavBar from "../../components/NavBar/NavBar";
+import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
 
 const FormField = lazy(() => import("../../components/FormField/FormField"));
 const TextError = lazy(() => import("../../components/TextError/TextError"));
@@ -38,6 +46,7 @@ export default function Form({ route, navigation }) {
 	const [formValid, setFormValid] = useState(true);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [mount, setMount] = useState(true);
+	const [screenWidth, setScreenWidth] = useState(useWindowDimensions().width);
 	const [fieldWidth, setFieldWidth] = useState({
 		width: "25%",
 		minWidth: "25%",
@@ -48,7 +57,7 @@ export default function Form({ route, navigation }) {
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
 
-		if (Platform.OS != "web") {
+		if (screenWidth < 700) {
 			setFieldWidth({
 				width: "50%",
 				minWidth: "50%",
@@ -166,39 +175,52 @@ export default function Form({ route, navigation }) {
 	}
 
 	return (
-		<Suspense fallback={<ActivityIndicator size="large" />}>
-			<View style={{ ...styles.pageContainer, alignItems: "center" }}>
-				<UserEmailForms
-					toLogin={toLogin}
-					usernameHandler={usernameHandler}
-					emailHandler={emailHandler}
-					containerStyle={fieldWidth}
-					labelStyle={FormStyle.formLabel}
-					inputStyle={{
-						...FormStyle.formInput,
-						borderColor: formValid ? "black" : "red",
-					}}
-				/>
-				<FormField
-					label={"Password:"}
-					placeholder={"Please enter password:"}
-					isPassword={true}
-					onChangeTextHandler={passwordHandler}
-					containerStyle={fieldWidth}
-					labelStyle={FormStyle.formLabel}
-					inputStyle={{
-						...FormStyle.formInput,
-						borderColor: formValid ? "black" : "red",
-					}}
-				/>
-				<SubmitButton />
+		<View>
+			<NavBar
+				routeName={route.name}
+				style={NavBarStyle.container}
+			/>
+			<View
+				style={{
+					...styles.pageContainer,
+					paddingTop: "5%",
+					alignItems: "center",
+					height: useWindowDimensions().height,
+				}}
+			>
+				<Suspense fallback={<ActivityIndicator size="large" />}>
+					<UserEmailForms
+						toLogin={toLogin}
+						usernameHandler={usernameHandler}
+						emailHandler={emailHandler}
+						containerStyle={fieldWidth}
+						labelStyle={FormStyle.formLabel}
+						inputStyle={{
+							...FormStyle.formInput,
+							borderColor: formValid ? "black" : "red",
+						}}
+					/>
+					<FormField
+						label={"Password:"}
+						placeholder={"Please enter password:"}
+						isPassword={true}
+						onChangeTextHandler={passwordHandler}
+						containerStyle={fieldWidth}
+						labelStyle={FormStyle.formLabel}
+						inputStyle={{
+							...FormStyle.formInput,
+							borderColor: formValid ? "black" : "red",
+						}}
+					/>
+					<SubmitButton />
 
-				<TextError
-					hasError={!formValid}
-					style={styles.errorMsg}
-					message={errorMsg}
-				/>
+					<TextError
+						hasError={!formValid}
+						style={styles.errorMsg}
+						message={errorMsg}
+					/>
+				</Suspense>
 			</View>
-		</Suspense>
+		</View>
 	);
 }

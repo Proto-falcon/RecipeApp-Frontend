@@ -11,21 +11,18 @@ import {
 } from "react-native";
 import { styles } from "../../AppStyles";
 import { SearchOptionsStyle } from "./SearchOptionsStyle";
-import { Link } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { AccountCtx } from "../../context/account";
 import { CsrfCtx } from "../../context/CsrfToken";
 import { RecipeResultsCtx } from "../../context/Context";
 import RecipeMetaOptions from "../../RecipeMetaOptions";
 import BACKEND from "../../ipaddressesports/BackEndIP";
+import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
+import NavBar from "../../components/NavBar/NavBar";
 const RecipeOption = lazy(() =>
 	import("../../components/RecipeOption/RecipeOption")
 );
 const TextError = lazy(() => import("../../components/TextError/TextError"));
-const NavBar = lazy(() => import("../../components/NavBar/NavBar"));
-const LogOutButton = lazy(() =>
-	import("../../components/Buttons/LogOutButton")
-);
 const SelectedOptions = lazy(() =>
 	import("../../components/SelectedOptions/SelectedOptions")
 );
@@ -39,10 +36,11 @@ const WrappingItems = lazy(() =>
  * @param {{ navigation: * }} props
  * @returns Search Options Page
  */
-export default function SearchOptions({ navigation }) {
+export default function SearchOptions({ route, navigation }) {
 	const ctx = useContext(RecipeResultsCtx);
 	const accCtx = useContext(AccountCtx);
 	const authCtx = useContext(CsrfCtx);
+	// const navCtx = useContext(NavigationCtx);
 
 	const [width, setWidth] = useState(useWindowDimensions().width);
 
@@ -74,63 +72,8 @@ export default function SearchOptions({ navigation }) {
 		accCtx.checkCred(authCtx, BACKEND);
 	}, [mount]);
 
-	// Changes the navigation bar if the user is logged in or not.
-	useEffect(() => {
-		if (accCtx.loggedIn) {
-			navigation.setOptions({
-				headerLeft: () => (
-					<NavBar>
-						<Link
-							style={styles.navLink}
-							to={{ screen: "Home" }}
-						>
-							<Text style={styles.navText}>Home</Text>
-						</Link>
-						<Link
-							style={styles.navLink}
-							to={{ screen: "Profile" }}
-						>
-							<Text style={styles.navText}>Profile</Text>
-						</Link>
-						<Text style={styles.usernameText}>
-							Username: {accCtx.username}
-						</Text>
-					</NavBar>
-				),
-				headerRight: () => <LogOutButton />,
-			});
-		} else {
-			navigation.setOptions({
-				headerLeft: () => (
-					<Link
-						style={styles.navLink}
-						to={{ screen: "Home" }}
-					>
-						<Text style={styles.navText}>Home</Text>
-					</Link>
-				),
-				headerRight: () => (
-					<NavBar>
-						<Link
-							to={{ screen: "Login", params: { toLogin: true } }}
-							style={styles.navLink}
-						>
-							<Text style={styles.navText}>Login</Text>
-						</Link>
-						<Link
-							to={{
-								screen: "SignUp",
-								params: { toLogin: false },
-							}}
-							style={styles.navLink}
-						>
-							<Text style={styles.navText}>Sign Up</Text>
-						</Link>
-					</NavBar>
-				),
-			});
-		}
-	}, [accCtx.loggedIn]);
+	// Updates route
+	// useEffect(() => {navCtx.updateRoute(route.name)}, [route.name]);
 
 	/**
 	 * Updates the selected options
@@ -317,6 +260,11 @@ export default function SearchOptions({ navigation }) {
 	}
 
 	return (
+		<View>
+			<NavBar
+				routeName={route.name}
+				style={NavBarStyle.container}
+			/>
 		<Suspense fallback={<ActivityIndicator size="large"/>}>
 			<View
 				style={{
@@ -415,5 +363,6 @@ export default function SearchOptions({ navigation }) {
 				</View>
 			</View>
 		</Suspense>
+		</View>
 	);
 }
