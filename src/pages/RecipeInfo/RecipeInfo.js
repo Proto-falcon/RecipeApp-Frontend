@@ -66,13 +66,13 @@ export default function RecipeInfo({ route, navigation }) {
 	useEffect(() => {testLink()}, [source]);
 
 	return (
-		<View>
+		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
 				style={NavBarStyle.container}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
-				<View style={{ ...styles.pageContainer, alignItems: "center" }}>
+				<View style={{ alignItems: "center" }}>
 					<Text
 						style={{
 							textAlign: "center",
@@ -108,7 +108,7 @@ export default function RecipeInfo({ route, navigation }) {
 					>
 						<Text style={{ fontWeight: "bold", fontSize: 15 }}>{workingLink ? "Source": "No Source"}</Text>
 					</Pressable>
-					<Text style={{fontWeight: "bold", fontSize: 15, textAlign: "center" }}>Ingredients</Text>
+					<Text style={{fontWeight: "bold", fontSize: 20, textDecorationLine: "underline", textAlign: "center" }}>Ingredients</Text>
 					<FlatList
 						data={ingredients}
 						renderItem={({ item, index }) => (

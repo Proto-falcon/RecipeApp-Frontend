@@ -1,5 +1,5 @@
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { RecipeResultsCtx } from "../../context/Context";
 import { SearchStyle } from "./SearchStyle";
 import { styles } from "../../AppStyles";
@@ -31,7 +31,7 @@ export default function Search({ route, navigation }) {
 	}, [isMounted]);
 
 	return (
-		<View>
+		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
 				style={NavBarStyle.container}
@@ -39,7 +39,6 @@ export default function Search({ route, navigation }) {
 			<Suspense fallback={<ActivityIndicator size="large" />}>
 				<View
 					style={{
-						...styles.pageContainer,
 						...SearchStyle.container,
 					}}
 				>
@@ -49,7 +48,6 @@ export default function Search({ route, navigation }) {
 							setData={ctx.addRecipes}
 							recipeLink={ctx.moreRecipesLink}
 							showEnd={true}
-							navigation={navigation}
 						/>
 					)}
 				</View>

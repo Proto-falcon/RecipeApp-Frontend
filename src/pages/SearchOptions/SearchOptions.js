@@ -260,7 +260,7 @@ export default function SearchOptions({ route, navigation }) {
 	}
 
 	return (
-		<View>
+		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
 				style={NavBarStyle.container}
@@ -269,7 +269,6 @@ export default function SearchOptions({ route, navigation }) {
 			<View
 				style={{
 					...SearchOptionsStyle.container,
-					...styles.pageContainer,
 					width: width,
 					height: useWindowDimensions().height
 				}}

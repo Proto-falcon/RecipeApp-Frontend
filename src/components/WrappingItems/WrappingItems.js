@@ -2,11 +2,10 @@ import { View } from "react-native";
 
 /**
  * List built for displaying items horizontally that can automatically
- * wraps to the next line. However, it's not built to display lots of items
- * e.g., 100s or 1,000s of items displayed in one screen.
+ * wraps to the next line.
  * 
  * @param {{
- *      style: any,
+ *      style?: any,
  *      items: any[],
  *      renderItems: ({item: any, index: number}) => JSX.Element
  * }} props 

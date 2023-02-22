@@ -2,11 +2,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import {
 	FlatList,
+	Pressable,
+	ScrollView,
+	Text,
 	useWindowDimensions,
 	View,
 } from "react-native";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import RecipeCover from "../RecipeCover/RecipeCover";
+import WrappingItems from "../WrappingItems/WrappingItems";
 
 /**
  * Renders a list of Recipes
@@ -23,20 +27,43 @@ import RecipeCover from "../RecipeCover/RecipeCover";
  *  recipeLink?: string,
  *  setData?: (recipeResults: Array<recipe>, addRecipesLink: string) => void,
  * 	showEnd: boolean,
- * 	navigation: any
  * }} props
  * @returns List of Recipes
  */
 export default function RecipeList(props) {
-	const [recipes, setRecipes] = useState(props.recipes); // List of recipes
-	const [isMoreRecipes, setIsMoreRecipes] = useState(true);
+	
+	const NoMoreRecipes = {
+		id: "",
+		name: "No more Recipes",
+		image: "",
+		ingredients: [],
+		source: "",
+	};
+
+	const [recipes, setRecipes] = useState(props.recipes);
 	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
+	const [isMoreRecipes, setIsMoreRecipes] = useState(true);
 
 	/**
-	 * Forces it to update the list because some reason
-	 * it doens't register it on first render
+	 * Updates the `recipes` array and checks if there are more recipes to load
+	 *
+	 * When the Search page is the first screen loaded it will never `unmount` while navigating
+	 * to other screens then back to it because `react-navigation` it keeps previously loaded screens mounted.
+	 * If you go back to a previously loaded screen it will unmount the screens that you loaded after that screen.
 	 */
 	useEffect(() => {
+		if (
+			props.recipes.length < 20 &&
+			(props.recipeLink !== "" || props.recipeLink !== undefined) &&
+			props.recipes[0].id !== ""
+		) {
+			setLoadedAllRecipes(true);
+			setRecipes(() => {
+				let recArray = props.recipes;
+				recArray.push(NoMoreRecipes);
+				return recArray;
+			});
+		}
 		setRecipes(props.recipes);
 	}, [props.recipes]);
 
@@ -51,7 +78,7 @@ export default function RecipeList(props) {
 			if (
 				props.recipeLink != undefined &&
 				props.recipeLink != "" &&
-				isMoreRecipes
+				!loadedAllRecipes
 			) {
 				try {
 					let response = await axios({
@@ -63,127 +90,90 @@ export default function RecipeList(props) {
 					let content = await response.data;
 					props.setData(content.results, content.addRecipesLink);
 				} catch (error) {
-					setIsMoreRecipes(false);
+					// setIsMoreRecipes(false);
+					setLoadedAllRecipes(true);
 				}
 			} else if (
 				recipes[recipes.length - 1].id != "" &&
-				!loadedAllRecipes &&
+				loadedAllRecipes &&
 				props.showEnd
 			) {
 				setRecipes((prevState) => {
 					let newState = [...prevState];
-					newState.push({
-						id: "",
-						name: "No more Recipes",
-						image: "",
-						ingredients: [],
-						source: "",
-					});
+					newState.push(NoMoreRecipes);
 
 					return newState;
 				});
-				setLoadedAllRecipes((prevState) => !prevState);
+				// setLoadedAllRecipes(true);
 			}
 		}
 	}
 
 	/**
-	 * Checks if the scroll view is near the bottom or not
+	 * Renders the load more button to load more recipes
 	 *
-	 * @param {{
-	 * 		layoutMeasurement: {width: number, height: number},
-	 * 		contentOffset: {x: number, y: number},
-	 * 		contentSize: {width: number, height: number}
-	 * }} event
-	 * @returns `true` for near the bottom, `false` otherwise
+	 * @param {{loadMore: boolean}} props
+	 * @returns Load more button
 	 */
-	function isCloseToBottom({
-		layoutMeasurement,
-		contentOffset,
-		contentSize,
-	}) {
-		const paddingToBottom = contentSize.height * 0.2;
-		return (
-			layoutMeasurement.height + contentOffset.y >=
-			contentSize.height - paddingToBottom
-		);
+	function LoadMoreRecipesButton({ loadMore }) {
+		if (loadMore) {
+			return (
+				<Pressable
+					style={{ backgroundColor: "ff6e00", padding: 5 }}
+					onPress={loadMoreRecipes}
+				>
+					<Text
+						style={{
+							textAlign: "center",
+							fontWeight: "bold",
+							fontSize: 50,
+						}}
+					>
+						Load More
+					</Text>
+				</Pressable>
+			);
+		}
 	}
 
-	let listStyle = {
-		flex: 1,
-		width: "100%",
-		alignItems: "center"
-	};
+	const width = useWindowDimensions().width;
+	const numCols = Math.floor(width / 300);
 
 	return (
-		<View style={listStyle}>
-			<FlatList
-				numColumns={Math.round(useWindowDimensions().width / 300)}
-				data={recipes}
-				renderItem={({ item }) => (
-					<RecipeCover
-						height={300}
-						width={300}
-						item={item}
+		<View style={{width: "100%"}}>
+			{numCols <= 1 ? (
+				<FlatList
+					data={recipes}
+					renderItem={({ item }) => (
+						<RecipeCover
+							height={300}
+							width={"100%"}
+							item={item}
+						/>
+					)}
+					onEndReached={loadMoreRecipes}
+					onEndReachedThreshold={2}
+					extraData={recipes}
+				/>
+			) : (
+				<ScrollView>
+					<WrappingItems
+						items={recipes}
+						renderItems={({ item, index }) => (
+							<RecipeCover
+								key={index}
+								height={300}
+								width={300}
+								item={item}
+								flexGrow={1}
+							/>
+						)}
 					/>
-				)}
-
-				/**
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * For devices that can render more than 2 columns, a button that the user manually clicks to load results
-				 * is needed because the onreachend event keeps on being called repeatedly when displaying items in a 
-				 * `grid`.
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 */
-				// onEndReached={loadMoreRecipes}
-				// onEndReachedThreshold={2}
-				extraData={recipes}
-			/>
+					<LoadMoreRecipesButton
+						loadMore={!loadedAllRecipes && props.recipeLink != ""}
+					/>
+				</ScrollView>
+			)}
 		</View>
 	);
 }

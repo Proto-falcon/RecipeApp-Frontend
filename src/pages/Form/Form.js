@@ -175,17 +175,15 @@ export default function Form({ route, navigation }) {
 	}
 
 	return (
-		<View>
+		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
 				style={NavBarStyle.container}
 			/>
 			<View
 				style={{
-					...styles.pageContainer,
 					paddingTop: "5%",
 					alignItems: "center",
-					height: useWindowDimensions().height,
 				}}
 			>
 				<Suspense fallback={<ActivityIndicator size="large" />}>

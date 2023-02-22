@@ -242,15 +242,17 @@ export default function Profile({ route, navigation }) {
 		borderBottomWidth: width < 700 ? 0 : 2,
 	};
 
-	let customWidth = width < 700 ? width * 0.7 : width * 0.3;
+	const customWidth = width < 700 ? width * 0.7 : width * 0.3;
+	const numCols = Math.floor(width / 300);
+
 	return (
-		<View>
+		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
 				style={NavBarStyle.container}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
-				<View style={styles.pageContainer}>
+				<View>
 					<ScrollView>
 						<View
 							style={{
@@ -354,6 +356,7 @@ export default function Profile({ route, navigation }) {
 								...recentRecipesBorders,
 								...profileStyles.recentRecipes,
 								padding: width < 700 ? 0 : 3,
+								paddingBottom: numCols <= 1 ? 50 : 0
 							}}
 						>
 							{recentRecipes.length > 0 ? (
@@ -362,7 +365,7 @@ export default function Profile({ route, navigation }) {
 									renderItem={({ item }) => (
 										<RecipeCover
 											key={item.id}
-											width={300}
+											width={numCols <= 1 ? "100%" : 300}
 											height={300}
 											item={item}
 										/>

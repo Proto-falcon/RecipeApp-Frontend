@@ -21,17 +21,17 @@ import { recipeListStyle } from "../RecipeList/RecipeListStyle";
  * @param {{
  *      item: recipe,
  * 		height: number | string,
- * 		width: number | string
+ * 		width: number | string,
+ * 		flexGrow?: number
  * }} prop
  * @returns A recipe with image and name
  */
-export default function RecipeCover({ item, height,  width}) {
+export default function RecipeCover({ item, height,  width, flexGrow}) {
 
     const navigation = useNavigation();
 	const authCtx = useContext(CsrfCtx);
 	const accCtx = useContext(AccountCtx);
 
-	// const [width, setWidth] = useState(useWindowDimensions().width);
 	const [image, setImage] = useState(() => {
         if (item.image !== "") {
             return { uri: item.image, height: "100%", width: "100%" };
@@ -68,7 +68,7 @@ export default function RecipeCover({ item, height,  width}) {
 
 	if (item.source === "") {
 		return (
-			<View key={item.id} style={{width: width, height: height}}>
+			<View key={item.id} style={{width: width, height: height, flexGrow: flexGrow}}>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
 						style={recipeListStyle.foodPic}
@@ -83,7 +83,7 @@ export default function RecipeCover({ item, height,  width}) {
 			<Pressable
 				key={item.id}
 				onPress={() => toRecipeInfo(item)}
-				style={{width: width, height: height}}
+				style={{width: width, height: height, flexGrow: flexGrow}}
 			>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
