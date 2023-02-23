@@ -28,7 +28,7 @@ export default function Search({ route, navigation }) {
 	// Checks the user has logged in when the app boots up
 	useEffect(() => {
 		accCtx.checkCred(csrfCtx, BACKEND);
-	}, [isMounted]);
+	}, [isMounted, ctx.isLoading, route.name]);
 
 	return (
 		<View style={styles.pageContainer}>
