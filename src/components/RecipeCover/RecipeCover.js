@@ -47,7 +47,7 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 	 * @param {recipe} recipe
 	 */
 	async function toRecipeInfo(recipe) {
-		if (accCtx.loggedIn) {
+		// if (accCtx.loggedIn) {
 			try {
 				await axios.post(
 					`${BACKEND}/api/setRecentRecipe/`,
@@ -62,7 +62,7 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 					}
 				);
 			} catch (error) {}
-		}
+		// }
 		navigation.navigate("RecipeInfo", { id: recipe.id });
 	}
 

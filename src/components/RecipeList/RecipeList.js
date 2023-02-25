@@ -26,7 +26,6 @@ import WrappingItems from "../WrappingItems/WrappingItems";
  * 	recipes: Array<recipe>,
  *  recipeLink?: string,
  *  setData?: (recipeResults: Array<recipe>, addRecipesLink: string) => void,
- * 	showEnd: boolean,
  * }} props
  * @returns List of Recipes
  */
@@ -42,7 +41,6 @@ export default function RecipeList(props) {
 
 	const [recipes, setRecipes] = useState(props.recipes);
 	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
-	const [isMoreRecipes, setIsMoreRecipes] = useState(true);
 
 	/**
 	 * Updates the `recipes` array and checks if there are more recipes to load
@@ -90,7 +88,6 @@ export default function RecipeList(props) {
 					let content = await response.data;
 					props.setData(content.results, content.addRecipesLink);
 				} catch (error) {
-					// setIsMoreRecipes(false);
 					setLoadedAllRecipes(true);
 				}
 			} else if (
@@ -104,7 +101,6 @@ export default function RecipeList(props) {
 
 					return newState;
 				});
-				// setLoadedAllRecipes(true);
 			}
 		}
 	}
