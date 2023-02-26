@@ -49,7 +49,7 @@ export default function RecipeInfo({ route, navigation }) {
 			let response = await axios.get(`${BACKEND}/api/getRecipe/?id=${route.params.id}`);
 			let content = await response.data;
 			setName(content.name);
-			setImage({uri: `${BACKEND}/${content.image}` ,height: "100%", width: "100%"});
+			setImage({uri: `${BACKEND}${content.image}` ,height: "100%", width: "100%"});
 			setIngredients(content.ingredients);
 			setSource(content.source);
 		} catch (error) {
@@ -112,7 +112,7 @@ export default function RecipeInfo({ route, navigation }) {
 						data={ingredients}
 						renderItem={({ item, index }) => (
 							<Text style={{textAlign: "left"}}>
-								{index + 1}. {item.text}
+								{index + 1}. {item}
 							</Text>
 						)}
 					/>
