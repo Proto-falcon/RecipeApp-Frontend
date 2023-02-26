@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { Image, Pressable, Text, useWindowDimensions, View } from "react-native";
-import { AccountCtx } from "../../context/account";
+import { Image, Pressable, Text, View } from "react-native";
 import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "../RecipeList/RecipeListStyle";
@@ -13,7 +12,7 @@ import { recipeListStyle } from "../RecipeList/RecipeListStyle";
  * @typedef {{
  *  	id: string,
  * 		name: string,
- *  	image: any,
+ *  	image: string,
  *  	ingredients: Array<string>,
  * 		source: string
  * 	}} recipe
@@ -30,11 +29,15 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 
     const navigation = useNavigation();
 	const authCtx = useContext(CsrfCtx);
-	const accCtx = useContext(AccountCtx);
 
 	const [image, setImage] = useState(() => {
         if (item.image !== "") {
-            return { uri: item.image, height: "100%", width: "100%" };
+			let image = item.image;
+			if (!image.startsWith("http")) {
+				return { uri: `${BACKEND}${item.image}`, height: "100%", width: "100%" };
+			} else {
+				return { uri: item.image, height: "100%", width: "100%" };
+			}
         } else {
             return require("../../../assets/favicon.png");
         }
@@ -47,7 +50,6 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 	 * @param {recipe} recipe
 	 */
 	async function toRecipeInfo(recipe) {
-		// if (accCtx.loggedIn) {
 			try {
 				await axios.post(
 					`${BACKEND}/api/setRecentRecipe/`,
@@ -62,7 +64,6 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 					}
 				);
 			} catch (error) {}
-		// }
 		navigation.navigate("RecipeInfo", { id: recipe.id });
 	}
 

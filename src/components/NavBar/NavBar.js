@@ -42,12 +42,12 @@ export default function NavBar(props) {
 	/**
 	 * Components when the user is logged in or not.
 	 *
-	 * @param {{ isLoggedIn: boolean }} props
+	 * @param {{ isLoggedIn: boolean, route: string }} props
 	 * @returns {JSX.Element} Renders either the profile button & username
 	 * when logged in or the sign up and log in button when not logged in.
 	 */
 	function AccountStatus(props) {
-		if (props.isLoggedIn) {
+		if (props.isLoggedIn && props.route !== "Profile") {
 			return (
 				<>
 					<Link
@@ -134,7 +134,7 @@ export default function NavBar(props) {
 		<View style={props.style}>
 			<View style={{ flexDirection: "row" }}>
 				<HomeButton show={props.routeName !== "Home"} />
-				<AccountStatus isLoggedIn={accCtx.loggedIn} />
+				<AccountStatus isLoggedIn={accCtx.loggedIn} route={props.routeName} />
 			</View>
 			<View style={{ flexDirection: "row" }}>
 				<SignInOrOut isLoggedIn={accCtx.loggedIn} route={props.routeName} />

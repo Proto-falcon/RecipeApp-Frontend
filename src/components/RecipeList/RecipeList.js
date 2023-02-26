@@ -17,7 +17,7 @@ import WrappingItems from "../WrappingItems/WrappingItems";
  * @typedef {{
  *  	id: string,
  * 		name: string,
- *  	image: any,
+ *  	image: string,
  *  	ingredients: Array<string>,
  * 		source: string
  * 	}} recipe
