@@ -9,11 +9,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons/faMagnifyingGlass";
 import { faBan } from "@fortawesome/free-solid-svg-icons/faBan";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
-// import Search from "./pages/Search/Search";
-// import SearchOptions from "./pages/SearchOptions/SearchOptions";
-// import RecipeInfo from "./pages/RecipeInfo/RecipeInfo";
-// import Form from "./pages/Form/Form";
-// import Profile from "./pages/Profile/Profile";
+import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
 
 const Search = lazy(() => import("./pages/Search/Search"));
 const SearchOptions = lazy(() => import("./pages/SearchOptions/SearchOptions"));
@@ -21,7 +17,7 @@ const RecipeInfo = lazy(() => import("./pages/RecipeInfo/RecipeInfo"));
 const Form = lazy(() => import("./pages/Form/Form"));
 const Profile = lazy(() => import("./pages/Profile/Profile"));
 
-library.add(faMagnifyingGlass, faBan, faXmark);
+library.add(faMagnifyingGlass, faBan, faXmark, faStar);
 
 /**
  * Render the enter APP UI and use React navigation to

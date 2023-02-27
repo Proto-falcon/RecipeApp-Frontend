@@ -2,6 +2,7 @@ import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Platform,
 	ScrollView,
 	Text,
 	useWindowDimensions,
@@ -35,6 +36,14 @@ export default function Profile({ route, navigation }) {
 	const authCtx = useContext(CsrfCtx);
 	const accCtx = useContext(AccountCtx);
 
+	const NoRecentRecipes = {
+		id: "",
+		name: "No Recent Recipes",
+		image: "",
+		ingredients: [],
+		source: "",
+	};
+
 	const [newUsername, setNewUserName] = useState("");
 	const [newEmail, setNewEmail] = useState("");
 	const [newPassword, setNewPassword] = useState("");
@@ -44,6 +53,7 @@ export default function Profile({ route, navigation }) {
 	const [passwordUpdated, setPasswordUpdated] = useState(false);
 
 	const [recentRecipes, setRecentRecipes] = useState([]);
+	const [responded, setResponded] = useState(false);
 
 	const [errorBackColor, setErrorBackColor] = useState("red");
 	const [errorMsg, setErrorMsg] = useState("");
@@ -57,6 +67,12 @@ export default function Profile({ route, navigation }) {
 		try {
 			let response = await axios.get(`${BACKEND}/api/getRecentRecipes/`);
 			let content = await response.data;
+			setResponded(true);
+
+			if (content["results"].length <= 0) {
+				setRecentRecipes([NoRecentRecipes]);
+			}
+			
 			setRecentRecipes(content["results"]);
 		} catch (error) {}
 	}
@@ -249,7 +265,10 @@ export default function Profile({ route, navigation }) {
 		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
-				style={NavBarStyle.container}
+				style={{
+					...NavBarStyle.container,
+					alignItems: Platform.OS === "web" ? "center" : "flex-end",
+				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
 				<View>
@@ -359,7 +378,7 @@ export default function Profile({ route, navigation }) {
 								paddingBottom: numCols <= 1 ? 50 : 0
 							}}
 						>
-							{recentRecipes.length > 0 ? (
+							{(recentRecipes.length > 0) || (responded) ? (
 								<RecipesArray
 									data={recentRecipes}
 									renderItem={({ item }) => (

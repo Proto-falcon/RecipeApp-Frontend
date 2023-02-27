@@ -67,7 +67,7 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 		navigation.navigate("RecipeInfo", { id: recipe.id });
 	}
 
-	if (item.source === "") {
+	if (item.id === "") {
 		return (
 			<View key={item.id} style={{width: width, height: height, flexGrow: flexGrow}}>
 				<View style={recipeListStyle.foodPicContainer}>

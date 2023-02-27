@@ -3,6 +3,7 @@ import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
+	Platform,
 	Pressable,
 	Text,
 	TextInput,
@@ -263,7 +264,10 @@ export default function SearchOptions({ route, navigation }) {
 		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
-				style={NavBarStyle.container}
+				style={{
+					...NavBarStyle.container,
+					alignItems: Platform.OS === "web" ? "center" : "flex-end",
+				}}
 			/>
 		<Suspense fallback={<ActivityIndicator size="large"/>}>
 			<View

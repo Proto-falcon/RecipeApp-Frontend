@@ -7,6 +7,5 @@ export const NavBarStyle = StyleSheet.create({
 		flexBasis: 75,
 		padding: 10,
         justifyContent: "space-between",
-		alignItems: "center"
 	},
 });

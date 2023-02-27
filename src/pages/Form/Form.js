@@ -2,6 +2,7 @@ import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Platform,
 	Pressable,
 	Text,
 	useWindowDimensions,
@@ -178,7 +179,10 @@ export default function Form({ route, navigation }) {
 		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
-				style={NavBarStyle.container}
+				style={{
+					...NavBarStyle.container,
+					alignItems: Platform.OS === "web" ? "center" : "flex-end",
+				}}
 			/>
 			<View
 				style={{

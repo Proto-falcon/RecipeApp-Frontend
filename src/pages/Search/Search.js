@@ -1,5 +1,5 @@
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import { RecipeResultsCtx } from "../../context/Context";
 import { SearchStyle } from "./SearchStyle";
 import { styles } from "../../AppStyles";
@@ -34,7 +34,10 @@ export default function Search({ route, navigation }) {
 		<View style={styles.pageContainer}>
 			<NavBar
 				routeName={route.name}
-				style={NavBarStyle.container}
+				style={{
+					...NavBarStyle.container,
+					alignItems: Platform.OS === "web" ? "center" : "flex-end",
+				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
 				<View
