@@ -21,7 +21,9 @@ export const RecipeResultsCtx = createContext({
 	getRecipes: (recipeList) => {}, // Create a list of recipes
 	addRecipes: (recipeList, link) => {}, // Add recipes to the current list
 	isLoading: false,
-	setIsLoading: (boolean) => {}
+	setIsLoading: (boolean) => {},
+	currentRecipeURI: "",
+	setCurrentRecipeURI: (newUri) => {}
 });
 
 /**
@@ -44,6 +46,10 @@ export default function ContextProvider(props) {
 	]);
 
 	const [excluded, setExcluded] = useState([]);
+	// link to recipes
+	const [addRecipesLink, setAddRecipesLink] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [currentRecipeUri, setCurrentRecipeUri] = useState("");
 
 	/**
 	 * Updates the `excluded` state
@@ -53,11 +59,6 @@ export default function ContextProvider(props) {
 	function changeExcluded(newExcludeState) {
 		setExcluded(newExcludeState);
 	}
-
-	// link to recipes
-	const [addRecipesLink, setAddRecipesLink] = useState("");
-
-	const [isLoading, setIsLoading] = useState(false);
 
 	/**
 	 * Sets link to fetch more recipes
@@ -126,6 +127,17 @@ export default function ContextProvider(props) {
 	}
 
 	/**
+	 * Updates the current recipe URI
+	 * 
+	 * @param {string} newUri 
+	 */
+	function updateCurrentRecipeUri(newUri) {
+		if (newUri !== "") {
+			setCurrentRecipeUri(newUri);
+		}
+	}
+
+	/**
 	 * Wraps the whole app in a context provider
 	 */
 	return (
@@ -141,7 +153,9 @@ export default function ContextProvider(props) {
 						setAddRecipesLink: setAddLink,
 						addRecipes: addRecipes,
 						isLoading: isLoading,
-						setIsLoading: setIsLoading
+						setIsLoading: setIsLoading,
+						currentRecipeURI: currentRecipeUri,
+						setCurrentRecipeURI: updateCurrentRecipeUri
 					}}
 				>
 					{props.children}

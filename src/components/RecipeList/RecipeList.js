@@ -37,6 +37,7 @@ export default function RecipeList(props) {
 		image: "",
 		ingredients: [],
 		source: "",
+		rating: "0.0"
 	};
 
 	const [recipes, setRecipes] = useState(props.recipes);

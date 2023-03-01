@@ -13,13 +13,16 @@ export const recipeListStyle = StyleSheet.create(
             resizeMode: "contain"
         },
 
-        foodName:
-        {
+        nameRatingContainer: {
             marginTop: 20,
             marginBottom: 20,
-            fontWeight: "bold",
-            padding: 10,
             borderWidth: 1,
+            padding: 10,
+        },
+
+        foodName:
+        {
+            fontWeight: "bold",
             textAlign: "center"
         }
     });

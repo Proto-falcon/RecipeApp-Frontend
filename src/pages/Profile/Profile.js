@@ -60,6 +60,12 @@ export default function Profile({ route, navigation }) {
 
 	const [mount, setMount] = useState(true);
 
+	// Fetches the recently viewed recipes by the user from our own database
+	useEffect(() => {
+		accCtx.checkCred(authCtx, BACKEND);
+		getRecentRecipes();
+	}, [mount, route.key]);
+
 	/**
 	 * Fetches most recent recipes that the user has viewd
 	 */
@@ -76,11 +82,6 @@ export default function Profile({ route, navigation }) {
 			setRecentRecipes(content["results"]);
 		} catch (error) {}
 	}
-
-	// Calls when `Form` component is mounted
-	useEffect(() => {
-		getRecentRecipes();
-	}, [mount]);
 
 	/**
 	 * Sets the new username

@@ -19,6 +19,7 @@ import { CsrfCtx } from "../../context/CsrfToken";
 import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { recipeInfoStyles } from "./RecipeInfoStyle";
+import { RecipeResultsCtx } from "../../context/Context";
 
 const WrappingItems = lazy(() =>
 	import("../../components/WrappingItems/WrappingItems")
@@ -27,17 +28,31 @@ const WrappingItems = lazy(() =>
 export default function RecipeInfo({ route, navigation }) {
 	const accCtx = useContext(AccountCtx);
 	const authCtx = useContext(CsrfCtx);
-
+	const recipeResultsCtx = useContext(RecipeResultsCtx);
+	
 	const [workingLink, setWorkingLink] = useState(false);
 	const [mounted, setMounted] = useState(true);
 	const [name, setName] = useState("Recipe Unavailable");
 	const [image, setImage] = useState(require("../../../assets/favicon.png"));
 	const [ingredients, setIngredients] = useState([]);
 	const [source, setSource] = useState("");
-
+	
 	const [ratingRange, setRatingRange] = useState([0, 1]);
 	const [rating, setRating] = useState("0.0");
 	const [selectedRating, setSelectedRating] = useState(0);
+
+	// Fetches the recipes from the backend
+	useEffect(() => {
+		accCtx.checkCred(authCtx, BACKEND);
+		if (recipeResultsCtx.currentRecipeURI !== "" && recipeResultsCtx.currentRecipeURI !== route.params.id) {
+			navigation.setParams({id: recipeResultsCtx.currentRecipeURI});
+		}
+		getRecipe();
+	}, [mounted, route.key, recipeResultsCtx.currentRecipeURI, accCtx.loggedIn, route.params.id]);
+
+	useEffect(() => {
+		testLink();
+	}, [source]);
 
 	/**
 	 * Updates the rating range where `min` is the minimum value & `max` is the max value.
@@ -155,7 +170,6 @@ export default function RecipeInfo({ route, navigation }) {
 			setIngredients(content.ingredients);
 			setSource(content.source);
 			updateRatingRange(content.minRating, content.maxRating);
-			console.log(content.userRating)
 			if (accCtx.loggedIn) {
 				setSelectedRating(content.userRating);
 			}
@@ -166,16 +180,6 @@ export default function RecipeInfo({ route, navigation }) {
 			}
 		} catch (error) {}
 	}
-
-	// Fetches the recipes from the backend
-	useEffect(() => {
-		accCtx.checkCred(authCtx, BACKEND);
-		getRecipe();
-	}, [mounted, route.params]);
-
-	useEffect(() => {
-		testLink();
-	}, [source]);
 
 	return (
 		<View style={styles.pageContainer}>
@@ -189,12 +193,7 @@ export default function RecipeInfo({ route, navigation }) {
 			<Suspense fallback={<ActivityIndicator size="large" />}>
 				<View style={{ alignItems: "center" }}>
 					<Text
-						style={{
-							textAlign: "center",
-							fontSize: 30,
-							fontWeight: "bold",
-							textDecorationLine: "underline",
-						}}
+						style={recipeInfoStyles.recipeName}
 					>
 						{name}
 					</Text>
@@ -210,12 +209,7 @@ export default function RecipeInfo({ route, navigation }) {
 						/>
 					</View>
 					<View
-						style={{
-							flexDirection: "row",
-							flexWrap: "wrap",
-							justifyContent: "space-evenly",
-							width: "70%",
-						}}
+						style={recipeInfoStyles.srcRatingContainer}
 					>
 						<Pressable
 							style={recipeInfoStyles.source}
@@ -235,11 +229,7 @@ export default function RecipeInfo({ route, navigation }) {
 								{rating}
 							</Text>
 							<View
-								style={{
-									width: "100%",
-									alignItems: "center",
-									borderWidth: 2,
-								}}
+								style={recipeInfoStyles.ratingsContainer}
 							>
 								<WrappingItems items={ratingRange} renderItems={renderRatingOptions} />
 							</View>
@@ -247,12 +237,7 @@ export default function RecipeInfo({ route, navigation }) {
 					</View>
 					<View style={{ paddingTop: 10 }}>
 						<Text
-							style={{
-								fontWeight: "bold",
-								fontSize: 20,
-								textDecorationLine: "underline",
-								textAlign: "center",
-							}}
+							style={recipeInfoStyles.ingredientsHeader}
 						>
 							Ingredients
 						</Text>

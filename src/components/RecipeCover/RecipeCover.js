@@ -5,6 +5,8 @@ import { Image, Pressable, Text, View } from "react-native";
 import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "../RecipeList/RecipeListStyle";
+import { RecipeResultsCtx } from "../../context/Context";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 /**
  * Renders a recipe with in image and name
@@ -14,7 +16,8 @@ import { recipeListStyle } from "../RecipeList/RecipeListStyle";
  * 		name: string,
  *  	image: string,
  *  	ingredients: Array<string>,
- * 		source: string
+ * 		source: string,
+ * 		rating: string
  * 	}} recipe
  *
  * @param {{
@@ -25,51 +28,66 @@ import { recipeListStyle } from "../RecipeList/RecipeListStyle";
  * }} prop
  * @returns A recipe with image and name
  */
-export default function RecipeCover({ item, height,  width, flexGrow}) {
-
-    const navigation = useNavigation();
+export default function RecipeCover({ item, height, width, flexGrow }) {
+	const navigation = useNavigation();
 	const authCtx = useContext(CsrfCtx);
+	const recipeResultsCtx = useContext(RecipeResultsCtx);
+	const [rating, setRating] = useState(() => {
+		if (item.rating === null) {
+			return "No Rating";
+		} else {
+			return item.rating;
+		}
+	});
 
 	const [image, setImage] = useState(() => {
-        if (item.image !== "") {
+		if (item.image !== "") {
 			let image = item.image;
 			if (!image.startsWith("http")) {
-				return { uri: `${BACKEND}${item.image}`, height: "100%", width: "100%" };
+				return {
+					uri: `${BACKEND}${item.image}`,
+					height: "100%",
+					width: "100%",
+				};
 			} else {
 				return { uri: item.image, height: "100%", width: "100%" };
 			}
-        } else {
-            return require("../../../assets/favicon.png");
-        }
-    });
+		} else {
+			return require("../../../assets/favicon.png");
+		}
+	});
 
-    /**
+	/**
 	 * Adds going to be viewed recipe in recents for the logged in user
 	 * before going to recipe page.
 	 *
 	 * @param {recipe} recipe
 	 */
 	async function toRecipeInfo(recipe) {
-			try {
-				await axios.post(
-					`${BACKEND}/api/setRecentRecipe/`,
-					{ id: recipe.id },
-					{
-						headers: {
-							"X-CSRFToken": authCtx.token,
-							credentials: "include",
-						},
-						withCredentials: true,
-						responseType: "json",
-					}
-				);
-			} catch (error) {}
+		try {
+			await axios.post(
+				`${BACKEND}/api/setRecentRecipe/`,
+				{ id: recipe.id },
+				{
+					headers: {
+						"X-CSRFToken": authCtx.token,
+						credentials: "include",
+					},
+					withCredentials: true,
+					responseType: "json",
+				}
+			);
+		} catch (error) {}
+		recipeResultsCtx.setCurrentRecipeURI(recipe.id);
 		navigation.navigate("RecipeInfo", { id: recipe.id });
 	}
 
 	if (item.id === "") {
 		return (
-			<View key={item.id} style={{width: width, height: height, flexGrow: flexGrow}}>
+			<View
+				key={item.id}
+				style={{ width: width, height: height, flexGrow: flexGrow }}
+			>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
 						style={recipeListStyle.foodPic}
@@ -84,7 +102,7 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 			<Pressable
 				key={item.id}
 				onPress={() => toRecipeInfo(item)}
-				style={{width: width, height: height, flexGrow: flexGrow}}
+				style={{ width: width, height: height, flexGrow: flexGrow }}
 			>
 				<View style={recipeListStyle.foodPicContainer}>
 					<Image
@@ -92,7 +110,10 @@ export default function RecipeCover({ item, height,  width, flexGrow}) {
 						source={image}
 					/>
 				</View>
-				<Text style={recipeListStyle.foodName}>{item.name}</Text>
+				<View style={recipeListStyle.nameRatingContainer}>
+					<Text style={recipeListStyle.foodName}>{item.name}</Text>
+					<Text style={recipeListStyle.foodName}><FontAwesomeIcon icon={"star"} /> {rating}</Text>
+				</View>
 			</Pressable>
 		);
 	}
