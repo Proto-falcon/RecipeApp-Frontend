@@ -16,7 +16,7 @@ import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import NavBar from "../../components/NavBar/NavBar";
 import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
-const RecipesArray = lazy(() => import("../../components/RecipesArray/RecipesArray"));
+const ItemsArray = lazy(() => import("../../components/ItemsArray/ItemsArray"));
 const RecipeCover = lazy(() => import("../../components/RecipeCover/RecipeCover"));
 const IndiviudalForm = lazy(() =>
 	import("../../components/IndividualForm/IndividualForm")
@@ -380,9 +380,9 @@ export default function Profile({ route, navigation }) {
 							}}
 						>
 							{(recentRecipes.length > 0) || (responded) ? (
-								<RecipesArray
+								<ItemsArray
 									data={recentRecipes}
-									renderItem={({ item }) => (
+									renderItem={({ item, index }) => (
 										<RecipeCover
 											key={item.id}
 											width={numCols <= 1 ? "100%" : 300}

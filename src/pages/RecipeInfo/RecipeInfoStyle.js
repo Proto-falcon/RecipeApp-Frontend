@@ -1,47 +1,66 @@
 import { StyleSheet } from "react-native";
 
-export const recipeInfoStyles = StyleSheet.create(
-    {
-        recipeName: {
-            textAlign: "center",
-            fontSize: 30,
-            fontWeight: "bold",
-            textDecorationLine: "underline",
-        },
+export const recipeInfoStyles = StyleSheet.create({
+	recipeName: {
+		textAlign: "center",
+		fontSize: 30,
+		fontWeight: "bold",
+		textDecorationLine: "underline",
+	},
 
-        srcRatingContainer: {
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-evenly",
-            alignItems: "flex-end",
-            width: "70%",
-        },
+	srcRatingContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-evenly",
+		alignItems: "flex-end",
+		width: "70%",
+	},
 
-        source: {
-            backgroundColor: "#fd5d00",
-            margin: 10,
-            padding: 10,
-            borderRadius: 20,
-            alignItems: "center",
-            maxHeight: 45
-        },
+	source: {
+		backgroundColor: "#fd5d00",
+		margin: 10,
+		padding: 10,
+		borderRadius: 20,
+		alignItems: "center",
+		maxHeight: 45,
+	},
 
-        ratingsContainer: {
-            width: "100%",
-            alignItems: "center",
-            borderWidth: 2,
-        },
+	cautionsText: {
+		color: "#951831",
+		fontWeight: "bold",
+	},
 
-        ratingButton: {
-            width: 33,
-            padding: 10,
-        },
+	ratingsContainer: {
+		alignItems: "center",
+		borderWidth: 2,
+	},
 
-        ingredientsHeader: {
-            fontWeight: "bold",
-            fontSize: 20,
-            textDecorationLine: "underline",
-            textAlign: "center",
-        }
-    }
-);
+	cautionsHeader: {
+		fontSize: 30,
+		textDecorationLine: "underline",
+		textAlign: "center",
+	},
+
+	nutrientRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+
+	nutrientCell: {
+		padding: 3,
+		flex: 1,
+		flexBasis: 150,
+	},
+
+	ratingButton: {
+		width: 33,
+		padding: 10,
+	},
+
+	ingredientsHeader: {
+		fontWeight: "bold",
+		fontSize: 20,
+		textDecorationLine: "underline",
+		textAlign: "center",
+	},
+});

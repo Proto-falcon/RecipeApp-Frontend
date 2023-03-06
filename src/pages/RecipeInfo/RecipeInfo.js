@@ -2,11 +2,11 @@ import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
-	FlatList,
 	Image,
 	Linking,
 	Platform,
 	Pressable,
+	ScrollView,
 	Text,
 	View,
 } from "react-native";
@@ -24,19 +24,32 @@ import { RecipeResultsCtx } from "../../context/Context";
 const WrappingItems = lazy(() =>
 	import("../../components/WrappingItems/WrappingItems")
 );
+const ItemsArray = lazy(() => import("../../components/ItemsArray/ItemsArray"));
 
 export default function RecipeInfo({ route, navigation }) {
 	const accCtx = useContext(AccountCtx);
 	const authCtx = useContext(CsrfCtx);
 	const recipeResultsCtx = useContext(RecipeResultsCtx);
-	
+
 	const [workingLink, setWorkingLink] = useState(false);
 	const [mounted, setMounted] = useState(true);
 	const [name, setName] = useState("Recipe Unavailable");
 	const [image, setImage] = useState(require("../../../assets/favicon.png"));
 	const [ingredients, setIngredients] = useState([]);
 	const [source, setSource] = useState("");
-	
+	const [cautions, setCautions] = useState([]);
+
+	const [categories, setCategories] = useState({});
+
+	// const [diets, setDiets] = useState([]);
+	// const [healths, setHealths] = useState([]);
+	// const [cuisines, setCuisines] = useState([]);
+	// const [meals, setMeals] = useState([]);
+	// const [dishes, setDishes] = useState([]);
+
+	const [calories, setCalories] = useState("0.0");
+	const [nutrients, setNutrients] = useState([]);
+
 	const [ratingRange, setRatingRange] = useState([0, 1]);
 	const [rating, setRating] = useState("0.0");
 	const [selectedRating, setSelectedRating] = useState(0);
@@ -44,11 +57,20 @@ export default function RecipeInfo({ route, navigation }) {
 	// Fetches the recipes from the backend
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
-		if (recipeResultsCtx.currentRecipeURI !== "" && recipeResultsCtx.currentRecipeURI !== route.params.id) {
-			navigation.setParams({id: recipeResultsCtx.currentRecipeURI});
+		if (
+			recipeResultsCtx.currentRecipeURI !== "" &&
+			recipeResultsCtx.currentRecipeURI !== route.params.id
+		) {
+			navigation.setParams({ id: recipeResultsCtx.currentRecipeURI });
 		}
 		getRecipe();
-	}, [mounted, route.key, recipeResultsCtx.currentRecipeURI, accCtx.loggedIn, route.params.id]);
+	}, [
+		mounted,
+		// route.key,
+		recipeResultsCtx.currentRecipeURI,
+		// accCtx.loggedIn,
+		route.params.id,
+	]);
 
 	useEffect(() => {
 		testLink();
@@ -134,9 +156,119 @@ export default function RecipeInfo({ route, navigation }) {
 	 */
 	function RenderIngredients({ item, index }) {
 		return (
-			<Text style={{ textAlign: "left" }}>
+			<Text
+				key={index}
+				style={{ textAlign: "left" }}
+			>
 				{index + 1}. {item}
 			</Text>
+		);
+	}
+
+	/**
+	 * Renders a cautions text
+	 *
+	 * @param {{item: string, index: number}} param
+	 * @returns
+	 */
+	function renderCautions({ item, index }) {
+		return (
+			<Text
+				key={index}
+				style={{
+					color: "white",
+					fontWeight: "bold",
+					textAlign: "center",
+					flex: 1,
+					maxWidth: "40%",
+					padding: 3,
+					fontSize: 20,
+				}}
+			>
+				{item}
+			</Text>
+		);
+	}
+
+	/**
+	 * @typedef {{
+	 * 		label: string,
+	 * 		quantity: number,
+	 * 		unit: string
+	 * } | string} nutrient
+	 *
+	 * @param {{item: nutrient, index: number}} param
+	 * @returns
+	 */
+	function renderNutrients({ item, index }) {
+
+		if (typeof item.quantity === "number") {
+			return (
+				<View
+					key={index}
+					style={{
+						...recipeInfoStyles.nutrientRow,
+						borderBottomWidth: 1
+					}}
+				>
+					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "left", borderRightWidth: 2 }}>
+						{item.label}
+					</Text>
+					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "right" }}>
+						{item.quantity.toFixed(1)}
+						{item.unit}
+					</Text>
+				</View>
+			);
+		} else {
+			return (
+				<View
+					key={index}
+					style={{
+						flexDirection: "row",
+						justifyContent: "space-between",
+						borderBottomWidth: 2
+					}}
+				>
+					<Text style={{padding: 3, flex: 1, flexBasis: 150, textAlign: "left", borderRightWidth: 2 }}>
+						{item.label}
+					</Text>
+					<Text style={{padding: 3, flex: 1, flexBasis: 150, textAlign: "right" }}>
+						{item.quantity}
+						{item.unit}
+					</Text>
+				</View>
+			);
+		}
+
+	}
+
+	/**
+	 * Renders a list of sub categories in wider category
+	 * 
+	 * @param {{
+	 * 		item: {
+	 * 			category: string,
+	 * 			values: string[]
+	 * 		},
+	 * 		index: number
+	 * }} param
+	 * @returns List of sub categories that the recipe is in
+	 */
+	function renderCategories({item, index}) {
+		return (
+			<View key={index} style={{borderBottomWidth: 1}}>
+				<Text style={{...recipeInfoStyles.recipeName, fontSize: 20}}>{item.category}</Text>
+				<View style={{alignItems: "center"}}>
+					<WrappingItems
+						// style={{width: "100%"}}
+						items={item.values}
+						renderItems={({item, index}) => (
+								<Text key={index} style={{padding: 3}}>{item}</Text>
+						)}
+					/>
+				</View>
+			</View>
 		);
 	}
 
@@ -169,6 +301,29 @@ export default function RecipeInfo({ route, navigation }) {
 			});
 			setIngredients(content.ingredients);
 			setSource(content.source);
+			setCautions(content.cautions);
+
+			setCategories([
+				{category: "Diets", values: content.diets,},
+				{category: "Healths", values: content.healths},
+				{category: "Cuisines", values: content.cuisineTypes},
+				{category: "Meals Types", values: content.mealTypes},
+				{category: "Dish Types", values: content.dishTypes}
+			]);
+
+			let nutrientsArray = [];
+			content.nutrients.forEach((nutrient) => {
+				if (nutrient.label === "Energy") {
+					setCalories(
+						`${Math.round(nutrient.quantity)} ${nutrient.unit}`
+					);
+				} else {
+					nutrientsArray.push(nutrient);
+				}
+			});
+
+			setNutrients(nutrientsArray);
+
 			updateRatingRange(content.minRating, content.maxRating);
 			if (accCtx.loggedIn) {
 				setSelectedRating(content.userRating);
@@ -191,12 +346,8 @@ export default function RecipeInfo({ route, navigation }) {
 				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
-				<View style={{ alignItems: "center" }}>
-					<Text
-						style={recipeInfoStyles.recipeName}
-					>
-						{name}
-					</Text>
+				<ScrollView contentContainerStyle={{ alignItems: "center" }}>
+					<Text style={recipeInfoStyles.recipeName}>{name}</Text>
 					<View
 						style={{
 							...recipeListStyle.foodPicContainer,
@@ -208,9 +359,7 @@ export default function RecipeInfo({ route, navigation }) {
 							source={image}
 						/>
 					</View>
-					<View
-						style={recipeInfoStyles.srcRatingContainer}
-					>
+					<View style={recipeInfoStyles.srcRatingContainer}>
 						<Pressable
 							style={recipeInfoStyles.source}
 							onPress={async () => {
@@ -225,28 +374,65 @@ export default function RecipeInfo({ route, navigation }) {
 						</Pressable>
 						<View style={{ alignItems: "center" }}>
 							<Text style={{ fontSize: 20 }}>
-								<FontAwesomeIcon icon={"star"} /> Rating:{" "}
+								<FontAwesomeIcon icon={"star"} /> Overal Rating:{" "}
 								{rating}
 							</Text>
-							<View
-								style={recipeInfoStyles.ratingsContainer}
-							>
-								<WrappingItems items={ratingRange} renderItems={renderRatingOptions} />
+							<View style={recipeInfoStyles.ratingsContainer}>
+								<WrappingItems
+									items={ratingRange}
+									renderItems={renderRatingOptions}
+								/>
 							</View>
 						</View>
 					</View>
-					<View style={{ paddingTop: 10 }}>
-						<Text
-							style={recipeInfoStyles.ingredientsHeader}
+					<View style={{alignItems: "center"}}>
+						{cautions.length > 0 ? <><Text
+							style={{
+								...recipeInfoStyles.cautionsText,
+								...recipeInfoStyles.cautionsHeader,
+							}}
 						>
+							Cautions
+						</Text>
+						<WrappingItems
+							style={{
+								borderWidth: 2,
+								backgroundColor: "#951831",
+							}}
+							items={cautions}
+							renderItems={renderCautions}
+						/></> : undefined}
+						<Text
+							style={{...recipeInfoStyles.recipeName, textDecorationLine: "none"}}
+						>
+							Calories: {calories}
+						</Text>
+						<View style={{borderWidth: 2, borderBottomWidth: 1}}>
+							<ItemsArray
+								data={categories}
+								renderItem={renderCategories}
+							/>
+						</View>
+					</View>
+					<View style={{ paddingTop: 10 }}>
+						<Text style={recipeInfoStyles.ingredientsHeader}>
 							Ingredients
 						</Text>
-						<FlatList
+						<ItemsArray
 							data={ingredients}
 							renderItem={RenderIngredients}
 						/>
 					</View>
-				</View>
+					<View>
+						<Text style={{...recipeInfoStyles.recipeName}}>Nutrient Information</Text>
+					</View>
+					<View style={{borderWidth: 2, marginTop: 10}}>
+						<ItemsArray
+							data={[{label: "Label", quantity: "Quantity", unit: "(Units)"}].concat(nutrients)}
+							renderItem={renderNutrients}
+						/>
+					</View>
+				</ScrollView>
 			</Suspense>
 		</View>
 	);

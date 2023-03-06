@@ -54,7 +54,7 @@ export default function RecipeList(props) {
 		if (
 			props.recipes.length < 20 &&
 			(props.recipeLink !== "" || props.recipeLink !== undefined) &&
-			props.recipes[0].id !== ""
+			props.recipes[props.recipes.length - 1].id !== ""
 		) {
 			setLoadedAllRecipes(true);
 			setRecipes(() => {

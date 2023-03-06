@@ -30,7 +30,7 @@ const HEALTHS = [
 	"No-oil-added",
 	"paleo",
 	"peanut-free",
-	"pecatarian",
+	"Pescatarian",
 	"pork-free",
 	"red-meat-free",
 	"sesame-free",
