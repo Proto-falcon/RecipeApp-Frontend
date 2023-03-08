@@ -152,7 +152,7 @@ export default function RecipeInfo({ route, navigation }) {
 		return (
 			<Text
 				key={index}
-				style={{ textAlign: "left" }}
+				style={{ textAlign: "center", width: "100%" }}
 			>
 				{index + 1}. {item}
 			</Text>
@@ -195,20 +195,30 @@ export default function RecipeInfo({ route, navigation }) {
 	 * @returns
 	 */
 	function renderNutrients({ item, index }) {
-
 		if (typeof item.quantity === "number") {
 			return (
 				<View
 					key={index}
 					style={{
 						...recipeInfoStyles.nutrientRow,
-						borderBottomWidth: 1
+						borderBottomWidth: 1,
 					}}
 				>
-					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "left", borderRightWidth: 2 }}>
+					<Text
+						style={{
+							...recipeInfoStyles.nutrientCell,
+							textAlign: "left",
+							borderRightWidth: 2,
+						}}
+					>
 						{item.label}
 					</Text>
-					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "right" }}>
+					<Text
+						style={{
+							...recipeInfoStyles.nutrientCell,
+							textAlign: "right",
+						}}
+					>
 						{item.quantity.toFixed(1)}
 						{item.unit}
 					</Text>
@@ -221,25 +231,37 @@ export default function RecipeInfo({ route, navigation }) {
 					style={{
 						flexDirection: "row",
 						justifyContent: "space-between",
-						borderBottomWidth: 2
+						borderBottomWidth: 2,
 					}}
 				>
-					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "left", fontWeight: "bold", borderRightWidth: 2 }}>
+					<Text
+						style={{
+							...recipeInfoStyles.nutrientCell,
+							textAlign: "left",
+							fontWeight: "bold",
+							borderRightWidth: 2,
+						}}
+					>
 						{item.label}
 					</Text>
-					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "right", fontWeight: "bold" }}>
+					<Text
+						style={{
+							...recipeInfoStyles.nutrientCell,
+							textAlign: "right",
+							fontWeight: "bold",
+						}}
+					>
 						{item.quantity}
 						{item.unit}
 					</Text>
 				</View>
 			);
 		}
-
 	}
 
 	/**
 	 * Renders a list of sub categories in wider category
-	 * 
+	 *
 	 * @param {{
 	 * 		item: {
 	 * 			category: string,
@@ -249,16 +271,28 @@ export default function RecipeInfo({ route, navigation }) {
 	 * }} param
 	 * @returns List of sub categories that the recipe is in
 	 */
-	function renderCategories({item, index}) {
+	function renderCategories({ item, index }) {
 		return (
-			<View key={index} style={{borderBottomWidth: 1}}>
-				<Text style={{...recipeInfoStyles.recipeName, fontSize: 20}}>{item.category}</Text>
-				<View style={{justifyContent: "center", alignItems: "center"}}>
+			<View
+				key={index}
+				style={{ borderBottomWidth: 1 }}
+			>
+				<Text style={{ ...recipeInfoStyles.recipeName, fontSize: 20 }}>
+					{item.category}
+				</Text>
+				<View
+					style={{ justifyContent: "center", alignItems: "center" }}
+				>
 					<WrappingItems
-						style={{justifyContent: "center"}}
+						style={{ justifyContent: "center" }}
 						items={item.values}
-						renderItems={({item, index}) => (
-								<Text key={index} style={{padding: 3}}>{item}</Text>
+						renderItems={({ item, index }) => (
+							<Text
+								key={index}
+								style={{ padding: 3 }}
+							>
+								{item}
+							</Text>
 						)}
 					/>
 				</View>
@@ -298,11 +332,11 @@ export default function RecipeInfo({ route, navigation }) {
 			setCautions(content.cautions);
 
 			setCategories([
-				{category: "Diets", values: content.diets,},
-				{category: "Healths", values: content.healths},
-				{category: "Cuisines", values: content.cuisineTypes},
-				{category: "Meals Types", values: content.mealTypes},
-				{category: "Dish Types", values: content.dishTypes}
+				{ category: "Diets", values: content.diets },
+				{ category: "Healths", values: content.healths },
+				{ category: "Cuisines", values: content.cuisineTypes },
+				{ category: "Meals Types", values: content.mealTypes },
+				{ category: "Dish Types", values: content.dishTypes },
 			]);
 
 			let nutrientsArray = [];
@@ -341,7 +375,11 @@ export default function RecipeInfo({ route, navigation }) {
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
 				<ScrollView contentContainerStyle={{ alignItems: "center" }}>
-					<Text style={recipeInfoStyles.recipeName}>{name}</Text>
+					<Text
+						style={{ ...recipeInfoStyles.recipeName, fontSize: 50 }}
+					>
+						{name}
+					</Text>
 					<View
 						style={{
 							...recipeListStyle.foodPicContainer,
@@ -379,50 +417,100 @@ export default function RecipeInfo({ route, navigation }) {
 							</View>
 						</View>
 					</View>
-					<View style={{alignItems: "center"}}>
-						{cautions.length > 0 ? <><Text
-							style={{
-								...recipeInfoStyles.cautionsText,
-								...recipeInfoStyles.cautionsHeader,
-							}}
-						>
-							Cautions
+					<View
+						style={{
+							paddingTop: 10,
+							alignItems: "center",
+							width:
+								useWindowDimensions().width < 700
+									? "100%"
+									: "50%",
+						}}
+					>
+						<Text style={recipeInfoStyles.recipeName}>
+							Ingredients
 						</Text>
-						<WrappingItems
+						<View
 							style={{
 								borderWidth: 2,
-								backgroundColor: "#951831",
+								width: "100%"
 							}}
-							items={cautions}
-							renderItems={renderCautions}
-						/></> : undefined}
+						>
+							<ItemsArray
+								data={ingredients}
+								renderItem={RenderIngredients}
+							/>
+						</View>
+					</View>
+					<View style={{ alignItems: "center" }}>
+						{cautions.length > 0 ? (
+							<>
+								<Text
+									style={{
+										...recipeInfoStyles.cautionsText,
+										...recipeInfoStyles.cautionsHeader,
+									}}
+								>
+									Cautions
+								</Text>
+								<WrappingItems
+									style={{
+										borderWidth: 2,
+										backgroundColor: "#951831",
+									}}
+									items={cautions}
+									renderItems={renderCautions}
+								/>
+							</>
+						) : undefined}
 						<Text
-							style={{...recipeInfoStyles.recipeName, textDecorationLine: "none"}}
+							style={{
+								...recipeInfoStyles.recipeName,
+								textDecorationLine: "none",
+							}}
 						>
 							Calories: {calories}
 						</Text>
-						<View style={{borderWidth: 2, borderBottomWidth: 0, width: useWindowDimensions().width < 700 ? "100%" : "50%"}}>
+						<View
+							style={{
+								borderWidth: 2,
+								borderBottomWidth: 0,
+								width:
+									useWindowDimensions().width < 700
+										? "100%"
+										: "50%",
+							}}
+						>
 							<ItemsArray
 								data={categories}
 								renderItem={renderCategories}
 							/>
 						</View>
 					</View>
-					<View style={{ paddingTop: 10 }}>
-						<Text style={recipeInfoStyles.ingredientsHeader}>
-							Ingredients
-						</Text>
-						<ItemsArray
-							data={ingredients}
-							renderItem={RenderIngredients}
-						/>
-					</View>
 					<View>
-						<Text style={{...recipeInfoStyles.recipeName}}>Nutrient Information</Text>
+						<Text style={{ ...recipeInfoStyles.recipeName }}>
+							Nutrient Information
+						</Text>
 					</View>
-					<View style={{borderWidth: 2, borderBottomWidth: 0, marginTop: 10, width: useWindowDimensions().width < 700 ? "100%" : "50%"}}>
+					<View
+						style={{
+							borderWidth: 2,
+							borderBottomWidth: 0,
+							marginTop: 10,
+							width:
+								useWindowDimensions().width < 700
+									? "100%"
+									: "50%",
+						}}
+					>
 						<ItemsArray
-							data={[{label: "Label", quantity: "Quantity", unit: "(Units)"}].concat(nutrients)}
+							data={[
+								{
+									label: "Label",
+									quantity: "Quantity",
+									unit: "(Units)",
+								},
+							].concat(nutrients)}
 							renderItem={renderNutrients}
 						/>
 					</View>
