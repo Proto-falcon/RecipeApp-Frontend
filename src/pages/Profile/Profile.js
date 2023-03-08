@@ -17,7 +17,9 @@ import BACKEND from "../../ipaddressesports/BackEndIP";
 import NavBar from "../../components/NavBar/NavBar";
 import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
 const ItemsArray = lazy(() => import("../../components/ItemsArray/ItemsArray"));
-const RecipeCover = lazy(() => import("../../components/RecipeCover/RecipeCover"));
+const RecipeCover = lazy(() =>
+	import("../../components/RecipeCover/RecipeCover")
+);
 const IndiviudalForm = lazy(() =>
 	import("../../components/IndividualForm/IndividualForm")
 );
@@ -36,7 +38,7 @@ export default function Profile({ route, navigation }) {
 	const authCtx = useContext(CsrfCtx);
 	const accCtx = useContext(AccountCtx);
 
-	const NoRecentRecipes = {
+	const NoRecipes = {
 		id: "",
 		name: "No Recent Recipes",
 		image: "",
@@ -54,6 +56,8 @@ export default function Profile({ route, navigation }) {
 
 	const [recentRecipes, setRecentRecipes] = useState([]);
 	const [responded, setResponded] = useState(false);
+	const [ratedRecipes, setRatedRecipes] = useState([]);
+	const [ratedResponded, setRatedResponded] = useState(false);
 
 	const [errorBackColor, setErrorBackColor] = useState("red");
 	const [errorMsg, setErrorMsg] = useState("");
@@ -64,6 +68,7 @@ export default function Profile({ route, navigation }) {
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
 		getRecentRecipes();
+		getMostRatedRecipes();
 	}, [mount, route.key]);
 
 	/**
@@ -76,10 +81,26 @@ export default function Profile({ route, navigation }) {
 			setResponded(true);
 
 			if (content["results"].length <= 0) {
-				setRecentRecipes([NoRecentRecipes]);
+				setRecentRecipes([NoRecipes]);
+			} else {
+				setRecentRecipes(content["results"]);
 			}
-			
-			setRecentRecipes(content["results"]);
+		} catch (error) {}
+	}
+
+	async function getMostRatedRecipes() {
+		try {
+			let response = await axios.get(
+				`${BACKEND}/api/getMostRatedRecipes/`
+			);
+			let content = await response.data;
+			setRatedResponded(true);
+
+			if (content["results"].length <= 0) {
+				setRatedRecipes([{ ...NoRecipes, name: "No Recipes Rated" }]);
+			} else {
+				setRatedRecipes(content["results"]);
+			}
 		} catch (error) {}
 	}
 
@@ -253,7 +274,7 @@ export default function Profile({ route, navigation }) {
 		setErrorMsg(message);
 	}
 
-	const recentRecipesBorders = {
+	const recipesBorders = {
 		borderLeftWidth: width < 700 ? 0 : 2,
 		borderRightWidth: width < 700 ? 0 : 2,
 		borderBottomWidth: width < 700 ? 0 : 2,
@@ -261,6 +282,44 @@ export default function Profile({ route, navigation }) {
 
 	const customWidth = width < 700 ? width * 0.7 : width * 0.3;
 	const numCols = Math.floor(width / 300);
+	
+	
+	/**
+	 * Renders a list of recipes
+	 * 
+	 * @param {{
+	 * 		header: string,
+	 * 		headerStyle: any,
+	 * 		listContainerStyle: any,
+	 * 		data: any[],
+	 * 		renderItems: (param: {item: any, index: number}) => void,
+	 * 		responded: any
+	 * }} props 
+	 * @returns List of recipes with title header
+	*/
+	function DisplayRecipes(props) {
+		return (
+			<>
+				<Text
+					style={props.headerStyle}
+				>
+					{props.header}
+				</Text>
+				<View
+					style={props.listContainerStyle}
+				>
+					{props.data.length > 0 || props.responded ? (
+						<ItemsArray
+							data={props.data}
+							renderItem={props.renderItems}
+						/>
+					) : (
+						<ActivityIndicator size="large" />
+					)}
+				</View>
+			</>
+		);
+	}
 
 	return (
 		<View style={styles.pageContainer}>
@@ -362,7 +421,7 @@ export default function Profile({ route, navigation }) {
 								message={errorMsg}
 							/>
 						</View>
-						<Text
+						{/* <Text
 							style={{
 								fontSize: 30,
 								fontWeight: "bold",
@@ -373,13 +432,13 @@ export default function Profile({ route, navigation }) {
 						</Text>
 						<View
 							style={{
-								...recentRecipesBorders,
+								...recipesBorders,
 								...profileStyles.recentRecipes,
 								padding: width < 700 ? 0 : 3,
-								paddingBottom: numCols <= 1 ? 50 : 0
+								paddingBottom: numCols <= 1 ? 50 : 0,
 							}}
 						>
-							{(recentRecipes.length > 0) || (responded) ? (
+							{recentRecipes.length > 0 || responded ? (
 								<ItemsArray
 									data={recentRecipes}
 									renderItem={({ item, index }) => (
@@ -394,7 +453,53 @@ export default function Profile({ route, navigation }) {
 							) : (
 								<ActivityIndicator size="large" />
 							)}
-						</View>
+						</View> */}
+						<DisplayRecipes
+							headerStyle={{
+								fontSize: 30,
+								fontWeight: "bold",
+								textAlign: "center",
+							}}
+							listContainerStyle={{
+								...recipesBorders,
+								...profileStyles.recentRecipes,
+								padding: width < 700 ? 0 : 3,
+								paddingBottom: numCols <= 1 ? 50 : 0,
+							}}
+							header="Recent Recipes"
+							data={recentRecipes}
+							renderItems={({ item, index }) => (
+								<RecipeCover
+									key={item.id}
+									width={numCols <= 1 ? "100%" : 300}
+									height={300}
+									item={item}
+								/>
+							)}
+						/>
+						<DisplayRecipes
+							headerStyle={{
+								fontSize: 30,
+								fontWeight: "bold",
+								textAlign: "center",
+							}}
+							listContainerStyle={{
+								...recipesBorders,
+								...profileStyles.recentRecipes,
+								padding: width < 700 ? 0 : 3,
+								paddingBottom: numCols <= 1 ? 50 : 0,
+							}}
+							header="Most Rated Recipes"
+							data={ratedRecipes}
+							renderItems={({ item, index }) => (
+								<RecipeCover
+									key={item.id}
+									width={numCols <= 1 ? "100%" : 300}
+									height={300}
+									item={item}
+								/>
+							)}
+						/>
 					</ScrollView>
 				</View>
 			</Suspense>

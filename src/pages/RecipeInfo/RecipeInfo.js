@@ -8,6 +8,7 @@ import {
 	Pressable,
 	ScrollView,
 	Text,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import { styles } from "../../AppStyles";
@@ -41,12 +42,6 @@ export default function RecipeInfo({ route, navigation }) {
 
 	const [categories, setCategories] = useState({});
 
-	// const [diets, setDiets] = useState([]);
-	// const [healths, setHealths] = useState([]);
-	// const [cuisines, setCuisines] = useState([]);
-	// const [meals, setMeals] = useState([]);
-	// const [dishes, setDishes] = useState([]);
-
 	const [calories, setCalories] = useState("0.0");
 	const [nutrients, setNutrients] = useState([]);
 
@@ -66,9 +61,8 @@ export default function RecipeInfo({ route, navigation }) {
 		getRecipe();
 	}, [
 		mounted,
-		// route.key,
+		route.key,
 		recipeResultsCtx.currentRecipeURI,
-		// accCtx.loggedIn,
 		route.params.id,
 	]);
 
@@ -180,7 +174,7 @@ export default function RecipeInfo({ route, navigation }) {
 					fontWeight: "bold",
 					textAlign: "center",
 					flex: 1,
-					maxWidth: "40%",
+					// maxWidth: "40%",
 					padding: 3,
 					fontSize: 20,
 				}}
@@ -230,10 +224,10 @@ export default function RecipeInfo({ route, navigation }) {
 						borderBottomWidth: 2
 					}}
 				>
-					<Text style={{padding: 3, flex: 1, flexBasis: 150, textAlign: "left", borderRightWidth: 2 }}>
+					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "left", fontWeight: "bold", borderRightWidth: 2 }}>
 						{item.label}
 					</Text>
-					<Text style={{padding: 3, flex: 1, flexBasis: 150, textAlign: "right" }}>
+					<Text style={{...recipeInfoStyles.nutrientCell, textAlign: "right", fontWeight: "bold" }}>
 						{item.quantity}
 						{item.unit}
 					</Text>
@@ -259,9 +253,9 @@ export default function RecipeInfo({ route, navigation }) {
 		return (
 			<View key={index} style={{borderBottomWidth: 1}}>
 				<Text style={{...recipeInfoStyles.recipeName, fontSize: 20}}>{item.category}</Text>
-				<View style={{alignItems: "center"}}>
+				<View style={{justifyContent: "center", alignItems: "center"}}>
 					<WrappingItems
-						// style={{width: "100%"}}
+						style={{justifyContent: "center"}}
 						items={item.values}
 						renderItems={({item, index}) => (
 								<Text key={index} style={{padding: 3}}>{item}</Text>
@@ -407,7 +401,7 @@ export default function RecipeInfo({ route, navigation }) {
 						>
 							Calories: {calories}
 						</Text>
-						<View style={{borderWidth: 2, borderBottomWidth: 1}}>
+						<View style={{borderWidth: 2, borderBottomWidth: 0, width: useWindowDimensions().width < 700 ? "100%" : "50%"}}>
 							<ItemsArray
 								data={categories}
 								renderItem={renderCategories}
@@ -426,7 +420,7 @@ export default function RecipeInfo({ route, navigation }) {
 					<View>
 						<Text style={{...recipeInfoStyles.recipeName}}>Nutrient Information</Text>
 					</View>
-					<View style={{borderWidth: 2, marginTop: 10}}>
+					<View style={{borderWidth: 2, borderBottomWidth: 0, marginTop: 10, width: useWindowDimensions().width < 700 ? "100%" : "50%"}}>
 						<ItemsArray
 							data={[{label: "Label", quantity: "Quantity", unit: "(Units)"}].concat(nutrients)}
 							renderItem={renderNutrients}

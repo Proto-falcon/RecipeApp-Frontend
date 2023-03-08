@@ -77,7 +77,6 @@ const DISHTYPES = [
 	"soup",
 	"special occasions",
 	"starter",
-	// "sweets",
 ];
 
 const CUISINETYPES = [
