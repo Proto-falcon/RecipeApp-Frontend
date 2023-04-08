@@ -22,4 +22,11 @@ export const profileStyles = StyleSheet.create({
 		flexWrap: "wrap",
 		justifyContent: "center"
 	},
+
+	subHeader: {
+		fontSize: 30,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	
 });

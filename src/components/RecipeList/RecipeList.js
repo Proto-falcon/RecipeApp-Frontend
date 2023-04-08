@@ -14,14 +14,7 @@ import WrappingItems from "../WrappingItems/WrappingItems";
 
 /**
  * Renders a list of Recipes
- * @typedef {{
- *  	id: string,
- * 		name: string,
- *  	image: string,
- *  	ingredients: Array<string>,
- * 		source: string
- * 	}} recipe
- *
+ * @typedef {import("../../Constants").recipe} recipe
  * @param {{
  * 	recipes: Array<recipe>,
  *  recipeLink?: string,

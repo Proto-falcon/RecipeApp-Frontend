@@ -7,19 +7,12 @@ import BACKEND from "../../ipaddressesports/BackEndIP";
 import { recipeListStyle } from "../RecipeList/RecipeListStyle";
 import { RecipeResultsCtx } from "../../context/Context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { defaultImage } from "../../Constants";
 
 /**
  * Renders a recipe with in image and name
- *
- * @typedef {{
- *  	id: string,
- * 		name: string,
- *  	image: string,
- *  	ingredients: Array<string>,
- * 		source: string,
- * 		rating: string
- * 	}} recipe
- *
+ * 
+ * @typedef {import("../../Constants").recipe} recipe 
  * @param {{
  *      item: recipe,
  * 		height: number | string,
@@ -53,7 +46,7 @@ export default function RecipeCover({ item, height, width, flexGrow }) {
 				return { uri: item.image, height: "100%", width: "100%" };
 			}
 		} else {
-			return require("../../../assets/favicon.png");
+			return defaultImage;
 		}
 	});
 

@@ -21,6 +21,7 @@ import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { recipeInfoStyles } from "./RecipeInfoStyle";
 import { RecipeResultsCtx } from "../../context/Context";
+import { defaultImage } from "../../Constants";
 
 const WrappingItems = lazy(() =>
 	import("../../components/WrappingItems/WrappingItems")
@@ -35,12 +36,13 @@ export default function RecipeInfo({ route, navigation }) {
 	const [workingLink, setWorkingLink] = useState(false);
 	const [mounted, setMounted] = useState(true);
 	const [name, setName] = useState("Recipe Unavailable");
-	const [image, setImage] = useState(require("../../../assets/favicon.png"));
+	const [sourceName, setSourceName] = useState("Recipe Unavailable");
+	const [image, setImage] = useState(defaultImage);
 	const [ingredients, setIngredients] = useState([]);
 	const [source, setSource] = useState("");
 	const [cautions, setCautions] = useState([]);
 
-	const [categories, setCategories] = useState({});
+	const [categories, setCategories] = useState([]);
 
 	const [calories, setCalories] = useState("0.0");
 	const [nutrients, setNutrients] = useState([]);
@@ -322,11 +324,23 @@ export default function RecipeInfo({ route, navigation }) {
 			);
 			let content = await response.data;
 			setName(content.name);
-			setImage({
-				uri: `${BACKEND}${content.image}`,
-				height: "100%",
-				width: "100%",
-			});
+			setSourceName(content.sourceName);
+			if (content.image.length > 0) {
+				let imageUrl = defaultImage;
+				if (!content.image.startsWith("http")) {
+					imageUrl = `${BACKEND}${content.image}`;
+				} else {
+					imageUrl = `${content.image}`;
+				}
+				setImage({
+					uri: imageUrl,
+					height: "100%",
+					width: "100%",
+				});
+			}
+			else {
+				setImage(defaultImage);
+			}
 			setIngredients(content.ingredients);
 			setSource(content.source);
 			setCautions(content.cautions);
@@ -357,11 +371,43 @@ export default function RecipeInfo({ route, navigation }) {
 				setSelectedRating(content.userRating);
 			}
 			if (content.rating !== null) {
-				setRating(content.rating.toFixed(1));
+				setRating(content.rating);
 			} else {
 				setRating("No Ratings");
 			}
 		} catch (error) {}
+	}
+
+	/**
+	 * Renders the average rating with rating choices
+	 *
+	 * @param {{
+	 * 		show: boolean,
+	 * 		avgRating: number,
+	 * 		ratingRange: number[],
+	 * 		renderRatingChoices: (item: number, index: number) => JSX.Element
+	 * }} props
+	 * @returns Average rating and rating choices
+	 */
+	function Ratings(props) {
+		if (props.show) {
+			return (
+				<View style={{ alignItems: "center" }}>
+					<Text style={{ fontSize: 20 }}>
+						<FontAwesomeIcon icon={"star"} /> Overal Rating:{" "}
+						{props.avgRating}
+					</Text>
+					<View style={recipeInfoStyles.ratingsContainer}>
+						<WrappingItems
+							items={props.ratingRange}
+							renderItems={props.renderRatingChoices}
+						/>
+					</View>
+				</View>
+			);
+		} else {
+			return undefined;
+		}
 	}
 
 	return (
@@ -370,7 +416,6 @@ export default function RecipeInfo({ route, navigation }) {
 				routeName={route.name}
 				style={{
 					...NavBarStyle.container,
-					alignItems: Platform.OS === "web" ? "center" : "flex-end",
 				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
@@ -387,16 +432,17 @@ export default function RecipeInfo({ route, navigation }) {
 						}}
 					>
 						<Image
-							style={{ resizeMode: "contain" }}
+							style={recipeListStyle.foodPic}
 							source={image}
 						/>
 					</View>
+					<Text>Source Name: {sourceName}</Text>
 					<View style={recipeInfoStyles.srcRatingContainer}>
 						<Pressable
 							style={recipeInfoStyles.source}
 							onPress={async () => {
 								if (workingLink) {
-									return Linking.openURL(source);
+									return await Linking.openURL(source);
 								}
 							}}
 						>
@@ -404,18 +450,12 @@ export default function RecipeInfo({ route, navigation }) {
 								{workingLink ? "Source" : "No Source"}
 							</Text>
 						</Pressable>
-						<View style={{ alignItems: "center" }}>
-							<Text style={{ fontSize: 20 }}>
-								<FontAwesomeIcon icon={"star"} /> Overal Rating:{" "}
-								{rating}
-							</Text>
-							<View style={recipeInfoStyles.ratingsContainer}>
-								<WrappingItems
-									items={ratingRange}
-									renderItems={renderRatingOptions}
-								/>
-							</View>
-						</View>
+						<Ratings
+							show={accCtx.loggedIn}
+							avgRating={rating}
+							ratingRange={ratingRange}
+							renderRatingChoices={renderRatingOptions}
+						/>
 					</View>
 					<View
 						style={{
@@ -433,7 +473,7 @@ export default function RecipeInfo({ route, navigation }) {
 						<View
 							style={{
 								borderWidth: 2,
-								width: "100%"
+								width: "100%",
 							}}
 						>
 							<ItemsArray

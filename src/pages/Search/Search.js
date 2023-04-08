@@ -36,7 +36,6 @@ export default function Search({ route, navigation }) {
 				routeName={route.name}
 				style={{
 					...NavBarStyle.container,
-					alignItems: Platform.OS === "web" ? "center" : "flex-end",
 				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>

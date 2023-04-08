@@ -1,6 +1,6 @@
 import { Link } from "@react-navigation/native";
 import { useContext } from "react";
-import { Text, View } from "react-native";
+import { Platform, Text, View, useWindowDimensions } from "react-native";
 import { styles } from "../../AppStyles";
 import { AccountCtx } from "../../context/account";
 import LogOutButton from "../Buttons/LogOutButton";
@@ -18,51 +18,6 @@ import SearchButton from "../Buttons/SearchButton";
 export default function NavBar(props) {
 	const accCtx = useContext(AccountCtx);
 	
-	/**
-	 * Renders the home button
-	 *
-	 * @param {{show: boolean}} props
-	 * @returns Home button when `show` is true, `undefined` otherwise
-	 */
-	function HomeButton({ show }) {
-		if (show) {
-			return (
-				<Link
-					style={styles.navLink}
-					to={{ screen: "Home" }}
-				>
-					<Text style={styles.navText}>Home</Text>
-				</Link>
-			);
-		} else {
-			return undefined;
-		}
-	}
-
-	/**
-	 * Components when the user is logged in or not.
-	 *
-	 * @param {{ isLoggedIn: boolean, route: string }} props
-	 * @returns {JSX.Element} Renders either the profile button & username
-	 * when logged in or the sign up and log in button when not logged in.
-	 */
-	function AccountStatus(props) {
-		if (props.isLoggedIn && props.route !== "Profile") {
-			return (
-				<>
-					<Link
-						style={styles.navLink}
-						to={{ screen: "Profile" }}
-					>
-						<Text style={styles.navText}>Profile</Text>
-					</Link>
-					<Text style={styles.usernameText}>
-						Username: {accCtx.username}
-					</Text>
-				</>
-			);
-		}
-	}
 
 	/**
 	 * Renders the login Button
@@ -131,14 +86,35 @@ export default function NavBar(props) {
 	}
 
 	return (
-		<View style={props.style}>
-			<View style={{ flexDirection: "row" }}>
-				<HomeButton show={props.routeName !== "Home"} />
-				<AccountStatus isLoggedIn={accCtx.loggedIn} route={props.routeName} />
+		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 20,}}>
+			<View>
+				{accCtx.loggedIn && <Text style={styles.usernameText}>
+					Username: {accCtx.username}
+				</Text>}
 			</View>
-			<View style={{ flexDirection: "row" }}>
-				<SignInOrOut isLoggedIn={accCtx.loggedIn} route={props.routeName} />
-				<SearchButton show={props.routeName !== "Search"} />
+			<View style={{flexDirection:"row"}}>
+				<View style={{ flexDirection: "row", width:useWindowDimensions().width*0.48}}>
+					{props.routeName !== "Home" &&
+						<Link
+							style={styles.navLink}
+							to={{ screen: "Home" }}
+						>
+							<Text style={styles.navText}>Home</Text>
+						</Link>
+					}
+					{accCtx.loggedIn && props.routeName !== "Profile" &&
+					<Link
+						style={styles.navLink}
+						to={{ screen: "Profile" }}
+					>
+						<Text style={styles.navText}>Profile</Text>
+					</Link>
+					}
+				</View>
+				<View style={{ flexDirection: "row", justifyContent: "flex-end", width:useWindowDimensions().width*0.48}}>
+					<SignInOrOut isLoggedIn={accCtx.loggedIn} route={props.routeName} />
+					<SearchButton show={props.routeName !== "Search"} />
+				</View>
 			</View>
 		</View>
 	);

@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import AccountProvider from "./account";
 import CsrfContextProvider from "./CsrfToken";
+import { defaultImage, NoMoreRecipes } from "../Constants";
 
 // Creates a context for reciperesults
 export const RecipeResultsCtx = createContext({
@@ -8,16 +9,8 @@ export const RecipeResultsCtx = createContext({
 	setAddRecipesLink: (link) => {}, // set Recipes link
 	exclusions: [""],
 	updateExclusions: (newExclusions) => {},
-	results: [
-		// array of recipes
-		{
-			id: "",
-			name: "No Recipe Name Available",
-			image: require("../../assets/favicon.png"),
-			ingredients: [""],
-			source: ""
-		},
-	],
+	// array of recipes
+	results: [NoMoreRecipes],
 	getRecipes: (recipeList) => {}, // Create a list of recipes
 	addRecipes: (recipeList, link) => {}, // Add recipes to the current list
 	isLoading: false,
@@ -35,15 +28,7 @@ export const RecipeResultsCtx = createContext({
 export default function ContextProvider(props) {
 
 	// Array of recipes
-	const [recipes, setRecipes] = useState([
-		{
-			id: "",
-			name: "No Recipe Name Available",
-			image: "",
-			ingredients: ["None"],
-			source: "",
-		},
-	]);
+	const [recipes, setRecipes] = useState([NoMoreRecipes]);
 
 	const [excluded, setExcluded] = useState([]);
 	// link to recipes
@@ -82,15 +67,7 @@ export default function ContextProvider(props) {
 	 */
 	function GetRecipes(recipeList) {
 		if (recipeList[0].id != "") {
-			setRecipes([
-				{
-					id: "",
-					name: "No Recipe Name Available",
-					image: "",
-					ingredients: ["None"],
-					source: "",
-				},
-			]);
+			setRecipes([NoMoreRecipes]);
 			
             let newState = recipeList;
             setRecipes(newState);

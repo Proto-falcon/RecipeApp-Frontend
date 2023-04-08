@@ -181,7 +181,6 @@ export default function Form({ route, navigation }) {
 				routeName={route.name}
 				style={{
 					...NavBarStyle.container,
-					alignItems: Platform.OS === "web" ? "center" : "flex-end",
 				}}
 			/>
 			<View

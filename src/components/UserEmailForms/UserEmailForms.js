@@ -22,6 +22,7 @@ export default function UserEmailForms(props) {
 			<FormField
 				label={"Username:"}
 				placeholder={"Enter username:"}
+				autoCapitalize="none"
 				onChangeTextHandler={props.usernameHandler}
 				containerStyle={props.containerStyle}
 				labelStyle={props.labelStyle}
