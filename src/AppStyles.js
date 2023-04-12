@@ -21,8 +21,8 @@ export const styles = StyleSheet.create({
 
 	usernameText: {
 		color: "black",
-		fontSize: 12,
-		fontWeight: "400",
+		fontSize: 20,
+		fontWeight: "bold",
 		marginLeft: 10,
 		marginTop: 5
 	},

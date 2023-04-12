@@ -86,14 +86,14 @@ export default function NavBar(props) {
 	}
 
 	return (
-		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 20,}}>
+		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 40, flex: 1, maxHeight: 100}}>
 			<View>
 				{accCtx.loggedIn && <Text style={styles.usernameText}>
 					Username: {accCtx.username}
 				</Text>}
 			</View>
 			<View style={{flexDirection:"row"}}>
-				<View style={{ flexDirection: "row", width:useWindowDimensions().width*0.48}}>
+				<View style={{ flexDirection: "row", width: useWindowDimensions().width*0.5}}>
 					{props.routeName !== "Home" &&
 						<Link
 							style={styles.navLink}

@@ -6,6 +6,7 @@ export const NavBarStyle = StyleSheet.create({
 		flexDirection: "column",
 		flexBasis: 75,
 		padding: 10,
+		justifyContent: "center",
 		alignItems: "flex-start"
 	},
 });

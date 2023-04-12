@@ -59,10 +59,9 @@ export default function Profile({ route, navigation }) {
 	// Fetches the recently viewed recipes by the user from our own database
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
-		getRecipeResults("getRecentRecipes/", setRecentRecipes);
-		
-		getRecipeResults("getMostRatedRecipes/", setRatedRecipes);
-		getRecipeResults("recommend/", setRecommendRecipes);
+		getRecipeResults("getRecentRecipes/", setRecentRecipes, [{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
+		getRecipeResults("getMostRatedRecipes/", setRatedRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
+		getRecipeResults("recommend/", setRecommendRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
 		
 	}, [mount, route.key]);
 
@@ -72,14 +71,15 @@ export default function Profile({ route, navigation }) {
 	 * 
 	 * @param {string} apiEndPoint 
 	 * @param {React.Dispatch<React.SetStateAction<import("../../Constants").recipe[]>>} setData 
+	 * @param {recipe[]} defaultRecipes
 	 */
-	async function getRecipeResults(apiEndPoint, setData) {
+	async function getRecipeResults(apiEndPoint, setData, defaultRecipes) {
 		try {
 			let response = await axios.get(`${BACKEND}/api/${apiEndPoint}`);
 			let content = await response.data;
 
 			if (content["results"].length <= 0) {
-				setData([NoMoreRecipes]);
+				setData(defaultRecipes);
 			} else {
 				setData(content["results"]);
 			}
