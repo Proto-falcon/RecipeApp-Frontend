@@ -85,8 +85,12 @@ export default function NavBar(props) {
 		}
 	}
 
+	const platformStyles = Platform.OS !== "web" ? {
+		flex: 1, maxHeight: 100
+	} : {};
+
 	return (
-		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 40, flex: 1, maxHeight: 100}}>
+		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 40, ...platformStyles}}>
 			<View>
 				{accCtx.loggedIn && <Text style={styles.usernameText}>
 					Username: {accCtx.username}
