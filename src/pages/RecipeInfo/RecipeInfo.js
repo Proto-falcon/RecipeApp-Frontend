@@ -1,10 +1,10 @@
 import axios from "axios";
+import { useKeepAwake } from 'expo-keep-awake';
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Image,
 	Linking,
-	Platform,
 	Pressable,
 	ScrollView,
 	Text,
@@ -71,6 +71,9 @@ export default function RecipeInfo({ route, navigation }) {
 	useEffect(() => {
 		testLink();
 	}, [source]);
+
+	// Keeps screen open while the recipe page is open
+	useKeepAwake();
 
 	/**
 	 * Updates the rating range where `min` is the minimum value & `max` is the max value.

@@ -47,9 +47,9 @@ export default function Profile({ route, navigation }) {
 	const [emailUpdated, setEmailUpdated] = useState(false);
 	const [passwordUpdated, setPasswordUpdated] = useState(false);
 
-	const [recentRecipes, setRecentRecipes] = useState([]);
-	const [ratedRecipes, setRatedRecipes] = useState([]);
-	const [recommendRecipes, setRecommendRecipes] = useState([NoMoreRecipes]);
+	const [recentRecipes, setRecentRecipes] = useState([{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
+	const [ratedRecipes, setRatedRecipes] = useState([{...NoMoreRecipes, name: "No recipes rated Yet"}]);
+	const [recommendRecipes, setRecommendRecipes] = useState([{...NoMoreRecipes, name: "No recipes rated Yet"}]);
 
 	const [errorBackColor, setErrorBackColor] = useState("red");
 	const [errorMsg, setErrorMsg] = useState("");

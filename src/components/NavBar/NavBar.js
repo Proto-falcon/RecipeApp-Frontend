@@ -86,7 +86,7 @@ export default function NavBar(props) {
 	}
 
 	const platformStyles = Platform.OS !== "web" ? {
-		flex: 1, maxHeight: 100
+		flex: 1, maxHeight: 100, minHeight:100
 	} : {};
 
 	return (
