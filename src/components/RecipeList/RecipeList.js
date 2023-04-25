@@ -128,7 +128,6 @@ export default function RecipeList(props) {
 
 	const width = useWindowDimensions().width;
 	const numCols = Math.floor(width / 300);
-
 	return (
 		<View style={{width: "100%"}}>
 			{numCols <= 1 ? (
@@ -160,7 +159,7 @@ export default function RecipeList(props) {
 						)}
 					/>
 					<LoadMoreRecipesButton
-						loadMore={!loadedAllRecipes && props.recipeLink != ""}
+						loadMore={!loadedAllRecipes && props.recipeLink !== ""}
 					/>
 				</ScrollView>
 			)}
