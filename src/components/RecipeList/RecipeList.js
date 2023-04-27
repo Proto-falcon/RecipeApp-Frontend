@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import {
 	FlatList,
+	Platform,
 	Pressable,
 	ScrollView,
 	Text,
@@ -11,6 +12,7 @@ import {
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import RecipeCover from "../RecipeCover/RecipeCover";
 import WrappingItems from "../WrappingItems/WrappingItems";
+import { NoMoreRecipes } from "../../Constants";
 
 /**
  * Renders a list of Recipes
@@ -23,15 +25,6 @@ import WrappingItems from "../WrappingItems/WrappingItems";
  * @returns List of Recipes
  */
 export default function RecipeList(props) {
-	
-	const NoMoreRecipes = {
-		id: "",
-		name: "No more Recipes",
-		image: "",
-		ingredients: [],
-		source: "",
-		rating: "0.0"
-	};
 
 	const [recipes, setRecipes] = useState(props.recipes);
 	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
@@ -66,7 +59,7 @@ export default function RecipeList(props) {
 	 * @param {{distanceFromEnd: number}?} info
 	 */
 	async function loadMoreRecipes({ distanceFromEnd }) {
-		if (props.showEnd || props.setData !== undefined) {
+		if (props.setData !== undefined) {
 			if (
 				props.recipeLink != undefined &&
 				props.recipeLink != "" &&
@@ -86,8 +79,7 @@ export default function RecipeList(props) {
 				}
 			} else if (
 				recipes[recipes.length - 1].id != "" &&
-				loadedAllRecipes &&
-				props.showEnd
+				loadedAllRecipes
 			) {
 				setRecipes((prevState) => {
 					let newState = [...prevState];
@@ -130,7 +122,7 @@ export default function RecipeList(props) {
 	const numCols = Math.floor(width / 300);
 	return (
 		<View style={{width: "100%"}}>
-			{numCols <= 1 ? (
+			{Platform.OS != "web" ? (
 				<FlatList
 					data={recipes}
 					renderItem={({ item }) => (

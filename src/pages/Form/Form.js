@@ -204,6 +204,7 @@ export default function Form({ route, navigation }) {
 					<FormField
 						label={"Password:"}
 						placeholder={"Please enter password:"}
+						autoCapitalize="none"
 						isPassword={true}
 						onChangeTextHandler={passwordHandler}
 						containerStyle={fieldWidth}

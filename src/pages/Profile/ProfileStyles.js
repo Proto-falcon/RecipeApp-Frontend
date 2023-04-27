@@ -24,9 +24,11 @@ export const profileStyles = StyleSheet.create({
 	},
 
 	subHeader: {
-		fontSize: 30,
+		width: 160,
+		fontSize: 20,
 		fontWeight: "bold",
 		textAlign: "center",
+		padding: 10
 	},
 	
 });

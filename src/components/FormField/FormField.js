@@ -8,6 +8,7 @@ import { Text, TextInput, View } from "react-native";
  *      placeholder: string,
  *      isPassword: boolean,
  * 		autoCapitalize: string,
+ * 		keyType: string
  *      onChangeTextHandler: (text: string) => void,
  *      inputStyle: *,
  *      labelStyle: *,
@@ -22,6 +23,7 @@ export default function FormField({
 	placeholder = "",
 	isPassword = false,
 	autoCapitalize = "sentences",
+	keyType = undefined,
 	onChangeTextHandler = undefined,
 	inputStyle = {},
 	labelStyle = {},
@@ -34,6 +36,7 @@ export default function FormField({
 				style={{ ...inputStyle }}
 				secureTextEntry={isPassword}
 				autoCapitalize={autoCapitalize}
+				keyboardType={keyType}
 				onChangeText={onChangeTextHandler}
 				placeholder={placeholder}
 			/>

@@ -19,6 +19,8 @@ import {
  *      labelValueStyle?: *,
  *      inputPromptStyle: *,
  *      placeholder: string,
+ * 		onBlurCallBack: any,
+ * 		onFocusCallBack: any,
  *      onChangeText: (text: string) => void,
  *      submitHandler: () => void,
  *      submitStyle: *
@@ -52,6 +54,9 @@ export default function IndiviudalForm(props) {
 				<TextInput
 					style={props.inputPromptStyle}
 					placeholder={props.placeholder}
+					autoCapitalize="none"
+					onBlur={props.onBlurCallBack}
+  					onFocus={props.onFocusCallBack}
 					onChangeText={props.onChangeText}
 				/>
 				<Pressable

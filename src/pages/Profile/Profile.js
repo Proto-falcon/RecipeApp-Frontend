@@ -2,7 +2,9 @@ import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	FlatList,
 	Platform,
+	Pressable,
 	ScrollView,
 	Text,
 	useWindowDimensions,
@@ -47,9 +49,7 @@ export default function Profile({ route, navigation }) {
 	const [emailUpdated, setEmailUpdated] = useState(false);
 	const [passwordUpdated, setPasswordUpdated] = useState(false);
 
-	const [recentRecipes, setRecentRecipes] = useState([{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
-	const [ratedRecipes, setRatedRecipes] = useState([{...NoMoreRecipes, name: "No recipes rated Yet"}]);
-	const [recommendRecipes, setRecommendRecipes] = useState([{...NoMoreRecipes, name: "No recipes rated Yet"}]);
+	const [ispwdFocused, setIsPwdFocused] = useState(false);
 
 	const [errorBackColor, setErrorBackColor] = useState("red");
 	const [errorMsg, setErrorMsg] = useState("");
@@ -59,32 +59,8 @@ export default function Profile({ route, navigation }) {
 	// Fetches the recently viewed recipes by the user from our own database
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
-		getRecipeResults("getRecentRecipes/", setRecentRecipes, [{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
-		getRecipeResults("getMostRatedRecipes/", setRatedRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
-		getRecipeResults("recommend/", setRecommendRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
-		
 	}, [mount, route.key]);
 
-	/**
-	 * Gets an array of recipe results from backend given an api endpoint and
-	 * updates a state given a `React.Dispatch<React.SetStateAction<recipe[]>>`.
-	 * 
-	 * @param {string} apiEndPoint 
-	 * @param {React.Dispatch<React.SetStateAction<import("../../Constants").recipe[]>>} setData 
-	 * @param {recipe[]} defaultRecipes
-	 */
-	async function getRecipeResults(apiEndPoint, setData, defaultRecipes) {
-		try {
-			let response = await axios.get(`${BACKEND}/api/${apiEndPoint}`);
-			let content = await response.data;
-
-			if (content["results"].length <= 0) {
-				setData(defaultRecipes);
-			} else {
-				setData(content["results"]);
-			}
-		} catch (error) {}
-	}
 
 	/**
 	 * Sets the new username
@@ -256,67 +232,7 @@ export default function Profile({ route, navigation }) {
 		setErrorMsg(message);
 	}
 
-	const recipesBorders = {
-		borderLeftWidth: width < 700 ? 0 : 2,
-		borderRightWidth: width < 700 ? 0 : 2,
-		borderBottomWidth: width < 700 ? 0 : 2,
-	};
-
-	const recipeListContainer = {
-		...recipesBorders,
-		...profileStyles.recentRecipes,
-		padding: width < 700 ? 0 : 3,
-		paddingBottom: numCols <= 1 ? 50 : 0,
-	};
-
 	const customWidth = width < 700 ? width * 0.7 : width * 0.3;
-	const numCols = Math.floor(width / 300);
-	const recipeWidth = numCols <= 1 ? "100%" : 300;
-	const renderRecipe = ({ item, index }) => (
-		<RecipeCover
-			key={item.id}
-			width={recipeWidth}
-			height={300}
-			item={item}
-		/>
-	)
-	
-	/**
-	 * Renders a list of recipes
-	 * 
-	 * @param {{
-	 * 		header: string,
-	 * 		headerStyle: any,
-	 * 		listContainerStyle: any,
-	 * 		data: any[],
-	 * 		renderItems: (param: {item: any, index: number}) => void,
-	 * 		responded: any
-	 * }} props 
-	 * @returns List of recipes with title header
-	*/
-	function DisplayRecipes(props) {
-		return (
-			<>
-				<Text
-					style={props.headerStyle}
-				>
-					{props.header}
-				</Text>
-				<View
-					style={props.listContainerStyle}
-				>
-					{props.data.length > 0 || props.responded ? (
-						<ItemsArray
-							data={props.data}
-							renderItem={props.renderItems}
-						/>
-					) : (
-						<ActivityIndicator size="large" />
-					)}
-				</View>
-			</>
-		);
-	}
 
 	return (
 		<View style={styles.pageContainer}>
@@ -331,7 +247,8 @@ export default function Profile({ route, navigation }) {
 					<ScrollView>
 						<View
 							style={{
-								alignItems: "center",
+								alignItems: "center", paddingBottom: useWindowDimensions().height * 
+								(ispwdFocused && Platform.OS != "web" ? 0.3 : 0)
 							}}
 						>
 							<IndiviudalForm
@@ -398,6 +315,8 @@ export default function Profile({ route, navigation }) {
 									fontWeight: "bold",
 								}}
 								labelValueHidden={true}
+								onBlurCallBack={() => setIsPwdFocused(false)}
+								onFocusCallBack={() => setIsPwdFocused(true)}
 								placeholder="Please enter new Password"
 								onChangeText={updatePaswordHandler}
 								inputPromptStyle={{
@@ -417,33 +336,6 @@ export default function Profile({ route, navigation }) {
 								message={errorMsg}
 							/>
 						</View>
-						<Suspense fallback={<ActivityIndicator size="large" />}>
-							<DisplayRecipes
-								headerStyle={profileStyles.subHeader}
-								listContainerStyle={recipeListContainer}
-								header="Recommended Recipes"
-								data={recommendRecipes}
-								renderItems={renderRecipe}
-							/>
-						</Suspense>
-						<Suspense fallback={<ActivityIndicator size="large" />}>
-							<DisplayRecipes
-								headerStyle={profileStyles.subHeader}
-								listContainerStyle={recipeListContainer}
-								header="Recent Recipes"
-								data={recentRecipes}
-								renderItems={renderRecipe}
-							/>
-						</Suspense>
-						<Suspense fallback={<ActivityIndicator size="large" />}>
-							<DisplayRecipes
-								headerStyle={profileStyles.subHeader}
-								listContainerStyle={recipeListContainer}
-								header="Most Rated Recipes"
-								data={ratedRecipes}
-								renderItems={renderRecipe}
-							/>
-						</Suspense>
 					</ScrollView>
 				</View>
 			</Suspense>

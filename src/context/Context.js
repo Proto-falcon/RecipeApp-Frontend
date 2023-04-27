@@ -1,7 +1,7 @@
 import { createContext, useState } from "react";
 import AccountProvider from "./account";
 import CsrfContextProvider from "./CsrfToken";
-import { defaultImage, NoMoreRecipes } from "../Constants";
+import { NoMoreRecipes } from "../Constants";
 
 // Creates a context for reciperesults
 export const RecipeResultsCtx = createContext({

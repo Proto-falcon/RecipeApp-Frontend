@@ -8,9 +8,17 @@
       "distribution": "internal",
       "channel": "development"
     },
-    "preview": {
+    "testFood": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
     },
     "production": {
       "channel": "production"
