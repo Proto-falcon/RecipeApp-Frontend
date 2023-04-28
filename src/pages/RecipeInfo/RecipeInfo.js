@@ -51,6 +51,8 @@ export default function RecipeInfo({ route, navigation }) {
 	const [rating, setRating] = useState("0.0");
 	const [selectedRating, setSelectedRating] = useState(0);
 
+	const [loading, setLoading] = useState(true);
+
 	// Fetches the recipes from the backend
 	useEffect(() => {
 		accCtx.checkCred(authCtx, BACKEND);
@@ -379,6 +381,7 @@ export default function RecipeInfo({ route, navigation }) {
 				setRating("No Ratings");
 			}
 		} catch (error) {}
+		setLoading(false);
 	}
 
 	/**
@@ -422,7 +425,7 @@ export default function RecipeInfo({ route, navigation }) {
 				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
-				<ScrollView contentContainerStyle={{ alignItems: "center" }}>
+				{!loading && <ScrollView contentContainerStyle={{ alignItems: "center" }}>
 					<Text
 						style={{ ...recipeInfoStyles.recipeName, fontSize: 50 }}
 					>
@@ -557,7 +560,7 @@ export default function RecipeInfo({ route, navigation }) {
 							renderItem={renderNutrients}
 						/>
 					</View>
-				</ScrollView>
+				</ScrollView>}
 			</Suspense>
 		</View>
 	);

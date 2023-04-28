@@ -3,7 +3,6 @@ import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
-	Platform,
 	Pressable,
 	Text,
 	TextInput,

@@ -70,6 +70,7 @@ export default function Search({ route, navigation }) {
 			getRecipeResults("recommend/", setRecommendRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
 
 			setRecipes(recommendRecipes);
+			setRecipeListName("recommend");
 			setButtons(
 				[
 					"Search Results",
@@ -82,11 +83,7 @@ export default function Search({ route, navigation }) {
 		else {
 			setRecipes(ctx.results);
 			setRecipeListName("Search Results");
-			setButtons(
-				[
-					"Search Results"
-				]
-			);
+			setButtons([]);
 		}
 	}, [isMounted, accCtx.loggedIn])
 
@@ -153,7 +150,12 @@ export default function Search({ route, navigation }) {
 		);
 	}
 
-	
+	let navBarPadding = 0;
+
+	if (recipeListName === "Search Results") {
+		navBarPadding = - changeNavBarPaddingTop();
+	}
+
 	return (
 		<View style={styles.pageContainer}>
 			<NavBar
@@ -166,7 +168,7 @@ export default function Search({ route, navigation }) {
 				<View
 					style={{
 						...SearchStyle.container,
-						height: useWindowDimensions().height - (navBarHeight + changeNavBarPaddingTop())
+						height: useWindowDimensions().height - (navBarHeight + navBarPadding)
 					}}
 				>
 					<WrappingItems
