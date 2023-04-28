@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const NavBarStyle = StyleSheet.create({
 	container: {
@@ -10,3 +10,19 @@ export const NavBarStyle = StyleSheet.create({
 		alignItems: "flex-start"
 	},
 });
+
+export const navBarHeight = 100;
+
+export const platformStyles = Platform.OS !== "web" ? {
+	maxHeight: navBarHeight, minHeight:navBarHeight
+} : {};
+
+/**
+ * Changes the size of the top padding depending on whether it's on 
+ * `web` or `android`.
+ * @returns Padding Top Size
+ * 
+ */
+export function changeNavBarPaddingTop() {
+    return Platform.OS !== "web" ? 40 : 10
+}

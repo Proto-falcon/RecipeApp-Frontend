@@ -2,11 +2,8 @@ import axios from "axios";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
-	FlatList,
 	Platform,
-	Pressable,
 	ScrollView,
-	Text,
 	useWindowDimensions,
 	View,
 } from "react-native";
@@ -18,11 +15,6 @@ import { CsrfCtx } from "../../context/CsrfToken";
 import BACKEND from "../../ipaddressesports/BackEndIP";
 import NavBar from "../../components/NavBar/NavBar";
 import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
-import { NoMoreRecipes } from "../../Constants";
-const ItemsArray = lazy(() => import("../../components/ItemsArray/ItemsArray"));
-const RecipeCover = lazy(() =>
-	import("../../components/RecipeCover/RecipeCover")
-);
 const IndiviudalForm = lazy(() =>
 	import("../../components/IndividualForm/IndividualForm")
 );

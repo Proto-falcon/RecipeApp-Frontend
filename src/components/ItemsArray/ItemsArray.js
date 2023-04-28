@@ -7,7 +7,7 @@
  * 		data: any[],
  * 		renderItem: ({item, index: number}) => JSX.Element
  * }} props
- * @returns {JSX.Element} Array of items elements
+ * @returns {JSX.Element[]} Array of items elements
  */
 export default function ItemsArray(props) {
 	let recipes = [];

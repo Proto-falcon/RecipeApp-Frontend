@@ -15,20 +15,4 @@ export const profileStyles = StyleSheet.create({
 		backgroundColor: "#fd5d00",
 		width: 150,
 	},
-
-	recentRecipes: {
-		borderTopWidth: 2,
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "center"
-	},
-
-	subHeader: {
-		width: 160,
-		fontSize: 20,
-		fontWeight: "bold",
-		textAlign: "center",
-		padding: 10
-	},
-	
 });

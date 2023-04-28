@@ -1,16 +1,15 @@
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { RecipeResultsCtx } from "../../context/Context";
 import { SearchStyle } from "./SearchStyle";
 import { styles } from "../../AppStyles";
 import { CsrfCtx } from "../../context/CsrfToken";
 import { AccountCtx } from "../../context/account";
 import BACKEND from "../../ipaddressesports/BackEndIP";
-import { NavBarStyle } from "../../components/NavBar/NavBarStyle";
+import { changeNavBarPaddingTop, navBarHeight, NavBarStyle } from "../../components/NavBar/NavBarStyle";
 import NavBar from "../../components/NavBar/NavBar";
 import { NoMoreRecipes } from "../../Constants";
 import axios from "axios";
-import { profileStyles } from "../Profile/ProfileStyles";
 const RecipeList = lazy(() => import("../../components/RecipeList/RecipeList"));
 const WrappingItems = lazy(() => import("../../components/WrappingItems/WrappingItems"));
 
@@ -35,16 +34,34 @@ export default function Search({ route, navigation }) {
 	const [recipeListName, setRecipeListName] = useState("recommend");
 	const [buttons, setButtons] = useState(
 		[
-			{recipes:ctx.results, type:"Search Results"}
+			"Search Results"
 		]
 	);
+
+	const recipeLists = [
+		{type: "Search Results", list: undefined},
+		{type: "recommend", list: recommendRecipes},
+		{type: "recent", list: recentRecipes},
+		{type: "rated", list: ratedRecipes},
+	];
 
 	useEffect(() => ctx.setIsLoading(false), [ctx.isLoading]);
 
 	// Checks the user has logged in when the app boots up
 	useEffect(() => {
 		accCtx.checkCred(csrfCtx, BACKEND);
+
+		if (ctx.isLoading) {
+			setRecipes(ctx.results);
+			setRecipeListName("Search Results");
+		}
+
 	}, [isMounted, ctx.isLoading, route.name]);
+
+	// updates the search results when user does a search or 
+	useEffect(() => {
+		setRecipes(ctx.results);
+	}, [ctx.moreRecipesLink]);
 
 	useEffect(() => {
 		if (accCtx.loggedIn) {
@@ -55,18 +72,19 @@ export default function Search({ route, navigation }) {
 			setRecipes(recommendRecipes);
 			setButtons(
 				[
-					{recipes:ctx.results, type:"Search Results"},
-					{recipes:recommendRecipes, type:"recommend"},
-					{recipes:recentRecipes, type:"recent"},
-					{recipes:ratedRecipes, type:"rated"},
+					"Search Results",
+					"recommend",
+					"recent",
+					"rated",
 				]
 			);
 		}
 		else {
 			setRecipes(ctx.results);
+			setRecipeListName("Search Results");
 			setButtons(
 				[
-					{recipes:ctx.results, type:"Search Results"}
+					"Search Results"
 				]
 			);
 		}
@@ -96,11 +114,21 @@ export default function Search({ route, navigation }) {
 	/**
 	 * Instantly changes to different list of recipes.
 	 * 
-	 * @param {import("../../Constants").recipe[]} toRecipes 
 	 * @param {string} title 
 	 */
-	function changeRecipes(toRecipes, title) {
-		setRecipes(toRecipes);
+	function changeRecipes(title) {
+
+		recipeLists.forEach((recipeList) => {
+			if (recipeList.type === title) {
+				if (recipeList.list === undefined) {
+					setRecipes(ctx.results);
+				}
+				else {
+					setRecipes(recipeList.list)
+				}
+			}
+		})
+
 		setRecipeListName(title);
 	}
 
@@ -109,23 +137,17 @@ export default function Search({ route, navigation }) {
 	 * Render button to change recipe lists
 	 * 
 	 * @param {{
-	 * 		item : {recipes: import("../../Constants").recipe[], type: string},
+	 * 		item : string,
 	 * 		index : number
 	 * }} param
 	 * @returns Button to change recipe list
 	 */
 	function renderButtons({item, index}) {
-
-		let chosenStyle = {
-			backgroundColor: "#0098ff",
-			color: "#ffffff",
-			borderRadius: 10
-		};
 		return (
-			<Pressable key={index} onPress={() => changeRecipes(item.recipes, item.type)} style={{borderRadius: 10}}>
-				<Text style={ recipeListName === item.type ? {...profileStyles.subHeader, ...chosenStyle }
-				: {...profileStyles.subHeader }}>
-					{item.type}
+			<Pressable key={index} onPress={() => changeRecipes(item)} style={SearchStyle.listHeaderContainer}>
+				<Text style={ recipeListName === item ? {...SearchStyle.listHeader, ...SearchStyle.chosenList }
+				: {...SearchStyle.listHeader }}>
+					{item}
 				</Text>
 			</Pressable>
 		);
@@ -144,7 +166,7 @@ export default function Search({ route, navigation }) {
 				<View
 					style={{
 						...SearchStyle.container,
-						height: useWindowDimensions().height * 0.7
+						height: useWindowDimensions().height - (navBarHeight + changeNavBarPaddingTop())
 					}}
 				>
 					<WrappingItems
@@ -155,6 +177,7 @@ export default function Search({ route, navigation }) {
 					{!ctx.isLoading && (
 						<RecipeList
 							recipes={recipes}
+							canLoad={recipeListName === "Search Results"}
 							setData={ctx.addRecipes}
 							recipeLink={ctx.moreRecipesLink}
 						/>

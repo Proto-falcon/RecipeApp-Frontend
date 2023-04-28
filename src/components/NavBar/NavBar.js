@@ -1,10 +1,11 @@
 import { Link } from "@react-navigation/native";
 import { useContext } from "react";
-import { Platform, Text, View, useWindowDimensions } from "react-native";
+import { Text, View, useWindowDimensions } from "react-native";
 import { styles } from "../../AppStyles";
 import { AccountCtx } from "../../context/account";
 import LogOutButton from "../Buttons/LogOutButton";
 import SearchButton from "../Buttons/SearchButton";
+import { changeNavBarPaddingTop, platformStyles } from "./NavBarStyle";
 
 /**
  * Renders a NavBar
@@ -85,13 +86,8 @@ export default function NavBar(props) {
 		}
 	}
 
-	const platformStyles = Platform.OS !== "web" ? {
-		// flex: 1,
-		maxHeight: 100, minHeight:100
-	} : {};
-
 	return (
-		<View style={{...props.style, paddingTop: Platform.OS === "web" ? 10 : 40, ...platformStyles}}>
+		<View style={{...props.style, paddingTop: changeNavBarPaddingTop(), ...platformStyles}}>
 			<View>
 				{accCtx.loggedIn && <Text style={styles.usernameText}>
 					Username: {accCtx.username}

@@ -6,7 +6,6 @@ import {
 	Pressable,
 	ScrollView,
 	Text,
-	useWindowDimensions,
 	View,
 } from "react-native";
 import BACKEND from "../../ipaddressesports/BackEndIP";
@@ -19,6 +18,7 @@ import { NoMoreRecipes } from "../../Constants";
  * @typedef {import("../../Constants").recipe} recipe
  * @param {{
  * 	recipes: Array<recipe>,
+ * 	canLoad: boolean
  *  recipeLink?: string,
  *  setData?: (recipeResults: Array<recipe>, addRecipesLink: string) => void,
  * }} props
@@ -27,6 +27,8 @@ import { NoMoreRecipes } from "../../Constants";
 export default function RecipeList(props) {
 
 	const [recipes, setRecipes] = useState(props.recipes);
+
+	const [lastLoaded, setLastLoaded] = useState(new Date().getTime());
 	const [loadedAllRecipes, setLoadedAllRecipes] = useState(false);
 
 	/**
@@ -38,7 +40,7 @@ export default function RecipeList(props) {
 	 */
 	useEffect(() => {
 		if (
-			props.recipes.length < 20 &&
+			props.canLoad && props.recipes.length < 20 &&
 			(props.recipeLink !== "" || props.recipeLink !== undefined) &&
 			props.recipes[props.recipes.length - 1].id !== ""
 		) {
@@ -59,11 +61,12 @@ export default function RecipeList(props) {
 	 * @param {{distanceFromEnd: number}?} info
 	 */
 	async function loadMoreRecipes({ distanceFromEnd }) {
-		if (props.setData !== undefined) {
+		if (props.setData !== undefined && props.canLoad) {
+			const lastFetched = new Date().getTime();
 			if (
 				props.recipeLink != undefined &&
 				props.recipeLink != "" &&
-				!loadedAllRecipes
+				!loadedAllRecipes && (lastFetched - lastLoaded > 6000)
 			) {
 				try {
 					let response = await axios({
@@ -77,6 +80,7 @@ export default function RecipeList(props) {
 				} catch (error) {
 					setLoadedAllRecipes(true);
 				}
+				setLastLoaded(lastFetched);
 			} else if (
 				recipes[recipes.length - 1].id != "" &&
 				loadedAllRecipes
@@ -118,8 +122,6 @@ export default function RecipeList(props) {
 		}
 	}
 
-	const width = useWindowDimensions().width;
-	const numCols = Math.floor(width / 300);
 	return (
 		<View style={{width: "100%"}}>
 			{Platform.OS != "web" ? (
@@ -151,7 +153,7 @@ export default function RecipeList(props) {
 						)}
 					/>
 					<LoadMoreRecipesButton
-						loadMore={!loadedAllRecipes && props.recipeLink !== ""}
+						loadMore={props.canLoad && !loadedAllRecipes && props.recipeLink !== ""}
 					/>
 				</ScrollView>
 			)}

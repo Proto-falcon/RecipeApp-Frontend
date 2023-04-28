@@ -9,4 +9,22 @@ export const SearchStyle = StyleSheet.create(
         imgContainer: {
             margin: 7
         },
+
+        listHeaderContainer: {
+            borderRadius: 10
+        },
+
+        listHeader: {
+            width: 160,
+            fontSize: 20,
+            fontWeight: "bold",
+            textAlign: "center",
+            padding: 10
+        },
+
+        chosenList: {
+			backgroundColor: "#0098ff",
+			color: "#ffffff",
+			borderRadius: 10
+		}
     });
