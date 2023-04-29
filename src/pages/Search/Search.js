@@ -31,7 +31,7 @@ export default function Search({ route, navigation }) {
 	const [recommendRecipes, setRecommendRecipes] = useState([{...NoMoreRecipes, name: "No recipes rated Yet"}]);
 
 	const [recipes, setRecipes] = useState(ctx.results);
-	const [recipeListName, setRecipeListName] = useState("recommend");
+	const [recipeListName, setRecipeListName] = useState("Recommended");
 	const [buttons, setButtons] = useState(
 		[
 			"Search Results"
@@ -40,9 +40,9 @@ export default function Search({ route, navigation }) {
 
 	const recipeLists = [
 		{type: "Search Results", list: undefined},
-		{type: "recommend", list: recommendRecipes},
-		{type: "recent", list: recentRecipes},
-		{type: "rated", list: ratedRecipes},
+		{type: "Recommended", list: recommendRecipes},
+		{type: "Most Recent", list: recentRecipes},
+		{type: "Most Rated", list: ratedRecipes},
 	];
 
 	useEffect(() => ctx.setIsLoading(false), [ctx.isLoading]);
@@ -63,6 +63,8 @@ export default function Search({ route, navigation }) {
 		setRecipes(ctx.results);
 	}, [ctx.moreRecipesLink]);
 
+	// Fetches the recipes from Server and
+	// sets current recipe list to be displayed
 	useEffect(() => {
 		if (accCtx.loggedIn) {
 			getRecipeResults("getRecentRecipes/", setRecentRecipes, [{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
@@ -70,13 +72,13 @@ export default function Search({ route, navigation }) {
 			getRecipeResults("recommend/", setRecommendRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);
 
 			setRecipes(recommendRecipes);
-			setRecipeListName("recommend");
+			setRecipeListName("Recommended");
 			setButtons(
 				[
 					"Search Results",
-					"recommend",
-					"recent",
-					"rated",
+					"Recommended",
+					"Most Recent",
+					"Most Rated",
 				]
 			);
 		}

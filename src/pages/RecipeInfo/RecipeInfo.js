@@ -48,10 +48,12 @@ export default function RecipeInfo({ route, navigation }) {
 	const [nutrients, setNutrients] = useState([]);
 
 	const [ratingRange, setRatingRange] = useState([0, 1]);
-	const [rating, setRating] = useState("0.0");
+	const [rating, setRating] = useState("No Ratings");
 	const [selectedRating, setSelectedRating] = useState(0);
 
 	const [loading, setLoading] = useState(true);
+
+	const [width, setWidth] = useState(useWindowDimensions().width);
 
 	// Fetches the recipes from the backend
 	useEffect(() => {
@@ -181,7 +183,6 @@ export default function RecipeInfo({ route, navigation }) {
 					fontWeight: "bold",
 					textAlign: "center",
 					flex: 1,
-					// maxWidth: "40%",
 					padding: 3,
 					fontSize: 20,
 				}}
@@ -468,7 +469,7 @@ export default function RecipeInfo({ route, navigation }) {
 							paddingTop: 10,
 							alignItems: "center",
 							width:
-								useWindowDimensions().width < 700
+								width < 700
 									? "100%"
 									: "50%",
 						}}
@@ -522,7 +523,7 @@ export default function RecipeInfo({ route, navigation }) {
 								borderWidth: 2,
 								borderBottomWidth: 0,
 								width:
-									useWindowDimensions().width < 700
+									width < 700
 										? "100%"
 										: "50%",
 							}}
@@ -544,7 +545,7 @@ export default function RecipeInfo({ route, navigation }) {
 							borderBottomWidth: 0,
 							marginTop: 10,
 							width:
-								useWindowDimensions().width < 700
+								width < 700
 									? "100%"
 									: "50%",
 						}}

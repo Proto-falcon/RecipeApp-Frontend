@@ -15,7 +15,7 @@ export const SearchStyle = StyleSheet.create(
         },
 
         listHeader: {
-            width: 160,
+            width: 165,
             fontSize: 20,
             fontWeight: "bold",
             textAlign: "center",
