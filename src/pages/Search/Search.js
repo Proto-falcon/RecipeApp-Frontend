@@ -66,6 +66,7 @@ export default function Search({ route, navigation }) {
 	// Fetches the recipes from Server and
 	// sets current recipe list to be displayed
 	useEffect(() => {
+		accCtx.checkCred(csrfCtx, BACKEND);
 		if (accCtx.loggedIn) {
 			getRecipeResults("getRecentRecipes/", setRecentRecipes, [{...NoMoreRecipes, name: "No recipes viewd Yet"}]);
 			getRecipeResults("getMostRatedRecipes/", setRatedRecipes, [{...NoMoreRecipes, name: "No recipes rated Yet"}]);

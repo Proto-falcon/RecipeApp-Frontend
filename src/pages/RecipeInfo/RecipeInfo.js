@@ -426,7 +426,7 @@ export default function RecipeInfo({ route, navigation }) {
 				}}
 			/>
 			<Suspense fallback={<ActivityIndicator size="large" />}>
-				{!loading && <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+				{!loading ? <ScrollView contentContainerStyle={{ alignItems: "center" }}>
 					<Text
 						style={{ ...recipeInfoStyles.recipeName, fontSize: 50 }}
 					>
@@ -561,7 +561,7 @@ export default function RecipeInfo({ route, navigation }) {
 							renderItem={renderNutrients}
 						/>
 					</View>
-				</ScrollView>}
+				</ScrollView> : <ActivityIndicator size="large" />}
 			</Suspense>
 		</View>
 	);
